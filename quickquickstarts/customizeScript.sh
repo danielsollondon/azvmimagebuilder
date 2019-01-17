@@ -1,3 +1,5 @@
+#!/bin/bash -e
+
 # Add preview banner to MOTD
 cat >> /etc/motd << EOF
 *******************************************************
