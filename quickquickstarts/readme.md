@@ -1,4 +1,4 @@
-# Quick Quickstarts : Hello Image Examples
+# Quick Quickstarts : Hello Image Example
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder.
 
@@ -31,7 +31,7 @@ az provider show -n Microsoft.Storage | grep registrationState
 
 If they do not saw registered, run the commented out code below.
 ```bash
-## az provider register -n ## Microsoft.VirtualMachineImages
+## az provider register -n Microsoft.VirtualMachineImages
 
 ## az provider register -n Microsoft.Storage
 ```
