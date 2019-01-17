@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "imagetemplatename": {
+        "value": ""
+        },
+        "api-version": {
+            "value": ""
+          },
+        "svclocation": {
+            "value": "westcentralus"
+        },
+        "sourceURI": {
+            "value": "https://.."
+          },
+          "sha256Checksum": {
+            "value": ""
+          },
+
+        "customizestepname": {
+          "value": ""
+        },
+        "customizescriptpath": {
+          "value": ""
+        },
+        "galleryImageId": {
+          "value": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/"
+        },
+        "destinationresgroupid": {
+          "value": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Compute/images/"
+        },
+        "managedimagename": {
+          "value": ""
+        },
+        "sharedgalimagename": {
+          "value": ""
+        },
+        "destinationregion": {
+          "value": "westcentralus"
+        }
+      }
+    
+  }

@@ -1,0 +1,104 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imagetemplatename": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        },
+        "sourceURI": {
+          "type": "string"
+        },
+        "sha256Checksum": {
+          "type": "string"
+        },
+        "customizestepname": {
+          "type": "string"
+        },
+        "customizescriptpath": {
+          "type": "string"
+        },
+        "galleryImageId": {
+          "type": "string"
+        },
+        "managedImageResGroupId": {
+          "type": "string"
+        },
+        
+        "managedimagename": {
+          "type": "string"
+        },
+        "sharedgalimagename": {
+          "type": "string"
+        },
+        
+        "destinationregion": {
+          "type": "string"
+        }
+    },
+    
+    "variables": {
+      "sigresourceid": "[concat(parameters('galleryImageId'),parameters('sharedgalimagename'))]",
+      "mdiresourceid": "[concat(parameters('managedImageResGroupId'),parameters('managedimagename'))]"
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imagetemplatename')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[parameters('api-version')]",
+        "location": "[parameters('svclocation')]",
+        "dependsOn": [],
+        "properties": {
+              "source": {
+                "type": "ISO",
+                    "sourceURI": "[parameters('sourceURI')]",
+                    "sha256Checksum": "[parameters('sha256Checksum')]"
+                
+            },
+            "customize": [
+                {
+                    "type": "shell",
+                    "name": "[parameters('customizestepname')]",
+                    "script": "[parameters('customizescriptpath')]"
+                }
+            ],
+            "distribute": 
+                [
+                  {
+                    "type": "sharedImage",
+                    "galleryImageId": "[variables('sigresourceid')]",
+                    "runOutputName": "[parameters('sharedgalimagename')]",
+                    "tags": {
+                        "source": "azVmImageBuilder",
+                        "releaseStatus": "staging",
+                        "type": "sig"
+                    },
+                    "replicationRegions": [
+                      "westcentralus",
+                      "centralus"
+                    ]
+                  },
+                  {   "type":"managedImage",
+                    "imageId": "[variables('mdiresourceid')]",
+                    "location": "[parameters('destinationregion')]",
+                    "runOutputName": "[parameters('managedimagename')]",
+                    "tags": {
+                      "source": "azVmImageBuilder",
+                      "releaseStatus": "staging",
+                      "type": "sig"
+                    }
+                }
+                ]
+            }
+        }
+
+    
+    ]
+}    

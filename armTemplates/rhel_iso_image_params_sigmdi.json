@@ -1,0 +1,45 @@
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imagetemplatename": {
+          "value": ""
+          },
+          "api-version": {
+              "value": "2018-02-01-preview"
+            },
+          "svclocation": {
+              "value": "westcentralus"
+          },
+          "sourceURI": {
+            "value": "Red Hat Enterprise Linux 7.3 Binary DVD Link from RH Download Center"
+          },
+          "sha256Checksum": {
+            "value": "Checksum for the ISO"
+          },
+          "customizestepname": {
+            "value": "ProdShellScript"
+          },
+          "customizescriptpath": {
+            "value": "Customize Path - must be publically accessible"
+          },
+          "galleryImageId": {
+            "value": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Compute/galleries/<imggalname>/images/"
+          },
+          "managedImageResGroupId": {
+            "value": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Compute/images/"
+          },
+          "managedimagename": {
+            "value": "managed image name"
+          },
+          "sharedgalimagename": {
+            "value": "shared image definition name"
+          },
+          "destinationregion": {
+            "value": "westcentralus"
+          }
+        }
+      
+    }
+  

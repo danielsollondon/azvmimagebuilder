@@ -1,0 +1,89 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imagetemplatename": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "offer": {
+          "type": "string"
+        },
+        "sku": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "customizestepname": {
+          "type": "string"
+        },
+        "customizescriptpath": {
+          "type": "string"
+        },
+        "managedImageResGroupId": {
+          "type": "string"
+        },
+        "managedimagename": {
+          "type": "string"
+        },
+        "destinationregion": {
+          "type": "string"
+        }
+    },
+    
+    "variables": {
+      "resourceid": "[concat(parameters('managedImageResGroupId'),parameters('managedimagename'))]"
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imagetemplatename')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[parameters('api-version')]",
+        "location": "[parameters('svclocation')]",
+        "dependsOn": [],
+        "properties": {
+            "source": {
+                "type": "PlatformImage",
+                    "publisher": "[parameters('publisher')]",
+                    "offer": "[parameters('offer')]",
+                    "sku": "[parameters('sku')]",
+                    "version": "[parameters('version')]"
+                
+            },
+            "customize": [
+                {
+                    "type": "shell",
+                    "name": "[parameters('customizestepname')]",
+                    "script": "[parameters('customizescriptpath')]"
+                }
+            ],
+            "distribute": 
+                [
+                    {   "type":"managedImage",
+                        "imageId": "[variables('resourceid')]",
+                        "location": "[parameters('destinationregion')]",
+                        "runOutputName": "[parameters('managedimagename')]",
+                        "tags": {
+                          "source": "azVmImageBuilder",
+                          "releaseStatus": "staging",
+                          "type": "mdionly"
+                        }
+                    }
+                ]
+            }
+        }
+
+    
+    ]
+}    

@@ -1,0 +1,35 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2018-02-01-preview",
+    "location": "westcentralus",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "18.04.201808140"
+            
+        },
+        "customize": [
+            {
+                "type": "shell",
+                "name": "",
+                "script": ""
+            }
+        ],
+        "distribute": 
+            [
+                {   "type":"managedImage",
+                    "imageId": "",
+                    "location": "westcentralus",
+                    "runOutputName": "",
+                    "tags": {
+                        "source": "goimagebuilderarm",
+                        "baseosimg": "ubuntu1804"
+                    }
+                }
+            ]
+        }
+    }

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "imagetemplatename": {
+      "value": ""
+      },
+      "api-version": {
+          "value": "2018-02-01-preview"
+        },
+      "svclocation": {
+          "value": "westcentralus"
+      },
+      "publisher": {
+        "value": "Canonical"
+      },
+      "offer": {
+        "value": "UbuntuServer"
+      },
+      "sku": {
+        "value": "18.04-LTS"
+      },
+      "version": {
+        "value": "18.04.201808140"
+      },
+      "customizestepname": {
+        "value": ""
+      },
+      "customizescriptpath": {
+        "value": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testscript.sh"
+      },
+        "galleryImageId": {
+          "value": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/"
+        },
+        "sharedgalimagename": {
+          "value": ""
+        },
+        "destinationregion": {
+          "value": "westcentralus"
+        }
+      }
+    
+  }

@@ -1,0 +1,47 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2018-02-01-preview",
+    "location": "westcentralus",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "ISO",
+            "sourceURI": "",
+            "sha256Checksum": "" 
+
+        },
+        "customize": [
+            {
+                "type": "shell",
+                "name": "ProdShellScript",
+                "script": ""
+            }
+
+        ],
+        "distribute": 
+            [
+                {   "type":"managedImage",
+                    "imageId": "",
+                    "location": "westcentralus",
+                    "runOutputName": "",
+                    "tags": {
+                        "source": "goimagebuilderarm",
+                        "baseosimg": "rhel73"
+                    }
+                },
+                {
+                    "type": "sharedImage",
+                    "galleryImageId": "",
+                    "runOutputName": "",
+                    "tags": {
+                        "source": "goimagebuilderarm",
+                        "baseosimg": "rhel73sept18sigmdi"
+                    },
+                    "replicationRegions": [
+                      "westcentralus",
+                      "centralus"
+                    ]
+                  }
+            ]
+        }
+    }
