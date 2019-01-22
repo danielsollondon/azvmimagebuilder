@@ -1,0 +1,39 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2018-02-01-preview",
+    "location": "<Region1>",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "18.04.201808140"
+            
+        },
+        "customize": [
+            {
+                "type": "shell",
+                "name": "HelloImageScript1",
+                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+            }
+        ],
+        "distribute": 
+            [
+                {   
+                    "type": "sharedImage",
+                    "galleryImageId": "/subscriptions/<subcriptionID>/resourceGroups/<rgname>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
+                    "runOutputName": "<imageDefName>",
+                    "tags": {
+                        "source": "azureVmImageBuilder",
+                        "baseosimg": "ubuntu1804"
+                    },
+                    "replicationRegions": [
+                      "<Region1>",
+                      "<Region2>"
+                    ]
+                }
+            ]
+        }
+    }
