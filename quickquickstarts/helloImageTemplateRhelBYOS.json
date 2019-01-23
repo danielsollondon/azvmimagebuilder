@@ -1,0 +1,33 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2018-02-01-preview",
+    "location": "<Region>",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "ISO",
+            "sourceURI": "<rhellinkaddress>",
+            "sha256Checksum": "<rhelchecksum>" 
+            
+        },
+        "customize": [
+            {
+                "type": "shell",
+                "name": "HelloImageScript1",
+                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+            }
+        ],
+        "distribute": 
+            [
+                {   "type":"managedImage",
+                    "imageId": "/subscriptions/<subcriptionID>/resourceGroups/<rgname>/providers/Microsoft.Compute/images/<imageName>",
+                    "location": "<Region>",
+                    "runOutputName": "<imageName>",
+                    "tags": {
+                        "source": "azVmImageBuilder",
+                        "baseosimg": "rhel76byos"
+                    }
+                }
+            ]
+        }
+    }
