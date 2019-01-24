@@ -1,13 +1,13 @@
 {
     "type": "Microsoft.VirtualMachineImages",
     "apiVersion": "2018-02-01-preview",
-    "location": "<Region>",
+    "location": "<region>",
     "dependsOn": [],
     "properties": {
         "source": {
             "type": "ISO",
-            "sourceURI": "<rhellinkaddress>",
-            "sha256Checksum": "<rhelchecksum>" 
+            "sourceURI": "<rhelLinkAddress>",
+            "sha256Checksum": "<rhelChecksum>" 
             
         },
         "customize": [
@@ -20,8 +20,8 @@
         "distribute": 
             [
                 {   "type":"managedImage",
-                    "imageId": "/subscriptions/<subcriptionID>/resourceGroups/<rgname>/providers/Microsoft.Compute/images/<imageName>",
-                    "location": "<Region>",
+                    "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
+                    "location": "<region>",
                     "runOutputName": "<imageName>",
                     "tags": {
                         "source": "azVmImageBuilder",
