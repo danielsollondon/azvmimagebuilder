@@ -2,7 +2,7 @@
 
 Welcome to the Azure VM Image Builder QuickStarts, these are some key scenarios you can test using Azure CloudShell in the Portal, or Azure CLI.
 
-## Quick Starts
+## Quick Starts (Linux)
 1. [Create a Custom Image from an Azure Platform Vanilla OS Image.](./0_Creating_a_Custom_Linux_Managed_Image/readme.md)
 2. [Create a Custom Image, then Distribute and Version over Multiple Regions.](./1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/readme.md)
 3. [Creating a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences.](./2_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences/readme.md)   
