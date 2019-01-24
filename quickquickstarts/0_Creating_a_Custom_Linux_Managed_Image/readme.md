@@ -48,6 +48,7 @@ imageResourceGroup=aibmdi
 location=WestUS2
 
 # your subscription
+# get the current subID : 'az account show | grep id'
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the image to be created
