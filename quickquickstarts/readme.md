@@ -1,148 +1,24 @@
-# Quick Quickstarts : Hello Image Example
+# Azure VM Image Builder Quick QuickStarts
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder.
+Welcome to the Azure VM Image Builder QuickStarts, these are some key scenarios you can test using Azure CloudShell in the Portal, or Azure CLI.
 
-To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subcriptionID** variable below.
+These are designed to get you started quickly, where at a minimum you just need to supply your subscriptionID (except for the RHEL example), showing you how the Azure VM Image Builder can be used to build images to meet these requirements:
 
-## Step 0 : Sign up for the Image Builder Private Preview
+* Security & Compliance - e.g. building corporate golden images, that meet your organizations security and compliance requirements.
+* Licensing - e.g. building RHEL images using your eligible Red Hat Subcription licenses.
+* Performance - e.g. creating images with applications pre-installed
+* Management - e.g. managing images updates and global region replication
 
-You must register [here](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR4Mz2uUjMSlGsl9SsCqVlc5UNUFCRDRRTjFJSDJJQTcwWks1UFBGTU8yRi4u), you will be added to the MS Teams channel, where you can ask questions to the dev team and gain access to docs.
+## Quick Starts
+1. [Creating a custom Managed Image using an Azure MarketPlace vanilla OS.](./0_Creating_a_Custom_Linux_Managed_Image/creatingCustomLinuxMangedImage.md)
+2. [Creating a custom Shared Image Gallery Image that is replicated to multiple regions.](./1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/creatingCustomLinuxSharedImageGalImage.md)
+3. [Creating a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences.](./2_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences/creatingCustomLinuxImagefromRhelISO.md)   
 
-For full detailed information, please refer to the documentation on the Azure VM Image Builder [MS Teams channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
-
-## Step 1 : Enable Prereqs
-
-Happy Image Building!!!
-
-### Register for Image Builder / VM / Storage Features
-```bash
-az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview
-
-az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview | grep state
-
-# wait until it says registered
-
-# check you are registered for the providers
-
-az provider show -n Microsoft.VirtualMachineImages | grep registrationState
-
-az provider show -n Microsoft.Storage | grep registrationState
-```
-
-If they do not saw registered, run the commented out code below.
-```bash
-## az provider register -n Microsoft.VirtualMachineImages
-
-## az provider register -n Microsoft.Storage
-```
-
-## Set Permissions & Create Resource Group for Image Builder Images
-
-```bash
-# set your environment variables here!!!!
-
-# destination image resource group
-imageResourceGroup=01
-
-# location (see possible locations in main docs)
-location=WestUS2
-
-# your subscription
-subcriptionID=<INSERT YOUR AZURE SUBSCRIPTION ID HERE>
-
-# name of the image to be created
-imageName=helloImage01
-
-# create resource group
-az group create -n $imageResourceGroup -l $location
-
-# assign permissions for that resource group
-az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
-    --scope /subscriptions/$subcriptionID/resourceGroups/$imageResourceGroup
-
-```
-
-## Step 2 : Modify HelloImage Example
-
-```bash
-# download the example and configure it with your vars
-
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/helloImageTemplate.json -o helloImageTemplate.json
-
-sed -i -e "s/<subcriptionID>/$subcriptionID/g" helloImageTemplate.json
-sed -i -e "s/<rgname>/$imageResourceGroup/g" helloImageTemplate.json
-sed -i -e "s/<Region>/$location/g" helloImageTemplate.json
-sed -i -e "s/<imageName>/$imageName/g" helloImageTemplate.json
-
-```
-
-## Step 3 : Create the Image
-
-```bash
-# submit the image confiuration to the VM Image Builder Service
-
-az resource create \
-    --resource-group $imageResourceGroup \
-    --properties @helloImageTemplate.json \
-    --is-full-object \
-    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
-
-
-# start the image build
-
-az resource invoke-action \
-     --resource-group $imageResourceGroup \
-     --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplate01 \
-     --action Run 
-
-# wait approx 15mins
-```
-
-
-## Step 4 : Create the VM
-
-```bash
-az vm create \
-  --resource-group $imageResourceGroup \
-  --name hello \
-  --admin-username aibuser \
-  --image $imageName \
-  --generate-ssh-keys
-
-# and login...
-
-ssh aibuser@<pubIp>
-
-You should see the image was customized with a Message of the Day as soon as your SSH connection is established!
-
-*******************************************************
-**            This VM was built from the:            **
-...
-
-```
-
-## Clean Up
-```bash
-az resource delete \
-    --resource-group $imageResourceGroup \
-    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
-
-az group delete -n $imageResourceGroup
-```
+Any questions, please ask on the [MS Teams Channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47), the Azure Image Builder Dev team is there during the week, Pacific time.
 
 ## Next Steps
 * Want to learn more???
-    * Explore the documentation in the [MS Teams channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) (Files).
-    * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
-
-    ```bash
-    cat helloImageTemplate.json
-    ```
+    * Explore the detailed documentation in the [MS Teams channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) (Files).
 
 * Want to try more???
 * Image Builder does support deployment through Azure Resource Manager, see here in the repo for [examples](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates), you will also see how you can use a RHEL ISO source too, and manu other capabilities.
