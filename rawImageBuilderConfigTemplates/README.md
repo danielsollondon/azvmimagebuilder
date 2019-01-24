@@ -13,9 +13,11 @@ e.g.
 * rhel73_iso_1customize_sigmdi
 * ubuntu1804_mp_1customize_mdi
 
-## How to deploy the templates using ARM
+## How to deploy the templates
 
-*!! If you are using Shared Image Gallery, you must ensure the Shared Image Gallery and Image Definition is created before you continue!!*
+**!! NOTE !!**
+* Ensure the Shared Image Gallery and Image Definition is created before you continue!! See the [SIG Quick QuickStarts](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image).
+* If using a source Platform Image, the version cannot be 'latest'.
 
 ### Submit the Image Template to the VM Image Builder
 ```bash
