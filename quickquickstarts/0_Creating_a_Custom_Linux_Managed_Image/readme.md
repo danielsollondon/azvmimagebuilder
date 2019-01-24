@@ -42,7 +42,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # destination image resource group
-imageResourceGroup=hellowimageRg01
+imageResourceGroup=aibmdi
 
 # location (see possible locations in main docs)
 location=WestUS2
@@ -51,7 +51,7 @@ location=WestUS2
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the image to be created
-imageName=helloImage01
+imageName=aibCustomImg01
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
@@ -111,6 +111,7 @@ az vm create \
   --name hello \
   --admin-username aibuser \
   --image $imageName \
+  --location $location \
   --generate-ssh-keys
 
 # and login...
