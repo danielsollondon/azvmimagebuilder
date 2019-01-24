@@ -59,8 +59,8 @@ location=WestUS
 additionalregion=eastus
 
 # your subscription
+# get the current subID : 'az account show | grep id'
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
-#<ADD YOUR Az SUBSCRIPTION HERE>
 
 # name of the shared image gallery, e.g. myCorpGallery
 sigName=my1stSIG
@@ -142,7 +142,7 @@ az resource invoke-action \
 ```bash
 az vm create \
   --resource-group $sigResourceGroup \
-  --name azaibvm1 \
+  --name aibImgVm01 \
   --admin-username aibuser \
   --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
   --generate-ssh-keys

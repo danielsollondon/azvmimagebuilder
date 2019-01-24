@@ -51,8 +51,7 @@ imageResourceGroup=aibRhelRg
 location=westUS2
 
 # your subscription
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
-
+# get the current subID : 'az account show | grep id'
 # name of the image to be created
 imageName=rhelImage01
 
