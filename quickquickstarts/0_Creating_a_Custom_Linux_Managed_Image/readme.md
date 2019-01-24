@@ -108,7 +108,7 @@ az resource invoke-action \
 ```bash
 az vm create \
   --resource-group $imageResourceGroup \
-  --name hello \
+  --name aibImgVm00 \
   --admin-username aibuser \
   --image $imageName \
   --location $location \
