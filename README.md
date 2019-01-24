@@ -4,7 +4,7 @@ To use this, see this [blog](https://azure.microsoft.com/en-us/blog/announcing-p
 
 This repo contains mutliple examples and test templates for Azure VM Image Builder.
 
-1. [Quick QuickStarts Examples](/.quickquickstarts/readme.md).
+1. [Quick QuickStarts Examples](/quickquickstarts/readme.md).
 You can run these immediately using the Azure CloudShell from the Portal, and see multiple scenarios that the VM Image Builder supports.  
 
 2. Detailed Examples
