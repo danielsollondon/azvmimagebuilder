@@ -1,6 +1,6 @@
-# Quick Quickstarts : Create a Custom Image from an Azure Platform Vanilla OS Image
+# Create a Custom Image, then Distribute and Version over Multiple Regions
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region.
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -20,6 +20,9 @@ az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMac
 
 az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview | grep state
 
+# register and enable for shared image gallery
+az feature register --namespace Microsoft.Compute --name GalleryPreview
+
 # wait until it says registered
 
 # check you are registered for the providers
@@ -27,6 +30,8 @@ az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachine
 az provider show -n Microsoft.VirtualMachineImages | grep registrationState
 
 az provider show -n Microsoft.Storage | grep registrationState
+
+az provider show -n Microsoft.Compute | grep registrationState
 ```
 
 If they do not saw registered, run the commented out code below.
@@ -34,47 +39,76 @@ If they do not saw registered, run the commented out code below.
 ## az provider register -n Microsoft.VirtualMachineImages
 
 ## az provider register -n Microsoft.Storage
+
+## az provider register -n Microsoft.Compute
+
 ```
 
-## Set Permissions & Create Resource Group for Image Builder Images
+## Step 1 : Set Permissions & Create Shared Image Gallery (SIG)
 
 ```bash
 # set your environment variables here!!!!
 
-# destination image resource group
-imageResourceGroup=hellowimageRg01
+# Create SIG  resource group
+sigResourceGroup=aibsig
 
-# location (see possible locations in main docs)
-location=WestUS2
+# location of SIG (see possible locations in main docs)
+location=WestUS
+
+# additional region to replication image to
+additionalregion=eastus
 
 # your subscription
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+#<ADD YOUR Az SUBSCRIPTION HERE>
 
-# name of the image to be created
-imageName=helloImage01
+# name of the shared image gallery, e.g. myCorpGallery
+sigName=my1stSIG
+
+# name of the image definition to be created, e.g. ProdImages
+imageDefName=ubuntu1804images
 
 # create resource group
-az group create -n $imageResourceGroup -l $location
+az group create -n $sigResourceGroup -l $location
 
 # assign permissions for that resource group
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
     --role Contributor \
-    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
 
+# create SIG
+az sig create \
+    -g $sigResourceGroup \
+    --gallery-name $sigName
+
+# create SIG image definition
+
+az sig image-definition create \
+   -g $sigResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --publisher corpIT \
+   --offer myOffer \
+   --sku 18.04-LTS \
+   --os-type Linux
 ```
+
 
 ## Step 2 : Modify HelloImage Example
 
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/helloImageTemplate.json -o helloImageTemplate.json
+curl https://github.com/danielsollondon/azvmimagebuilder/blob/master/quickquickstarts/1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/helloImageTemplateforSIG.json -o helloImageTemplateforSIG.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplate.json
-sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplate.json
-sed -i -e "s/<region>/$location/g" helloImageTemplate.json
-sed -i -e "s/<imageName>/$imageName/g" helloImageTemplate.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforSIG.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforSIG.json
+sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforSIG.json
+sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforSIG.json
+
+sed -i -e "s/<region1>/$location/g" helloImageTemplateforSIG.json
+sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIG.json
 
 ```
 
@@ -84,22 +118,22 @@ sed -i -e "s/<imageName>/$imageName/g" helloImageTemplate.json
 # submit the image confiuration to the VM Image Builder Service
 
 az resource create \
-    --resource-group $imageResourceGroup \
-    --properties @helloImageTemplate.json \
+    --resource-group $sigResourceGroup \
+    --properties @helloImageTemplateforSIG.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
+    -n helloImageTemplateforSIG01
 
 
 # start the image build
 
 az resource invoke-action \
-     --resource-group $imageResourceGroup \
+     --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplate01 \
+     -n helloImageTemplateforSIG01 \
      --action Run 
 
-# wait approx 15mins
+# wait approx 35mins (this includes replication time to both regions)
 ```
 
 
@@ -107,10 +141,10 @@ az resource invoke-action \
 
 ```bash
 az vm create \
-  --resource-group $imageResourceGroup \
-  --name hello \
+  --resource-group $sigResourceGroup \
+  --name azaibvm1 \
   --admin-username aibuser \
-  --image $imageName \
+  --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
   --generate-ssh-keys
 
 # and login...
@@ -128,11 +162,14 @@ You should see the image was customized with a Message of the Day as soon as you
 ## Clean Up
 ```bash
 az resource delete \
-    --resource-group $imageResourceGroup \
+    --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
+     --action Run 
+    -n helloImageTemplateforSIG01
 
-az group delete -n $imageResourceGroup
+az sig delete -r $sigName -g $sigResourceGroup
+
+az group delete -n $sigResourceGroup
 ```
 
 ## Next Steps
@@ -141,7 +178,7 @@ az group delete -n $imageResourceGroup
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplate.json
+    cat helloImageTemplateforSIG.json
     ```
 
 * Want to try more???

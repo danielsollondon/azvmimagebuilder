@@ -1,4 +1,4 @@
-# Quick Quickstarts : Creating a Custom Azure Image from Red Hat Enterprise Linux ISO
+# Create a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder.
 
@@ -98,7 +98,7 @@ rhelLinkAddress="<INSERT LINK ADDRESS HERE>"
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/helloImageTemplateRhelBYOS.json -o helloImageTemplateRhelBYOS.json
+curl https://github.com/danielsollondon/azvmimagebuilder/blob/master/quickquickstarts/2_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences/helloImageTemplateRhelBYOS.json -o helloImageTemplateRhelBYOS.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateRhelBYOS.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateRhelBYOS.json

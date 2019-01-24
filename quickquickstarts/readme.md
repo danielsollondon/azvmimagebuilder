@@ -10,9 +10,9 @@ These are designed to get you started quickly, where at a minimum you just need 
 * Management - e.g. managing images updates and global region replication
 
 ## Quick Starts
-1. [Creating a custom Managed Image using an Azure MarketPlace vanilla OS.](./0_Creating_a_Custom_Linux_Managed_Image/creatingCustomLinuxMangedImage.md)
-2. [Creating a custom Shared Image Gallery Image that is replicated to multiple regions.](./1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/creatingCustomLinuxSharedImageGalImage.md)
-3. [Creating a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences.](./2_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences/creatingCustomLinuxImagefromRhelISO.md)   
+1. [Create a Custom Image from an Azure Platform Vanilla OS Image.](./0_Creating_a_Custom_Linux_Managed_Image/readme.md)
+2. [Create a Custom Image, then Distribute and Version over Multiple Regions.](./1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/readme.md)
+3. [Creating a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences.](./2_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences/readme.md)   
 
 Any questions, please ask on the [MS Teams Channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47), the Azure Image Builder Dev team is there during the week, Pacific time.
 
