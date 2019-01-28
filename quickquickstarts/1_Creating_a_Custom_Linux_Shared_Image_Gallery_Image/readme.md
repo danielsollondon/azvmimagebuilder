@@ -164,7 +164,6 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-     --action Run 
     -n helloImageTemplateforSIG01
 
 az sig delete -r $sigName -g $sigResourceGroup
