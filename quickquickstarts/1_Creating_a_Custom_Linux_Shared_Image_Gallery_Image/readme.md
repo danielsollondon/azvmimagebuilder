@@ -133,7 +133,7 @@ az resource invoke-action \
      -n helloImageTemplateforSIG01 \
      --action Run 
 
-# wait approx 35mins (this includes replication time to both regions)
+# wait minimum of 15mins (this includes replication time to both regions)
 ```
 
 
@@ -144,6 +144,7 @@ az vm create \
   --resource-group $sigResourceGroup \
   --name aibImgVm01 \
   --admin-username aibuser \
+  --location $location \
   --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
   --generate-ssh-keys
 
@@ -161,14 +162,41 @@ You should see the image was customized with a Message of the Day as soon as you
 
 ## Clean Up
 ```bash
+# BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
+
+# delete AIB Template
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateforSIG01
 
+# get image version created by AIB, this always starts with 0.*
+sigDefImgVersion=$(az sig image-version list \
+   -g $sigResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"')
+
+# delete image version
+az sig image-version delete \
+   -g $sigResourceGroup \
+   --gallery-image-version $sigDefImgVersion \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID
+
+# delete image definition
+az sig image-definition delete \
+   -g $sigResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID
+
+# delete SIG
 az sig delete -r $sigName -g $sigResourceGroup
 
-az group delete -n $sigResourceGroup
+# delete RG
+az group delete -n $sigResourceGroup -y
 ```
 
 ## Next Steps
