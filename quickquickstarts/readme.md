@@ -9,6 +9,8 @@ Get started with the short walkthrough video below, or go straight to the Quick 
 [<img src="./mediumVideoplay.png" alt="drawing" width="450"/>
 ](https://microsoft.sharepoint.com/teams/AzureVMImageBuilder/Shared%20Documents/General/QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4)
 
+Note, if you have not registered and want to see the video, you can download it from GitHub [here](./QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4).
+
 ## Quick Starts (Linux)
 1. [Create a Custom Image from an Azure Platform Vanilla OS Image.](./0_Creating_a_Custom_Linux_Managed_Image/readme.md)
 
