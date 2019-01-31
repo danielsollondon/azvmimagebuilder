@@ -6,7 +6,7 @@ Welcome to the Azure VM Image Builder QuickStarts, these are some key scenarios 
 
 Get started with the short walkthrough video below, or go straight to the Quick Starts below.
 
-[<img src="./mediumVideoplay.png" alt="drawing" width="300"/>
+[<img src="./mediumVideoplay.png" alt="drawing" width="450"/>
 ](https://microsoft.sharepoint.com/teams/AzureVMImageBuilder/Shared%20Documents/General/QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4)
 
 ## Quick Starts (Linux)
