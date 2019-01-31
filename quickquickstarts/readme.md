@@ -4,9 +4,10 @@ Welcome to the Azure VM Image Builder QuickStarts, these are some key scenarios 
 
 **First time using Image Builder??** 
 
-Please see this 3 min video below, walking through how to get setup, and walking through the first Quick Start below.
+Get started with the short walkthrough video below, or go straight to the Quick Starts below.
 
-[![Creating a Custom Image using Azure VM Image Building](./playVideo.png)](https://microsoft.sharepoint.com/teams/AzureVMImageBuilder/Shared%20Documents/General/QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4)
+[<img src="./mediumVideoplay.png" alt="drawing" width="300"/>
+](https://microsoft.sharepoint.com/teams/AzureVMImageBuilder/Shared%20Documents/General/QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4)
 
 ## Quick Starts (Linux)
 1. [Create a Custom Image from an Azure Platform Vanilla OS Image.](./0_Creating_a_Custom_Linux_Managed_Image/readme.md)
