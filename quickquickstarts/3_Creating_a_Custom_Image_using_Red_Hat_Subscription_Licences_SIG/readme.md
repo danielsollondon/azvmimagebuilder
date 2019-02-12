@@ -1,6 +1,6 @@
-# Create a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences
+# Create a Custom Image from a RHEL ISO, then Distribute and Version over Multiple Regions
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder.
+This article is to show you how you can create a customized image using the Azure VM Image Builder from a RHEL ISO, and distribute to two Azure regions..
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID, rhelChecksum, rhelLinkAddress** variables below.
 
@@ -45,7 +45,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # destination image resource group
-imageResourceGroup=aibRhelRgSig
+sigResourceGroup=aibRhelRgSig
 
 # location (see possible locations in main docs)
 location=westUS2
@@ -128,19 +128,19 @@ rhelLinkAddress="<INSERT LINK ADDRESS HERE>"
 
 curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/2_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences/helloImageTemplateforByosSig.json -o helloImageTemplateRhelByosSig.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforByosSig.json
-sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforByosSig.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateRhelByosSig.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateRhelByosSig.json
 
-sed -i -e "s/<rhelChecksum>/$rhelChecksum/g" helloImageTemplateforByosSig.json
+sed -i -e "s/<rhelChecksum>/$rhelChecksum/g" helloImageTemplateRhelByosSig.json
 
-sed -i -e "s%<rhelLinkAddress>%$rhelLinkAddress%g" helloImageTemplateforByosSig.json
-sed -i -e "s/<rhelLinkAddress>/\&/g" helloImageTemplateforByosSig.json
+sed -i -e "s%<rhelLinkAddress>%$rhelLinkAddress%g" helloImageTemplateRhelByosSig.json
+sed -i -e "s/<rhelLinkAddress>/\&/g" helloImageTemplateRhelByosSig.json
 
-sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforByosSig.json
-sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforByosSig.json
+sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateRhelByosSig.json
+sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateRhelByosSig.json
 
-sed -i -e "s/<region1>/$location/g" helloImageTemplateforByosSig.json
-sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforByosSig.json
+sed -i -e "s/<region1>/$location/g" helloImageTemplateRhelByosSig.json
+sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateRhelByosSig.json
 
 ```
 
