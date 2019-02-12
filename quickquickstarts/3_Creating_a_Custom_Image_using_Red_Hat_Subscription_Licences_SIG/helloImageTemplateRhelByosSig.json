@@ -1,7 +1,7 @@
 {
     "type": "Microsoft.VirtualMachineImages",
     "apiVersion": "2018-02-01-preview",
-    "location": "<region1",
+    "location": "<region1>",
     "dependsOn": [],
     "properties": {
         "source": {
