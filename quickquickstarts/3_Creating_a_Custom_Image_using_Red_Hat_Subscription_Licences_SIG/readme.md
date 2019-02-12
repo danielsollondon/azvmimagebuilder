@@ -161,7 +161,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplateRhelBYOS01 \
+     -n helloImageTemplateRhelByosSig01 \
      --action Run 
 
 # wait approx 15mins
@@ -199,7 +199,7 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateRhelBYOS01
+    -n helloImageTemplateRhelByosSig01
 
 # get image version created by AIB, this always starts with 0.*
 sigDefImgVersion=$(az sig image-version list \
