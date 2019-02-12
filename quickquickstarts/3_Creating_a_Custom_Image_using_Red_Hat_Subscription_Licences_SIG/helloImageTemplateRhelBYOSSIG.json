@@ -1,0 +1,37 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2018-02-01-preview",
+    "location": "<region1",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "ISO",
+            "sourceURI": "<rhelLinkAddress>",
+            "sha256Checksum": "<rhelChecksum>" 
+            
+        },
+        "customize": [
+            {
+                "type": "shell",
+                "name": "HelloImageScript1",
+                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+            }
+        ],
+        "distribute": 
+            [
+                {   
+                    "type": "sharedImage",
+                    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
+                    "runOutputName": "<imageDefName>",
+                    "tags": {
+                        "source": "azureVmImageBuilder",
+                        "baseosimg": "rheliso75"
+                    },
+                    "replicationRegions": [
+                      "<region1>",
+                      "<region2>"
+                    ]
+                }
+            ]
+        }
+    }
