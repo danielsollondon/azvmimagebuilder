@@ -147,7 +147,7 @@ sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateRhelByosSig.json
 # submit the image confiuration to the VM Image Builder Service
 
 az resource create \
-    --resource-group $imageResourceGroup \
+    --resource-group $sigResourceGroup \
     --properties @helloImageTemplateRhelByosSig.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
@@ -159,7 +159,7 @@ az resource create \
 # start the image build
 
 az resource invoke-action \
-     --resource-group $imageResourceGroup \
+     --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
      -n helloImageTemplateRhelBYOS01 \
      --action Run 
@@ -171,7 +171,7 @@ az resource invoke-action \
 
 ```bash
 az vm create \
-  --resource-group $imageResourceGroup \
+  --resource-group $sigResourceGroup \
   --name aibImgVm02 \
   --admin-username aibuser \
   --image $imageName \
@@ -192,13 +192,42 @@ You should see the image was customized with a Message of the Day as soon as you
 ```
 
 ## Clean Up
+
 ```bash
+# BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
+
 az resource delete \
-    --resource-group $imageResourceGroup \
+    --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateRhelBYOS01
 
-az group delete -n $imageResourceGroup
+# get image version created by AIB, this always starts with 0.*
+sigDefImgVersion=$(az sig image-version list \
+   -g $sigResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"')
+
+# delete image version
+az sig image-version delete \
+   -g $sigResourceGroup \
+   --gallery-image-version $sigDefImgVersion \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID
+
+# delete image definition
+az sig image-definition delete \
+   -g $sigResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID
+
+# delete SIG
+az sig delete -r $sigName -g $sigResourceGroup
+
+# delete RG
+az group delete -n $sigResourceGroup -y
 ```
 
 ## Next Steps
