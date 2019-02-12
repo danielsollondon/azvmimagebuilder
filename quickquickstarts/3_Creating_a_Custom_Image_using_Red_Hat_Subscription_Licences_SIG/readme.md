@@ -58,7 +58,7 @@ additionalregion=eastus
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the shared image gallery, e.g. myCorpGallery
-sigName=my2ndSIG
+sigName=my3rdSIG
 
 # name of the image definition to be created, e.g. ProdImages
 imageDefName=rhel75
@@ -66,9 +66,6 @@ imageDefName=rhel75
 # create resource group
 az group create -n $sigResourceGroup -l $location
 
-
-# create resource group
-az group create -n $imageResourceGroup -l $location
 
 # assign permissions for that resource group
 az role assignment create \
