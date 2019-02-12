@@ -71,7 +71,7 @@ az group create -n $sigResourceGroup -l $location
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
     --role Contributor \
-    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
 
 
 # create SIG
@@ -148,10 +148,10 @@ sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateRhelByosSig.json
 
 az resource create \
     --resource-group $imageResourceGroup \
-    --properties @helloImageTemplateRhelBYOS.json \
+    --properties @helloImageTemplateRhelByosSig.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateRhelBYOS01
+    -n helloImageTemplateRhelByosSig01
 
 # wait approx 15mins (AIB is downloading the ISO)
 
