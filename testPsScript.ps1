@@ -1,1 +1,1 @@
-echo some-text  > filename.txt
+echo Azure-Image-Builder-Was-Here  > azureImageBuilder.txt
