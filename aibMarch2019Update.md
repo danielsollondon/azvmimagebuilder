@@ -66,3 +66,6 @@ az resource invoke-action \
      --action Run 
 ```
 >> Note! This should be a short term workaround!
+
+## Docuementation
+This will be updated once the release has been completed.
