@@ -37,7 +37,7 @@ Please review your templates against all these types used, below is the list of 
     * Windows-Restart
 * Distribute
     * ManagedImage
-    * SharedGallery
+    * SharedImage
     * VHD
 
 Update the AIB configuration template apiVersion to '2019-02-01-preview'. 
