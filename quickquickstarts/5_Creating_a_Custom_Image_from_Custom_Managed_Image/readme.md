@@ -71,7 +71,7 @@ subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 srcImageName=aibCustomLinuxImg01
 
 # name of the shared image gallery, e.g. myCorpGallery
-sigName=my2ndSIG
+sigName=my10thSIG
 
 # name of the image definition to be created, e.g. ProdImages
 imageDefName=ubuntu1804images
