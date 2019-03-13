@@ -11,6 +11,11 @@ Get started with the short walkthrough video below, or go straight to the Quick 
 
 Note, if you have not registered and want to see the video, you can download it from GitHub [here](./QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4).
 
+**Second time using Image Builder??**  
+On the 12th March we have just released a whole wave of New Features and API version, see here for [details]()! <<<<<<>>>>>>
+
+
+>>UPDATE
 ## Quick Starts (Linux)
 1. [Create a Custom Image from an Azure Platform Vanilla OS Image.](./0_Creating_a_Custom_Linux_Managed_Image/readme.md)
 

@@ -64,7 +64,7 @@
             },
             "customize": [
                 {
-                    "type": "shell",
+                    "type": "Shell",
                     "name": "[parameters('customizestepname')]",
                     "script": "[parameters('customizescriptpath')]"
                 }
@@ -72,7 +72,7 @@
             "distribute": 
                 [
                   {
-                    "type": "sharedImage",
+                    "type": "SharedImage",
                     "galleryImageId": "[variables('sigresourceid')]",
                     "runOutputName": "[parameters('sharedgalimagename')]",
                     "tags": {
@@ -85,7 +85,7 @@
                       "centralus"
                     ]
                   },
-                  {   "type":"managedImage",
+                  {   "type":"ManagedImage",
                     "imageId": "[variables('mdiresourceid')]",
                     "location": "[parameters('destinationregion')]",
                     "runOutputName": "[parameters('managedimagename')]",

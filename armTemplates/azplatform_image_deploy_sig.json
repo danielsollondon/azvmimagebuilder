@@ -63,7 +63,7 @@
             },
             "customize": [
                 {
-                    "type": "shell",
+                    "type": "Shell",
                     "name": "[parameters('customizestepname')]",
                     "script": "[parameters('customizescriptpath')]"
                 }
@@ -71,7 +71,7 @@
             "distribute": 
                 [
                   {
-                    "type": "sharedImage",
+                    "type": "SharedImage",
                     "galleryImageId": "[variables('resourceid')]",
                     "runOutputName": "[parameters('sharedgalimagename')]",
                     "tags": {

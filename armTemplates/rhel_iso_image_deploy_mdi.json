@@ -55,14 +55,14 @@
             },
             "customize": [
                 {
-                    "type": "shell",
+                    "type": "Shell",
                     "name": "[parameters('customizestepname')]",
                     "script": "[parameters('customizescriptpath')]"
                 }
             ],
             "distribute": 
                 [
-                    {   "type":"managedImage",
+                    {   "type":"ManagedImage",
                         "imageId": "[variables('resourceid')]",
                         "location": "[parameters('destinationregion')]",
                         "runOutputName": "[parameters('managedimagename')]",

@@ -1,7 +1,6 @@
 # Azure VM Image Builder March 2019 Update
 
-**ALERT**
-AIB will be updated with a new features, and a Microsoft.VirtualMachineImages API update, we will start the release of these features from 12th March 1600 PDT, and completion should be approx. 13th March 1200 PDT. Please monitor the [MS Teams](https://launchpad.net/~cloud-init-dev/+archive/ubuntu/daily) channel for updates. You will need to update your AIB templates, please see this article for details.
+Release Date : 12th March 1600 PDT
 
 ## Features
 * Windows Server Support
