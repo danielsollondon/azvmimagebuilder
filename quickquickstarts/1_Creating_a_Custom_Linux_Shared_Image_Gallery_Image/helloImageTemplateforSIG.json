@@ -22,7 +22,7 @@
         "distribute": 
         [
             {   
-                "type": "sharedImage",
+                "type": "SharedImage",
                 "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
                 "runOutputName": "<imageDefName>",
                 "tags": {
