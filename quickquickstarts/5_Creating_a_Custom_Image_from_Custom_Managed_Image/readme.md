@@ -58,7 +58,7 @@ This Quick Start assumes you have completed 0_Creating_a_Custom_Linux_Managed_Im
 sigResourceGroup=aibmdi
 
 # location of SIG (see possible locations in main docs)
-location=WestUS2
+location=westus2
 
 # additional region to replication image to
 additionalregion=eastus
