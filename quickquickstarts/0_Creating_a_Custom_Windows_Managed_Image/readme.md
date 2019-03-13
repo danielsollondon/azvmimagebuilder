@@ -42,7 +42,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # destination image resource group
-imageResourceGroup=dansolaibmdiwin2
+imageResourceGroup=aibmdiwin
 
 # location (see possible locations in main docs)
 location=WestUS2
