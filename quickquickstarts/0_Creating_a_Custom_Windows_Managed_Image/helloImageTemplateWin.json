@@ -1,0 +1,47 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2019-02-01-preview",
+    "location": "<region>",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2019-Datacenter",
+                "version": "2019.0.20190214"
+            
+        },
+        "customize": [
+            {
+                "type": "PowerShell",
+                "name": "RunScripts01",
+                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testPsScript.ps1"
+            },
+            {
+                "type": "WindowsRestart",
+                "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\buildArtifacts\\azureImageBuilderRestart.txt",
+                "restartTimeout": "5m"
+            },
+            {
+                "type": "PowerShell",
+                "inline": [
+                    "mkdir c:\\buildActions",
+                    "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt"
+                ]
+                }
+        ],
+        "distribute": 
+            [
+                {   "type":"ManagedImage",
+                    "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
+                    "location": "<region>",
+                    "runOutputName": "<imageName>",
+                    "tags": {
+                        "source": "azVmImageBuilder",
+                        "baseosimg": "windows2016"
+                    }
+                }
+            ]
+        }
+    }
