@@ -99,7 +99,7 @@ az sig image-definition create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/helloImageTemplateforSIG.json -o helloImageTemplateforReCustomization.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/5_Creating_a_Custom_Image_from_Custom_Managed_Image/helloImageTemplateforReCustomization.json -o helloImageTemplateforReCustomization.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforReCustomization.json
 sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforReCustomization.json
