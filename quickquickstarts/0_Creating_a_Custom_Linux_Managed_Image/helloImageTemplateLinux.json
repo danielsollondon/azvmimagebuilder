@@ -1,6 +1,6 @@
 {
     "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2018-02-01-preview",
+    "apiVersion": "2019-02-01-preview",
     "location": "<region>",
     "dependsOn": [],
     "properties": {
@@ -9,19 +9,29 @@
                 "publisher": "Canonical",
                 "offer": "UbuntuServer",
                 "sku": "18.04-LTS",
-                "version": "18.04.201808140"
+                "version": "18.04.201903060"
             
         },
         "customize": [
             {
-                "type": "shell",
-                "name": "HelloImageScript1",
+                "type": "Shell",
+                "name": "RunScripts01",
                 "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
-            }
+            },
+            {
+                "type": "Shell",
+                "name": "RunInlineCmds01",
+                "inline": [
+                    "sudo apt install unattended-upgrades",
+                    "sudo mkdir /buildArtifacts",
+                    "sudo touch /buildArtifacts/imageBuilder.md"
+                ]
+                }
+
         ],
         "distribute": 
             [
-                {   "type":"managedImage",
+                {   "type":"ManagedImage",
                     "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
                     "location": "<region>",
                     "runOutputName": "<imageName>",

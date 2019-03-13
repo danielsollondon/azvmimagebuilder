@@ -52,7 +52,7 @@ location=WestUS2
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the image to be created
-imageName=aibCustomImg01
+imageName=aibCustomLinuxImg01
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
@@ -70,12 +70,12 @@ az role assignment create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplate.json -o helloImageTemplate.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplate.json -o helloImageTemplateLinux.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplate.json
-sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplate.json
-sed -i -e "s/<region>/$location/g" helloImageTemplate.json
-sed -i -e "s/<imageName>/$imageName/g" helloImageTemplate.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateLinux.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateLinux.json
+sed -i -e "s/<region>/$location/g" helloImageTemplateLinux.json
+sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateLinux.json
 
 ```
 
@@ -86,10 +86,10 @@ sed -i -e "s/<imageName>/$imageName/g" helloImageTemplate.json
 
 az resource create \
     --resource-group $imageResourceGroup \
-    --properties @helloImageTemplate.json \
+    --properties @helloImageTemplateLinux.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
+    -n helloImageTemplateLinux01
 
 
 # start the image build
@@ -97,7 +97,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $imageResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplate01 \
+     -n helloImageTemplateLinux01 \
      --action Run 
 
 # wait approx 15mins
@@ -132,7 +132,7 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
+    -n helloImageTemplateLinux01
 
 az group delete -n $imageResourceGroup
 ```
