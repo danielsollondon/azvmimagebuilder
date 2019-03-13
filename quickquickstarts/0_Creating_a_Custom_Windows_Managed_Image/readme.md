@@ -72,7 +72,7 @@ az role assignment create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplate.json -o helloImageTemplateWin.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json -o helloImageTemplateWin.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateWin.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateWin.json
