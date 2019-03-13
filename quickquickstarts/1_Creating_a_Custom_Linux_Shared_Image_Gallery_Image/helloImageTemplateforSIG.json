@@ -1,7 +1,7 @@
 {
     "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2018-02-01-preview",
-    "location": "<region1>",
+    "apiVersion": "2019-02-01-preview",
+    "location": "centraluseuap",
     "dependsOn": [],
     "properties": {
         "source": {
@@ -9,12 +9,12 @@
                 "publisher": "Canonical",
                 "offer": "UbuntuServer",
                 "sku": "18.04-LTS",
-                "version": "18.04.201808140"
+                "version": "18.04.201903060"
             
         },
         "customize": [
             {
-                "type": "shell",
+                "type": "Shell",
                 "name": "HelloImageScript1",
                 "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
             }
@@ -22,16 +22,16 @@
         "distribute": 
             [
                 {   
-                    "type": "sharedImage",
-                    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
-                    "runOutputName": "<imageDefName>",
+                    "type": "SharedImage",
+                    "galleryImageId": "/subscriptions/27b750cd-ed43-42fd-9044-8d75e124ae55/resourceGroups/danielsolsig/providers/Microsoft.Compute/galleries/danielsolsig/images/ubuntu1804images",
+                    "runOutputName": "ubuntu1804images",
                     "tags": {
                         "source": "azureVmImageBuilder",
                         "baseosimg": "ubuntu1804"
                     },
                     "replicationRegions": [
-                      "<region1>",
-                      "<region2>"
+                      "centraluseuap",
+                      "eastus"
                     ]
                 }
             ]

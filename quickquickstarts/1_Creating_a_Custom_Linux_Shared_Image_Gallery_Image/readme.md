@@ -53,7 +53,7 @@ If they do not saw registered, run the commented out code below.
 sigResourceGroup=aibsig
 
 # location of SIG (see possible locations in main docs)
-location=WestUS
+location=westus
 
 # additional region to replication image to
 additionalregion=eastus
@@ -63,7 +63,7 @@ additionalregion=eastus
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the shared image gallery, e.g. myCorpGallery
-sigName=my1stSIG
+sigName=my21stSIG
 
 # name of the image definition to be created, e.g. ProdImages
 imageDefName=ubuntu1804images
