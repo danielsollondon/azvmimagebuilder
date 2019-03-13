@@ -109,7 +109,7 @@ az resource invoke-action \
 ## Step 4 : Get the URL to the VHD
 ```bash
 az resource show \
-    --ids "/subscriptions/$subscriptionId/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/$imageTemplateName/runOutputs/$runOutputName"  \
+    --ids "/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/$imageTemplateName/runOutputs/$runOutputName"  \
     --api-version=2019-02-01-preview | grep artifactUri
 ```
 
