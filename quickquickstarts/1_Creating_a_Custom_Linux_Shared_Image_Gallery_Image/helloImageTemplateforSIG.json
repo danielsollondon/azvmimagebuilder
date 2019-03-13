@@ -1,7 +1,7 @@
 {
     "type": "Microsoft.VirtualMachineImages",
     "apiVersion": "2019-02-01-preview",
-    "location": "centraluseuap",
+    "location": "<region1>",
     "dependsOn": [],
     "properties": {
         "source": {
@@ -20,20 +20,20 @@
             }
         ],
         "distribute": 
-            [
-                {   
-                    "type": "SharedImage",
-                    "galleryImageId": "/subscriptions/27b750cd-ed43-42fd-9044-8d75e124ae55/resourceGroups/danielsolsig/providers/Microsoft.Compute/galleries/danielsolsig/images/ubuntu1804images",
-                    "runOutputName": "ubuntu1804images",
-                    "tags": {
-                        "source": "azureVmImageBuilder",
-                        "baseosimg": "ubuntu1804"
-                    },
-                    "replicationRegions": [
-                      "centraluseuap",
-                      "eastus"
-                    ]
-                }
-            ]
-        }
+        [
+            {   
+                "type": "sharedImage",
+                "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
+                "runOutputName": "<imageDefName>",
+                "tags": {
+                    "source": "azureVmImageBuilder",
+                    "baseosimg": "ubuntu1804"
+                },
+                "replicationRegions": [
+                  "<region1>",
+                  "<region2>"
+                ]
+            }
+        ]
     }
+}
