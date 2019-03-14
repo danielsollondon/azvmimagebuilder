@@ -27,7 +27,7 @@ On the 12th March we have just released a whole wave of New Features and API ver
 
 6. [Create a Custom Linux Image and Export to VHD](./4_Creating_a_Custom_Linux_Image_to_VHD/readme.md)
 
-7. Any issues?? [Troubleshooting Guide & Log Locations](\troubleshootingaib.md)
+7. [Troubleshooting Guide & Log Locations](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md)
 
 ** Note: The quickstarts are designed to show you the different types of configuration you can have, many of these are supported on Windows and Linux, there will be more Windows examples soon!!
 
