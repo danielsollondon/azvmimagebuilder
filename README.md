@@ -15,8 +15,8 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 
 3. Release Information
 * [March 2019 Release (latest)](/aibMarch2019Update.md)
-* Features added:
-    * Windows Server Support
+* Features added (links to example config templates):
+    * [Windows Server Support](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json)
     * Additional Customizers
         * [Windows PowerShell (Script and Inline)](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json)
         * [Windows-Restart](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json)

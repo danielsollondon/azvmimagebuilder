@@ -1,6 +1,6 @@
 # Azure VM Image Builder March 2019 Update
 
-Release Date : 12th March 1600 PDT
+Release Date : 12th March 1600 PST
 
 ## Features
 * Windows Server Support
