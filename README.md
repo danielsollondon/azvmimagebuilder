@@ -22,7 +22,7 @@ The beauty of these examples, they are heavily parameterized, so you just need t
         * [Windows-Restart](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json)
         * [Linux Shell Inline command support](quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json)
     * [Image Build Logs](/troubleshootingaib.md#collecting-and-reviewing-aib-logs) - for troubleshooting
-    * [Use existing Custom Managed Images as a Base Image](quickquickstarts/5_Creating_a_Custom_Image_from_Custom_Managed_Image)
+    * [Use existing Custom Managed Images as a Base Image (Currently Linux only)](quickquickstarts/5_Creating_a_Custom_Image_from_Custom_Managed_Image)
     * [Export Images to VHD](/quickquickstarts/4_Creating_a_Custom_Linux_Image_to_VHD)
 
 4. [Troubleshooting](/troubleshootingaib.md)
