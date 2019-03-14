@@ -9,8 +9,7 @@ This repo contains mutliple examples and test templates for Azure VM Image Build
 You can run these immediately using the Azure CloudShell from the Portal, and see multiple scenarios that the VM Image Builder supports. 
 
 
-2. Detailed Examples
-* [Azure Resource Manager (ARM) Image Builder Templates](/armTemplates/README.md). 
+2. [Azure Resource Manager (ARM) Image Builder Examples](/armTemplates/README.md). 
 The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 
 3. Release Information
