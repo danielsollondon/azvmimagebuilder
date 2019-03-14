@@ -47,7 +47,8 @@ Lastly ensure you have an existing Custom Managed Image, if you dont, you need t
 
 ## Step 1 : Set Permissions & Create Shared Image Gallery (SIG)
 
->>> NOTE!! For Preview AIB will only support creating custom images in the same Resource Group as the source custom managed image. For example, if your existing managed custom images resides in RG1, then you must make sure the sigResourceGroup variable below is set to RG1. In the quick start below, we will create a SIG in that RG.
+>>> NOTE!!! Currently Linux Support only. 
+For Preview AIB will only support creating custom images in the same Resource Group as the source custom managed image. For example, if your existing managed custom images resides in RG1, then you must make sure the sigResourceGroup variable below is set to RG1. In the quick start below, we will create a SIG in that RG.
 
 This Quick Start assumes you have completed 0_Creating_a_Custom_Linux_Managed_Image, and therefore the variables below, will be preset to those variable names, for continuity, but you can always update them yourself.
 
