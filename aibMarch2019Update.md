@@ -9,7 +9,7 @@ Release Date : 12th March 1600 PST
     * Windows-Restart
     * Linux Shell Inline command support
 * Image Build Logs - for troubleshooting
-* Use existing Custom Managed Images as a Base Image
+* Use existing Custom Managed Images as a Base Image (Currently Linux only)
 * Export Images to VHD
 
 ## New Microsoft.VirtualMachineImages API Version : 2019-02-01-preview 
