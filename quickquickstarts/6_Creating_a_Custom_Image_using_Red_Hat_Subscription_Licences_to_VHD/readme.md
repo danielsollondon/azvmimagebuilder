@@ -97,7 +97,7 @@ rhelLinkAddress="<INSERT LINK ADDRESS HERE>"
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/6_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences_to_Vhd/helloImageTemplateRhelBYOSVhd.json -o helloImageTemplateRhelBYOSVhd.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/6_Creating_a_Custom_Image_using_Red_Hat_Subscription_Licences_to_VHD/helloImageTemplateRhelBYOSVhd.json -o helloImageTemplateRhelBYOSVhd.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateRhelBYOSVhd.json
