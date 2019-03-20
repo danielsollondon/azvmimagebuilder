@@ -4,6 +4,37 @@ These are some of the most common reasons for AIB failures.
 
 Check the run error messages, this will show you the lastRunStatus, and error messages:
 
+## Using 'latest' as Image Version
+If you deploy an AIB Configuration template with 'latest', this will fail, for example:
+```bash
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2019-Datacenter",
+                "version": "latest"
+```
+You must specify a version number, for example:
+```bash
+"version": "2019.0.20190214"
+```
+
+We are aware that many customers would like to use 'latest', this is on our backlog to resolve.
+
+If you need to identify what is the latest version number, you can use 
+
+### Windows
+[AZ PsCmdLets refence] https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage
+```PowerShell
+$skuName="<SKU>"
+Get-AzVMImage -Location $locName -Publisher $pubName -Offer $offerName -Sku $skuName | Select Version
+```
+### Linux
+[az cli refence](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage)
+```bash
+az vm image list --location westus --publisher Canonical --offer UbuntuServer --sku 18.04-LTS --all --output table
+```
+
 ## Image Template Submission
 •	Image Template already exists - either rename the template, or delete the existing.
 •	RHEL ISO token expired - these are bound to a time period, if this has been exceeded, AIB will not be able to download the ISO, so please refresh the URL.
