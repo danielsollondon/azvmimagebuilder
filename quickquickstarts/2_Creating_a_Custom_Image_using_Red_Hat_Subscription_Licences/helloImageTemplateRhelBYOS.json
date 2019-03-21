@@ -1,6 +1,6 @@
 {
     "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2018-02-01-preview",
+    "apiVersion": "2019-02-01-preview",
     "location": "<region>",
     "dependsOn": [],
     "properties": {
@@ -12,14 +12,14 @@
         },
         "customize": [
             {
-                "type": "shell",
+                "type": "Shell",
                 "name": "HelloImageScript1",
                 "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
             }
         ],
         "distribute": 
             [
-                {   "type":"managedImage",
+                {   "type":"ManagedImage",
                     "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
                     "location": "<region>",
                     "runOutputName": "<imageName>",

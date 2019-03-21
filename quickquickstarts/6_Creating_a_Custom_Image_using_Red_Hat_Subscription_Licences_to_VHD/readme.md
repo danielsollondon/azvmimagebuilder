@@ -55,7 +55,7 @@ location=westUS2
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the image to be created
-runOutputName=aibCustomRHELVhd01
+runOutputName=aibCustomRHELRoVhd01
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
