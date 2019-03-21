@@ -151,7 +151,7 @@ az resource show \
 az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplate01
+    -n helloImageTemplateRhelBYOSVhd01
 
 az group delete -n $imageResourceGroup
 ```
