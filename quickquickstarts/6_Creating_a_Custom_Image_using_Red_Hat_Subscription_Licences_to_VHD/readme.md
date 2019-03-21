@@ -108,7 +108,7 @@ helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<rhelChecksum>/$rhelChecksum/g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s%<rhelLinkAddress>%$rhelLinkAddress%g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<rhelLinkAddress>/\&/g" helloImageTemplateRhelBYOSVhd.json
-sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateVHD.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateRhelBYOSVhd.json
 ```
 
 ## Step 3 : Create the Image
