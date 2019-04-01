@@ -1,4 +1,4 @@
-# Create a Custom Image from an Azure Platform Vanilla OS Image
+# Create a Custom Image from a SuSE SLES Azure Platform Vanilla OS Image
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region.
 
@@ -52,7 +52,7 @@ location=WestUS2
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the image to be created
-imageName=aibCustomLinuxImg01
+imageName=aibCustomSlesImg01
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
@@ -70,12 +70,12 @@ az role assignment create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json -o helloImageTemplateLinux.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testingArea/suse/0_Creating_a_Custom_SLES_Managed_Image/SLESImageTemplateLinux.json -o SLESImageTemplateLinux.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateLinux.json
-sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateLinux.json
-sed -i -e "s/<region>/$location/g" helloImageTemplateLinux.json
-sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateLinux.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" SLESImageTemplateLinux.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" SLESImageTemplateLinux.json
+sed -i -e "s/<region>/$location/g" SLESImageTemplateLinux.json
+sed -i -e "s/<imageName>/$imageName/g" SLESImageTemplateLinux.json
 
 ```
 
@@ -86,10 +86,10 @@ sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateLinux.json
 
 az resource create \
     --resource-group $imageResourceGroup \
-    --properties @helloImageTemplateLinux.json \
+    --properties @SLESImageTemplateLinux.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateLinux01
+    -n SLESImageTemplateLinux01
 
 
 # start the image build
@@ -97,7 +97,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $imageResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplateLinux01 \
+     -n SLESImageTemplateLinux01 \
      --action Run 
 
 # wait approx 15mins
