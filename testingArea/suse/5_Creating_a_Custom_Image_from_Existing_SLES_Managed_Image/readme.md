@@ -75,7 +75,7 @@ srcImageName=aibCustomSlesImg01
 sigName=my11thSIG
 
 # name of the image definition to be created, e.g. ProdImages
-imageDefName=sles15images
+imageDefName=15images
 
 # create SIG
 az sig create \
@@ -90,7 +90,7 @@ az sig image-definition create \
    --gallery-image-definition $imageDefName \
    --publisher corpIT \
    --offer myOffer \
-   --sku sles15 \
+   --sku sles \
    --os-type Linux
 ```
 
