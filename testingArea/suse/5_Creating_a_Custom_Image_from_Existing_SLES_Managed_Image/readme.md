@@ -100,7 +100,7 @@ az sig image-definition create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testingArea/suse/5_Creating_a_Custom_Image_from_Existing_SLES_Managed_Image/SLESImageTemplateforReCustomization.json -o helloImageTemplateforReCustomization.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testingArea/suse/5_Creating_a_Custom_Image_from_Existing_SLES_Managed_Image/SLESImageTemplateforReCustomization.json -o SLESImageTemplateforReCustomization.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" SLESImageTemplateforReCustomization.json
 sed -i -e "s/<rgName>/$sigResourceGroup/g" SLESImageTemplateforReCustomization.json
