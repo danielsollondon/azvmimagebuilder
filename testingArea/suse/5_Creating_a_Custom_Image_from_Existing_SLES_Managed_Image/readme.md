@@ -90,7 +90,7 @@ az sig image-definition create \
    --gallery-image-definition $imageDefName \
    --publisher corpIT \
    --offer myOffer \
-   --sku 18.04-LTS \
+   --sku sles15 \
    --os-type Linux
 ```
 
