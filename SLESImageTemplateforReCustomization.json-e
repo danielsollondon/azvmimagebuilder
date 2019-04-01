@@ -1,0 +1,41 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2019-02-01-preview",
+    "location": "",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "ManagedImage",
+                "imageId": "/subscriptions//resourceGroups//providers/Microsoft.Compute/images/"
+ 
+            
+        },
+        "customize": [
+            {
+                "type": "Shell",
+                "name": "AddBuildArtifacts2",
+                "inline": [
+                    "sudo mkdir /buildArtifacts2",
+                    "sudo touch /buildArtifacts2/imageBuilder.md"
+                ]
+                }
+
+        ],
+        "distribute": 
+            [
+                {   
+                    "type": "SharedImage",
+                    "galleryImageId": "/subscriptions//resourceGroups//providers/Microsoft.Compute/galleries//images/",
+                    "runOutputName": "",
+                    "tags": {
+                        "source": "azureVmImageBuilder",
+                        "baseosimg": "sles15"
+                    },
+                    "replicationRegions": [
+                      "",
+                      "<region2>"
+                    ]
+                }
+            ]
+        }
+    }

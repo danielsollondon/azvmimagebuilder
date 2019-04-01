@@ -75,7 +75,7 @@ srcImageName=aibCustomSlesImg01
 sigName=my11thSIG
 
 # name of the image definition to be created, e.g. ProdImages
-imageDefName=ubuntu1804images
+imageDefName=sles15images
 
 # create SIG
 az sig create \
