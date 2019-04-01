@@ -26,7 +26,7 @@
                 {   
                     "type": "SharedImage",
                     "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
-                    "runOutputName": "<imageDefName>",
+                    "runOutputName": "<imageDefName>ro",
                     "tags": {
                         "source": "azureVmImageBuilder",
                         "baseosimg": "sles15"
