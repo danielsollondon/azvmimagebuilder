@@ -100,17 +100,17 @@ az sig image-definition create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/5_Creating_a_Custom_Image_from_Custom_Managed_Image/helloImageTemplateforReCustomization.json -o helloImageTemplateforReCustomization.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testingArea/suse/5_Creating_a_Custom_Image_from_Existing_SLES_Managed_Image/SLESImageTemplateforReCustomization.json -o helloImageTemplateforReCustomization.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforReCustomization.json
-sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforReCustomization.json
-sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforReCustomization.json
-sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforReCustomization.json
-sed -i -e "s/<srcImageName>/$srcImageName/g" helloImageTemplateforReCustomization.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" SLESImageTemplateforReCustomization.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" SLESImageTemplateforReCustomization.json
+sed -i -e "s/<imageDefName>/$imageDefName/g" SLESImageTemplateforReCustomization.json
+sed -i -e "s/<sharedImageGalName>/$sigName/g" SLESImageTemplateforReCustomization.json
+sed -i -e "s/<srcImageName>/$srcImageName/g" SLESImageTemplateforReCustomization.json
 
 
-sed -i -e "s/<region1>/$location/g" helloImageTemplateforReCustomization.json
-sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforReCustomization.json
+sed -i -e "s/<region1>/$location/g" SLESImageTemplateforReCustomization.json
+sed -i -e "s/<region2>/$additionalregion/g" SLESImageTemplateforReCustomization.json
 
 ```
 
@@ -121,10 +121,10 @@ sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforReCustomization
 
 az resource create \
     --resource-group $sigResourceGroup \
-    --properties @helloImageTemplateforReCustomization.json \
+    --properties @SLESImageTemplateforReCustomization.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n ImgTemplateforCustomManImg01
+    -n ImgTemplateforSLESCustManImg01
 
 
 # start the image build
@@ -132,7 +132,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n ImgTemplateforCustomManImg01 \
+     -n ImgTemplateforSLESCustManImg01 \
      --action Run 
 
 # wait minimum of 15mins (this includes replication time to both regions)
