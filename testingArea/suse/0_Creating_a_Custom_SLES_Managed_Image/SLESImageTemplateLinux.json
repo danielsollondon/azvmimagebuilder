@@ -1,0 +1,45 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2019-02-01-preview",
+    "location": "<region>",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "SUSE",
+                "offer": "SLES",
+                "sku": "15",
+                "version": "2019.03.30"
+            
+        },
+        "customize": [
+            {
+                "type": "Shell",
+                "name": "RunScripts01",
+                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+            },
+            {
+                "type": "Shell",
+                "name": "RunInlineCmds01",
+                "inline": [
+                    "sudo apt install unattended-upgrades",
+                    "sudo mkdir /buildArtifacts",
+                    "sudo touch /buildArtifacts/imageBuilder.md"
+                ]
+                }
+
+        ],
+        "distribute": 
+            [
+                {   "type":"ManagedImage",
+                    "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
+                    "location": "<region>",
+                    "runOutputName": "<imageName>",
+                    "tags": {
+                        "source": "azVmImageBuilder",
+                        "baseosimg": "sles15"
+                    }
+                }
+            ]
+        }
+    }
