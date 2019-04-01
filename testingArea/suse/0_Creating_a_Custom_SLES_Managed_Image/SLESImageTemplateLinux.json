@@ -22,7 +22,6 @@
                 "type": "Shell",
                 "name": "RunInlineCmds01",
                 "inline": [
-                    "sudo apt install unattended-upgrades",
                     "sudo mkdir /buildArtifacts",
                     "sudo touch /buildArtifacts/imageBuilder.md"
                 ]
