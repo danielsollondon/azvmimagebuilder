@@ -84,6 +84,15 @@ Note : This is only currently supported on Linux!!
 
 If you find your re-customized image has not been created properly, such as fails to boot, login, has errors, please check the source image first, by creating a VM from it. Then check it boots, and errors.
 
+## Status of an Image Build
+```bash
+imageBuilderTemplateResGrp=
+imageTemplateName=
+az resource show --resource-group $imageBuilderTemplateResGrp --resource-type  Microsoft.VirtualMachineImages/imageTemplates -n $imageTemplateName 
+```
+
+Review the 'lastRunStatus' for current runState.
+
 ## RHEL ISOs
 
 ## Ubuntu Image Builds

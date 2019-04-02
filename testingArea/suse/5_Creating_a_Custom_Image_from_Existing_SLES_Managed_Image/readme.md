@@ -135,7 +135,7 @@ az resource invoke-action \
      -n ImgTemplateforSLESCustManImg01 \
      --action Run 
 
-# wait minimum of 15mins (this includes replication time to both regions)
+# wait minimum of 30mins (this includes replication time to both regions)
 ```
 
 
@@ -170,7 +170,7 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n ImgTemplateforCustomManImg01
+    -n ImgTemplateforSLESCustManImg01
 
 # get image version created by AIB, this always starts with 0.*
 sigDefImgVersion=$(az sig image-version list \

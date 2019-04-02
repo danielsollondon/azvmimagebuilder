@@ -132,7 +132,7 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateLinux01
+    -n SLESImageTemplateLinux01
 
 az group delete -n $imageResourceGroup
 ```
