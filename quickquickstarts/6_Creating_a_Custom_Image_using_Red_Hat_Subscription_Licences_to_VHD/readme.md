@@ -104,7 +104,6 @@ curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/q
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<region>/$location/g" helloImageTemplateRhelBYOSVhd.json
-helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<rhelChecksum>/$rhelChecksum/g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s%<rhelLinkAddress>%$rhelLinkAddress%g" helloImageTemplateRhelBYOSVhd.json
 sed -i -e "s/<rhelLinkAddress>/\&/g" helloImageTemplateRhelBYOSVhd.json
@@ -140,7 +139,7 @@ az resource invoke-action \
 ## Step 4 : Get the URL to the VHD
 ```bash
 az resource show \
-    --ids "/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/$imageTemplateName/runOutputs/$runOutputName"  \
+    --ids "/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/helloImageTemplateRhelBYOSVhd01/runOutputs/$runOutputName"  \
     --api-version=2019-02-01-preview | grep artifactUri
 ```
 
