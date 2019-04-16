@@ -1,4 +1,4 @@
-# Create a Custom Image, then Distribute and Version over Multiple Regions
+# Create a Custom Image, from an existing Shared Image Gallery Custom Image then Distribute and Version over Multiple Regions
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
 

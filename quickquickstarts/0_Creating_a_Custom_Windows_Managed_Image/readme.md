@@ -1,6 +1,10 @@
 # Create a Windows Custom Image from an Azure Platform Vanilla OS Image
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region.
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region.This covers using 4 different customizations:
+* PowerShell (ScriptUri) - Downloading a PowerShell script and executing it
+* PowerShell (inline) - Execute an array of PS commands
+* File - Copy a html file from github
+
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
