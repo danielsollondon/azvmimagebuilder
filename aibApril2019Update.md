@@ -1,4 +1,4 @@
-# Azure VM Image Builder March 2019 Update
+# Azure VM Image Builder April 2019 Update
 
 Release Date : 15th April 2100 PST
 This is an exciting release, this is the high level:
