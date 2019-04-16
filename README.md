@@ -13,6 +13,12 @@ You can run these immediately using the Azure CloudShell from the Portal, and se
 The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 
 3. Release Information
+* [April 2019 Release (latest)](/aibApril2019Update.md)
+* Features added (links to example config templates):
+    * [Use existing Custom Shared Image Gallery Images as a Base Image (Currently Linux only)](quickquickstarts/..)
+    * Additional Customizers
+        * [File - Copy image build files into your image](quickquickstarts/..)
+
 * [March 2019 Release (latest)](/aibMarch2019Update.md)
 * Features added (links to example config templates):
     * [Windows Server Support](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json)
