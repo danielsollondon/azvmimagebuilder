@@ -42,7 +42,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # destination image resource group
-imageResourceGroup=aibmdiwin
+imageResourceGroup=aibmdiwin06
 
 # location (see possible locations in main docs)
 location=WestUS2
@@ -55,6 +55,9 @@ subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the image to be created
 imageName=aibCustomImgWini01
+
+# image distribution metadata reference name
+runOutputName=aibCustWinManImg01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
@@ -78,6 +81,7 @@ sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateWin.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateWin.json
 sed -i -e "s/<region>/$location/g" helloImageTemplateWin.json
 sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateWin.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateWin.json
 
 ```
 
@@ -92,7 +96,7 @@ az resource create \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateWin01
-
+# wait approx 1-3mins, depending on external links
 
 # start the image build
 
@@ -114,6 +118,7 @@ az vm create \
   --admin-password $vmpassword \
   --image $imageName \
   --location $location
+
 ```
 Remote Desktop to the VM, using the Portal, or typing MSTSC at the Command Prompt (CMD).
 
@@ -142,7 +147,7 @@ az group delete -n $imageResourceGroup
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplate.json
+    cat helloImageTemplateWin.json
     ```
 
 * Want to try more???

@@ -1,6 +1,6 @@
 {
-    "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2019-02-01-preview",
+    "type": "Microsoft.VirtualMachineImages/imageTemplates",
+    "apiVersion": "2019-05-01-preview",
     "location": "<region>",
     "dependsOn": [],
     "properties": {
@@ -15,8 +15,8 @@
         "customize": [
             {
                 "type": "PowerShell",
-                "name": "RunScripts01",
-                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testPsScript.ps1"
+                "name": "CreateBuildPath",
+                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testPsScript.ps1"
             },
             {
                 "type": "WindowsRestart",
@@ -24,7 +24,15 @@
                 "restartTimeout": "5m"
             },
             {
+                "type": "File",
+                "name": "downloadBuildArtifacts",
+                "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
+                "destination":"c:\\buildArtifacts"
+            },
+
+            {
                 "type": "PowerShell",
+                "name": "settingUpMgmtAgtPath",
                 "inline": [
                     "mkdir c:\\buildActions",
                     "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt"
@@ -36,10 +44,10 @@
                 {   "type":"ManagedImage",
                     "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
                     "location": "<region>",
-                    "runOutputName": "<imageName>",
-                    "tags": {
+                    "runOutputName": "<runOutputName>",
+                    "artifactTags": {
                         "source": "azVmImageBuilder",
-                        "baseosimg": "windows2016"
+                        "baseosimg": "windows2019"
                     }
                 }
             ]
