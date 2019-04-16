@@ -66,5 +66,5 @@ az resource invoke-action \
 ```
 >> Note! This should be a short term workaround!
 
-## Docuementation
+## Documentation
 This will be updated once the release has been completed.
