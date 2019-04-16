@@ -19,7 +19,7 @@ The beauty of these examples, they are heavily parameterized, so you just need t
     * Additional Customizers
         * [File - Copy image build files into your image](quickquickstarts/..)
 
-* [March 2019 Release (latest)](/aibMarch2019Update.md)
+* [March 2019 Release](/aibMarch2019Update.md)
 * Features added (links to example config templates):
     * [Windows Server Support](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json)
     * Additional Customizers
