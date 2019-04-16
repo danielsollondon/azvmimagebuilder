@@ -5,19 +5,20 @@
     "dependsOn": [],
     "properties": {
         "source": {
-            "type": "PlatformImage",
-                "publisher": "Canonical",
-                "offer": "UbuntuServer",
-                "sku": "18.04-LTS",
-                "version": "18.04.201903060"
+            "type": "SharedImageVersion",
+                "imageVersionId": "<sigDefImgVersionId>"
             
         },
         "customize": [
             {
                 "type": "Shell",
-                "name": "HelloImageScript1",
-                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
-            }
+                "name": "AddBuildArtifacts3",
+                "inline": [
+                    "sudo mkdir /buildArtifacts3",
+                    "sudo touch /buildArtifacts3/imageBuilder.md"
+                ]
+                }
+
         ],
         "distribute": 
         [

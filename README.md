@@ -15,9 +15,9 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 3. Release Information
 * [April 2019 Release (latest)](/aibApril2019Update.md)
 * Features added (links to example config templates):
-    * [Use existing Custom Shared Image Gallery Images as a Base Image (Currently Linux only)](quickquickstarts/..)
+    * [Use existing Custom Shared Image Gallery Images as a Base Image (Currently Linux only)](quickquickstarts/8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG)
     * Additional Customizers
-        * [File - Copy image build files into your image](quickquickstarts/..)
+        * File - Copy image build files into your image for [Windows](quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json) and [Linux](quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json)
 
 * [March 2019 Release](/aibMarch2019Update.md)
 * Features added (links to example config templates):

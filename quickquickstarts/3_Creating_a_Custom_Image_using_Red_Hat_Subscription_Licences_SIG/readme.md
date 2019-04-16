@@ -60,6 +60,9 @@ subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 # name of the shared image gallery, e.g. myCorpGallery
 sigName=my3rdSIG
 
+# image distribution metadata reference name
+runOutputName=aibCustRhSigImg01ro
+
 # name of the image definition to be created, e.g. ProdImages
 imageDefName=rhel75
 
@@ -139,6 +142,7 @@ sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateRhelByosSig.json
 sed -i -e "s/<region1>/$location/g" helloImageTemplateRhelByosSig.json
 sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateRhelByosSig.json
 
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateRhelByosSig.json
 ```
 
 ## Step 3 : Create the Image
@@ -236,7 +240,7 @@ az group delete -n $sigResourceGroup -y
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplateRhelBYOS01.json
+    cat helloImageTemplateRhelByosSig.json
     ```
 
 * Want to try more???

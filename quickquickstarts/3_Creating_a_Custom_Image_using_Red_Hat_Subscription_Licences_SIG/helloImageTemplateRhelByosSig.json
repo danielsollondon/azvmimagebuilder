@@ -1,6 +1,6 @@
 {
     "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2019-02-01-preview",
+    "apiVersion": "2019-05-01-preview",
     "location": "<region1>",
     "dependsOn": [],
     "properties": {
@@ -14,7 +14,7 @@
             {
                 "type": "Shell",
                 "name": "HelloImageScript1",
-                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
             }
         ],
         "distribute": 
@@ -22,8 +22,8 @@
                 {   
                     "type": "SharedImage",
                     "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
-                    "runOutputName": "<imageDefName>",
-                    "tags": {
+                    "runOutputName": "<runOutputName>",
+                    "artifactTags": {
                         "source": "azureVmImageBuilder",
                         "baseosimg": "rheliso75"
                     },

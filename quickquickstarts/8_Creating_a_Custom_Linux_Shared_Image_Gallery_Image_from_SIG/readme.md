@@ -46,6 +46,11 @@ If they do not saw registered, run the commented out code below.
 
 ## Step 1 : Set Permissions & Create Shared Image Gallery (SIG)
 
+>>> NOTE!!! Currently Linux Support only. 
+For Preview AIB will only support creating custom images in the same Resource Group as the source custom managed image. For example, if your existing managed custom images resides in RG1, then you must make sure the sigResourceGroup variable below is set to RG1. In the quick start below, we will create a SIG in that RG.
+
+This Quick Start assumes you have completed 1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image, and therefore the variables below, will be preset to those variable names, for continuity, but you can always update them yourself.
+
 ```bash
 # set your environment variables here!!!!
 
@@ -62,40 +67,31 @@ additionalregion=eastus
 # get the current subID : 'az account show | grep id'
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
-# name of the shared image gallery, e.g. myCorpGallery
+# name of the shared image gallery to used, e.g. myCorpGallery
 sigName=my21stSIG
 
-# name of the image definition to be created, e.g. ProdImages
+# name of the image definition to be used, e.g. ProdImages
 imageDefName=ubuntu1804images
 
 # image distribution metadata reference name
-runOutputName=u1804SigRo
+runOutputName=u1804SigRo2
 
-# create resource group
-az group create -n $sigResourceGroup -l $location
+# get image version created in SIG from previous example
+sigDefImgVersionId=$(az sig image-version list \
+   -g $sigResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID --query [].'id' -o json | grep 0. | tr -d '"' | tr -d '[:space:]')
 
+```
+
+>>Note! If you already have your own Shared Image Gallery, and did not follow the previous example, you will need to assign permissions for Image Builder to access the Resource Group, so it can access the SIG.
+```bash
 # assign permissions for that resource group
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
     --role Contributor \
     --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
-
-# create SIG
-az sig create \
-    -g $sigResourceGroup \
-    --gallery-name $sigName
-
-# create SIG image definition
-
-az sig image-definition create \
-   -g $sigResourceGroup \
-   --gallery-name $sigName \
-   --gallery-image-definition $imageDefName \
-   --publisher corpIT \
-   --offer myOffer \
-   --sku 18.04-LTS \
-   --os-type Linux
-
 ```
 
 
@@ -104,16 +100,17 @@ az sig image-definition create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/helloImageTemplateforSIG.json -o helloImageTemplateforSIG.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/helloImageTemplateforSIGfromSIG.json -o helloImageTemplateforSIGfromSIG.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforSIG.json
-sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforSIG.json
-sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforSIG.json
-sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforSIG.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforSIGfromSIG.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforSIGfromSIG.json
+sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforSIGfromSIG.json
+sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforSIGfromSIG.json
+sed -i -e "s%<sigDefImgVersionId>%$sigDefImgVersionId%g" helloImageTemplateforSIGfromSIG.json
 
-sed -i -e "s/<region1>/$location/g" helloImageTemplateforSIG.json
-sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIG.json
-sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIG.json
+sed -i -e "s/<region1>/$location/g" helloImageTemplateforSIGfromSIG.json
+sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIGfromSIG.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIGfromSIG.json
 
 ```
 
@@ -124,10 +121,10 @@ sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIG.json
 
 az resource create \
     --resource-group $sigResourceGroup \
-    --properties @helloImageTemplateforSIG.json \
+    --properties @helloImageTemplateforSIGfromSIG.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateforSIG01
+    -n helloImageTemplateforSIGfromSIG01
 
 
 # start the image build
@@ -135,10 +132,10 @@ az resource create \
 az resource invoke-action \
      --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplateforSIG01 \
+     -n helloImageTemplateforSIGfromSIG01 \
      --action Run 
 
-# wait minimum of 15mins (this includes replication time to both regions)
+# wait minimum of 30mins (this includes replication time to both regions)
 ```
 
 
@@ -147,7 +144,7 @@ az resource invoke-action \
 ```bash
 az vm create \
   --resource-group $sigResourceGroup \
-  --name aibImgVm01 \
+  --name aibImgVm001 \
   --admin-username aibuser \
   --location $location \
   --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
@@ -166,8 +163,6 @@ You should see the image was customized with a Message of the Day as soon as you
 ```
 
 ## Clean Up
->>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
-
 ```bash
 # BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
 
@@ -175,22 +170,23 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateforSIG01
+    -n helloImageTemplateforSIGfromSIG01
 
-# get image version created by AIB, this always starts with 0.*
-sigDefImgVersion=$(az sig image-version list \
+# list image versions created by AIB, this always starts with 0.*
+az sig image-version list \
    -g $sigResourceGroup \
    --gallery-name $sigName \
    --gallery-image-definition $imageDefName \
-   --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"')
+   --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"'
 
 # delete image version
 az sig image-version delete \
    -g $sigResourceGroup \
-   --gallery-image-version $sigDefImgVersion \
    --gallery-name $sigName \
    --gallery-image-definition $imageDefName \
-   --subscription $subscriptionID
+   --subscription $subscriptionID \
+   --gallery-image-version <imageVersionNumber>
+   #<imageVersionNumber e.g. 0.23725.5933> \
 
 # delete image definition
 az sig image-definition delete \
@@ -213,7 +209,7 @@ az group delete -n $sigResourceGroup -y
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplateforSIG01.json
+    cat helloImageTemplateforSIGfromSIG.json
     ```
 
 * Want to try more???

@@ -77,6 +77,9 @@ sigName=my10thSIG
 # name of the image definition to be created, e.g. ProdImages
 imageDefName=ubuntu1804images
 
+# name of the image definition to be created, e.g. ProdImages
+runOutputName=sigRo
+
 # create SIG
 az sig create \
     -g $sigResourceGroup \
@@ -92,6 +95,7 @@ az sig image-definition create \
    --offer myOffer \
    --sku 18.04-LTS \
    --os-type Linux
+
 ```
 
 
@@ -111,6 +115,7 @@ sed -i -e "s/<srcImageName>/$srcImageName/g" helloImageTemplateforReCustomizatio
 
 sed -i -e "s/<region1>/$location/g" helloImageTemplateforReCustomization.json
 sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforReCustomization.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforReCustomization.json
 
 ```
 
@@ -135,7 +140,7 @@ az resource invoke-action \
      -n ImgTemplateforCustomManImg01 \
      --action Run 
 
-# wait minimum of 15mins (this includes replication time to both regions)
+# wait minimum of 20mins (this includes replication time to both regions)
 ```
 
 
@@ -207,7 +212,7 @@ az group delete -n $sigResourceGroup -y
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplateforSIG.json
+    cat helloImageTemplateforReCustomization.json
     ```
 
 * Want to try more???

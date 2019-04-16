@@ -140,7 +140,7 @@ az resource invoke-action \
 ```bash
 az resource show \
     --ids "/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/helloImageTemplateRhelBYOSVhd01/runOutputs/$runOutputName"  \
-    --api-version=2019-02-01-preview | grep artifactUri
+    --api-version=2019-05-01-preview | grep artifactUri
 ```
 
 >>Note!! Once the VHD has been created, copy it to an alternative location, as soon as possible. The VHD is stored in a storage account in the temporary Resource Group created when the Image Template is submitted to the AIB service. If you delete the Image Template, then you will loose this VHD. 

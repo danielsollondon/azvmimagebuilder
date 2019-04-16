@@ -55,6 +55,9 @@ location=westUS2
 # name of the image to be created
 imageName=rhelImage01
 
+# image distribution metadata reference name
+runOutputName=aibCustRhManImg01ro
+
 # create resource group
 az group create -n $imageResourceGroup -l $location
 
@@ -106,7 +109,7 @@ sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateRhelBYOS.json
 sed -i -e "s/<rhelChecksum>/$rhelChecksum/g" helloImageTemplateRhelBYOS.json
 sed -i -e "s%<rhelLinkAddress>%$rhelLinkAddress%g" helloImageTemplateRhelBYOS.json
 sed -i -e "s/<rhelLinkAddress>/\&/g" helloImageTemplateRhelBYOS.json
-
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateRhelBYOS.json
 ```
 
 ## Step 3 : Create the Image
@@ -167,6 +170,7 @@ az resource delete \
     -n helloImageTemplateRhelBYOS01
 
 az group delete -n $imageResourceGroup
+
 ```
 
 ## Next Steps

@@ -53,8 +53,8 @@ subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 # Image Template Name
 imageTemplateName=helloImageTemplateVHD01
 
-# name of the image to be created
-runOutputName=aibCustomVhd01
+# image distribution metadata reference name
+runOutputName=aibCustomVhd01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
@@ -110,8 +110,9 @@ az resource invoke-action \
 ```bash
 az resource show \
     --ids "/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/$imageTemplateName/runOutputs/$runOutputName"  \
-    --api-version=2019-02-01-preview | grep artifactUri
+    --api-version=2019-05-01-preview | grep artifactUri
 ```
+
 
 >>Note!! Once the VHD has been created, copy it to an alternative location, as soon as possible. The VHD is stored in a storage account in the temporary Resource Group created when the Image Template is submitted to the AIB service. If you delete the Image Template, then you will loose this VHD. 
 
@@ -123,6 +124,7 @@ az resource delete \
     -n helloImageTemplate01
 
 az group delete -n $imageResourceGroup
+
 ```
 
 ## Next Steps
@@ -131,7 +133,7 @@ az group delete -n $imageResourceGroup
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplate.json
+    cat helloImageTemplateVHD.json
     ```
 
 * Want to try more???
