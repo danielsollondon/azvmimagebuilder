@@ -1,6 +1,6 @@
 {
-    "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2019-02-01-preview",
+    "type": "Microsoft.VirtualMachineImages/imageTemplates",
+    "apiVersion": "2019-05-01-preview",
     "location": "<region>",
     "dependsOn": [],
     "properties": {
@@ -16,17 +16,33 @@
             {
                 "type": "Shell",
                 "name": "RunScripts01",
-                "script": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
             },
+        
+            
+            {
+                "type": "File",
+                "name": "downloadBuildArtifacts",
+                "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
+                "destination":"/tmp/index.html"
+            },
+
             {
                 "type": "Shell",
-                "name": "RunInlineCmds01",
+                "name": "setupBuildPath",
                 "inline": [
-                    "sudo apt install unattended-upgrades",
                     "sudo mkdir /buildArtifacts",
-                    "sudo touch /buildArtifacts/imageBuilder.md"
+                    "sudo cp /tmp/index.html /buildArtifacts/index.html"
                 ]
-                }
+            },
+
+            {
+                "type": "Shell",
+                "name": "InstallUpgrades",
+                "inline": [
+                    "sudo apt install unattended-upgrades"
+                ]
+            }
 
         ],
         "distribute": 
@@ -34,8 +50,8 @@
                 {   "type":"ManagedImage",
                     "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
                     "location": "<region>",
-                    "runOutputName": "<imageName>",
-                    "tags": {
+                    "runOutputName": "<runOutputName>",
+                    "artifactTags": {
                         "source": "azVmImageBuilder",
                         "baseosimg": "ubuntu1804"
                     }

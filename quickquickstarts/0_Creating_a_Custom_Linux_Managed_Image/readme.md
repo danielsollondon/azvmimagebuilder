@@ -54,6 +54,9 @@ subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 # name of the image to be created
 imageName=aibCustomLinuxImg01
 
+# image distribution metadata reference name
+runOutputName=aibCustLinManImg01ro
+
 # create resource group
 az group create -n $imageResourceGroup -l $location
 
@@ -76,6 +79,7 @@ sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateLinux.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateLinux.json
 sed -i -e "s/<region>/$location/g" helloImageTemplateLinux.json
 sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateLinux.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateLinux.json
 
 ```
 
@@ -91,6 +95,7 @@ az resource create \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateLinux01
 
+# wait approx 1-3mins, depending on external links
 
 # start the image build
 
@@ -101,6 +106,7 @@ az resource invoke-action \
      --action Run 
 
 # wait approx 15mins
+
 ```
 
 
@@ -109,7 +115,7 @@ az resource invoke-action \
 ```bash
 az vm create \
   --resource-group $imageResourceGroup \
-  --name aibImgVm00 \
+  --name aibImgVm0001 \
   --admin-username aibuser \
   --image $imageName \
   --location $location \
@@ -135,6 +141,8 @@ az resource delete \
     -n helloImageTemplateLinux01
 
 az group delete -n $imageResourceGroup
+
+
 ```
 
 ## Next Steps
@@ -143,7 +151,7 @@ az group delete -n $imageResourceGroup
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplate.json
+    cat helloImageTemplateLinux.json
     ```
 
 * Want to try more???
