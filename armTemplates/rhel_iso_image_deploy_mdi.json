@@ -57,7 +57,7 @@
                 {
                     "type": "Shell",
                     "name": "[parameters('customizestepname')]",
-                    "script": "[parameters('customizescriptpath')]"
+                    "scriptUri": "[parameters('customizescriptpath')]"
                 }
             ],
             "distribute": 
@@ -66,7 +66,7 @@
                         "imageId": "[variables('resourceid')]",
                         "location": "[parameters('destinationregion')]",
                         "runOutputName": "[parameters('managedimagename')]",
-                        "tags": {
+                        "aritfactTags": {
                             "source": "goimagebuilderarm",
                             "baseosimg": "ubuntu1804"
                         }

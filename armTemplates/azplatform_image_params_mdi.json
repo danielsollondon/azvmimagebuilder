@@ -6,7 +6,7 @@
         "value": "ubuntuIgniteal01"
         },
         "api-version": {
-            "value": "2019-02-01-preview"
+            "value": "2019-05-01-preview"
           },
         "svclocation": {
             "value": "westcentralus"
@@ -21,7 +21,7 @@
           "value": "18.04-LTS"
         },
         "version": {
-          "value": "18.04.201808140"
+          "value": "18.04.201903060"
         },
         "customizestepname": {
           "value": "ProdShellScript"

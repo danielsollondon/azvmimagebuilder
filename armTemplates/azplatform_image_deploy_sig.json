@@ -65,7 +65,7 @@
                 {
                     "type": "Shell",
                     "name": "[parameters('customizestepname')]",
-                    "script": "[parameters('customizescriptpath')]"
+                    "scriptUri": "[parameters('customizescriptpath')]"
                 }
             ],
             "distribute": 
@@ -74,7 +74,7 @@
                     "type": "SharedImage",
                     "galleryImageId": "[variables('resourceid')]",
                     "runOutputName": "[parameters('sharedgalimagename')]",
-                    "tags": {
+                    "aritfactTags": {
                       "source": "azVmImageBuilder",
                       "releaseStatus": "staging",
                       "type": "sigonly"

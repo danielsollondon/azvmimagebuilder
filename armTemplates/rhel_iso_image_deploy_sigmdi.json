@@ -66,7 +66,7 @@
                 {
                     "type": "Shell",
                     "name": "[parameters('customizestepname')]",
-                    "script": "[parameters('customizescriptpath')]"
+                    "scriptUri": "[parameters('customizescriptpath')]"
                 }
             ],
             "distribute": 
@@ -89,7 +89,7 @@
                     "imageId": "[variables('mdiresourceid')]",
                     "location": "[parameters('destinationregion')]",
                     "runOutputName": "[parameters('managedimagename')]",
-                    "tags": {
+                    "aritfactTags": {
                       "source": "azVmImageBuilder",
                       "releaseStatus": "staging",
                       "type": "sig"

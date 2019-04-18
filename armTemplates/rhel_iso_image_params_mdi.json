@@ -6,7 +6,7 @@
         "value": ""
         },
         "api-version": {
-            "value": ""
+            "value": "2019-05-01-preview"
           },
         "svclocation": {
             "value": "westcentralus"
