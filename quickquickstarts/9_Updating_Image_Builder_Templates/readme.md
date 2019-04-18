@@ -1,8 +1,10 @@
 # Updating Image Builder Templates
 
-Once you submit an Image Builder Template to the service and it is stored as an Image Builder Template artifact, you cannot update it. We have heard asks to support updating Image Builder Template artifacts, we are looking at ways this can be done, and would welcome your feedback on the ways you want this to work.
+Once you submit an Image Builder Template to the service and it is stored as an Image Builder Template artifact, you cannot update it. We have heard asks to support updating Image Builder Template artifacts, we are looking at ways this can be done, and would welcome your feedback on the ways you want this to work, on MS Teams.
 
 One way you could workaround this, is creating multiple templates using a name versioning.
+
+A later date, we will document a PS version of the below.
 
 ## Examples : Linux
 1. You modify the AIB json template, add in an version tag. 
