@@ -1,6 +1,6 @@
 {
     "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2019-02-01-preview",
+    "apiVersion": "2019-05-01-preview",
     "location": "<region>",
     "dependsOn": [],
     "properties": {
@@ -34,7 +34,7 @@
                     "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
                     "location": "<region>",
                     "runOutputName": "<imageName>",
-                    "tags": {
+                    "artifactTags": {
                         "source": "azVmImageBuilder",
                         "baseosimg": "sles15"
                     }

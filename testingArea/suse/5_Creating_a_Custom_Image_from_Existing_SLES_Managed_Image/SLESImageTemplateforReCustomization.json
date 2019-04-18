@@ -1,6 +1,6 @@
 {
     "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2019-02-01-preview",
+    "apiVersion": "2019-05-01-preview",
     "location": "<region1>",
     "dependsOn": [],
     "properties": {
@@ -27,7 +27,7 @@
                     "type": "SharedImage",
                     "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
                     "runOutputName": "<imageDefName>ro",
-                    "tags": {
+                    "artifactTags": {
                         "source": "azureVmImageBuilder",
                         "baseosimg": "sles15"
                     },
