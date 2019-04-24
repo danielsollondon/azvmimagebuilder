@@ -27,7 +27,7 @@
                 "type": "File",
                 "name": "downloadBuildArtifacts",
                 "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
-                "destination":"c:\\buildArtifacts"
+                "destination":"c:\\buildArtifacts\\index.html"
             },
 
             {
