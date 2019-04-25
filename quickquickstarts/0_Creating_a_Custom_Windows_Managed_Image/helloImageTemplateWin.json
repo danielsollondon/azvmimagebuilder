@@ -4,6 +4,10 @@
     "location": "<region>",
     "dependsOn": [],
     "properties": {
+        "tags": {
+            "imagebuilderTemplate": "windows2019"
+                },
+        "buildTimeoutInMinutes" : 80,
         "source": {
             "type": "PlatformImage",
                 "publisher": "MicrosoftWindowsServer",
