@@ -127,7 +127,7 @@ sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforWinSIG.json
 
 az resource create \
     --resource-group $sigResourceGroup \
-    --properties @helloImageTemplateforSIG.json \
+    --properties @helloImageTemplateforWinSIG.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateforSIG01
@@ -216,7 +216,7 @@ az group delete -n $sigResourceGroup -y
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplateforSIG01.json
+    cat helloImageTemplateforWinSIG.json
     ```
 
 * Want to try more???
