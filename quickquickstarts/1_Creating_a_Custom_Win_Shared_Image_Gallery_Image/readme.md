@@ -58,6 +58,9 @@ location=westus
 # additional region to replication image to
 additionalregion=eastus
 
+# password for test VM
+vmpassword=<INSERT YOUR PASSWORD HERE>
+
 # your subscription
 # get the current subID : 'az account show | grep id'
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
@@ -146,24 +149,24 @@ az resource invoke-action \
 
 ```bash
 az vm create \
-  --resource-group $sigResourceGroup \
-  --name aibImgVm01 \
+  --resource-group $imageResourceGroup \
+  --name aibImgWinVm00 \
   --admin-username aibuser \
-  --location $location \
-  --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
-  --generate-ssh-keys
-
-# and login...
-
-ssh aibuser@<pubIp>
-
-You should see the image was customized with a Message of the Day as soon as your SSH connection is established!
-
-*******************************************************
-**            This VM was built from the:            **
-...
+  --admin-password $vmpassword \
+  --image $imageName \
+  --location $location
 
 ```
+
+Remote Desktop to the VM, using the Portal, or typing MSTSC at the Command Prompt (CMD).
+
+Then, Go to the Command Prompt, then run:
+```bash
+dir c:\
+```
+You should see these two directories created during image customization:
+buildActions
+
 
 ## Clean Up
 >>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
