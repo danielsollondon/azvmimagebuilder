@@ -3,10 +3,11 @@
     "apiVersion": "2019-05-01-preview",
     "location": "<region>",
     "dependsOn": [],
+    "tags": {
+        "imagebuilderTemplate": "ubuntu1804"
+            },
     "properties": {
-        "tags": {
-            "imagebuilderTemplate": "ubuntu1804"
-                },
+
         "buildTimeoutInMinutes" : 80,
         
         "source": {
