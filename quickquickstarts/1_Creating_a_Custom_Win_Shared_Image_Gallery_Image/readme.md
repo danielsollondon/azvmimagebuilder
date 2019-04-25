@@ -130,7 +130,7 @@ az resource create \
     --properties @helloImageTemplateforWinSIG.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateforSIG01
+    -n helloImageTemplateforWinSIG01
 
 
 # start the image build
@@ -138,7 +138,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplateforSIG01 \
+     -n helloImageTemplateforWinSIG01 \
      --action Run 
 
 # wait minimum of 15mins (this includes replication time to both regions)
@@ -178,7 +178,7 @@ buildActions
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateforSIG01
+    -n helloImageTemplateforWinSIG01
 
 # get image version created by AIB, this always starts with 0.*
 sigDefImgVersion=$(az sig image-version list \
