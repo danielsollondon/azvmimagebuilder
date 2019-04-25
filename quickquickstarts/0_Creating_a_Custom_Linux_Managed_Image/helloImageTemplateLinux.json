@@ -4,6 +4,11 @@
     "location": "<region>",
     "dependsOn": [],
     "properties": {
+        "tags": {
+            "imagebuilderTemplate": "ubuntu1804"
+                },
+        "buildTimeoutInMinutes" : 80,
+        
         "source": {
             "type": "PlatformImage",
                 "publisher": "Canonical",
