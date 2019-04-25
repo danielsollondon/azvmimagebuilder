@@ -3,11 +3,14 @@
     "apiVersion": "2019-05-01-preview",
     "location": "<region>",
     "dependsOn": [],
+    "tags": {
+        "imagebuilderTemplate": "windows2019"
+            },
+
     "properties": {
-        "tags": {
-            "imagebuilderTemplate": "windows2019"
-                },
+
         "buildTimeoutInMinutes" : 80,
+        
         "source": {
             "type": "PlatformImage",
                 "publisher": "MicrosoftWindowsServer",
