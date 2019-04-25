@@ -97,7 +97,7 @@ az sig image-definition create \
    --publisher corpIT \
    --offer myOffer \
    --sku 2019 \
-   --os-type Linux
+   --os-type Windows
 
 ```
 
