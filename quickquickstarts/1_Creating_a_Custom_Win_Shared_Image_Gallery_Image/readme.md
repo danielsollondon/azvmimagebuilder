@@ -1,4 +1,4 @@
-# Create a Linux Custom Image, then Distribute and Version over Multiple Regions
+# Create a Windows Custom Image, then Distribute and Version over Multiple Regions
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
 
@@ -50,7 +50,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # Create SIG  resource group
-sigResourceGroup=aibsig
+sigResourceGroup=aibwinsig
 
 # location of SIG (see possible locations in main docs)
 location=westus
@@ -63,13 +63,13 @@ additionalregion=eastus
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the shared image gallery, e.g. myCorpGallery
-sigName=my21stSIG
+sigName=my22stSIG
 
 # name of the image definition to be created, e.g. ProdImages
-imageDefName=ubuntu1804images
+imageDefName=winSvrimages
 
 # image distribution metadata reference name
-runOutputName=u1804SigRo
+runOutputName=w2019SigRo
 
 # create resource group
 az group create -n $sigResourceGroup -l $location
@@ -93,7 +93,7 @@ az sig image-definition create \
    --gallery-image-definition $imageDefName \
    --publisher corpIT \
    --offer myOffer \
-   --sku 18.04-LTS \
+   --sku 2019 \
    --os-type Linux
 
 ```
@@ -104,16 +104,16 @@ az sig image-definition create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image/helloImageTemplateforSIG.json -o helloImageTemplateforSIG.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image/helloImageTemplateforWinSIG.json -o helloImageTemplateforSIG.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforSIG.json
-sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforSIG.json
-sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforSIG.json
-sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforSIG.json
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforWinSIG.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforWinSIG.json
+sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforWinSIG.json
+sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforWinSIG.json
 
-sed -i -e "s/<region1>/$location/g" helloImageTemplateforSIG.json
-sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIG.json
-sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIG.json
+sed -i -e "s/<region1>/$location/g" helloImageTemplateforWinSIG.json
+sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforWinSIG.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforWinSIG.json
 
 ```
 
