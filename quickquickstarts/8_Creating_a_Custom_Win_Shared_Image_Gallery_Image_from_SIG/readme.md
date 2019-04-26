@@ -121,10 +121,10 @@ sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIGfromWinSI
 
 az resource create \
     --resource-group $sigResourceGroup \
-    --properties @helloImageTemplateforSIGfromSIG.json \
+    --properties @helloImageTemplateforSIGfromWinSIG.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateforSIGfromSIG01
+    -n imageTemplateforSIGfromWinSIG01
 
 
 # start the image build
@@ -132,7 +132,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $sigResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplateforSIGfromSIG01 \
+     -n imageTemplateforSIGfromWinSIG01 \
      --action Run 
 
 # wait minimum of 30mins (this includes replication time to both regions)
@@ -170,7 +170,7 @@ You should see the image was customized with a Message of the Day as soon as you
 az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateforSIGfromSIG01
+    -n imageTemplateforSIGfromWinSIG01
 
 # list image versions created by AIB, this always starts with 0.*
 az sig image-version list \
