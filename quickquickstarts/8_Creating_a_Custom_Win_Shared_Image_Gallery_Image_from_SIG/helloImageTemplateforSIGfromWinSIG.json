@@ -1,0 +1,40 @@
+{
+    "type": "Microsoft.VirtualMachineImages",
+    "apiVersion": "2019-05-01-preview",
+    "location": "<region1>",
+    "dependsOn": [],
+    "properties": {
+        "source": {
+            "type": "SharedImageVersion",
+                "imageVersionId": "<sigDefImgVersionId>"
+            
+        },
+
+        "customize": [
+            {
+                "type": "PowerShell",
+                "name": "settingUpMgmtAgtPath",
+                "inline": [
+                    "mkdir c:\\buildActions2",
+                    "echo Azure-Image-Builder-Was-Here  > c:\\buildActions2\\buildActionsOutput.txt" 
+                        ]
+            }
+        ],
+        "distribute": 
+        [
+            {   
+                "type": "SharedImage",
+                "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
+                "runOutputName": "<runOutputName>",
+                "artifactTags": {
+                    "source": "azureVmImageBuilder",
+                    "baseosimg": "windows2019"
+                },
+                "replicationRegions": [
+                  "<region1>",
+                  "<region2>"
+                ]
+            }
+        ]
+    }
+}
