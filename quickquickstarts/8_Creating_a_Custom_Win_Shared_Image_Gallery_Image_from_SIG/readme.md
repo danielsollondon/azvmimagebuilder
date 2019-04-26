@@ -135,7 +135,7 @@ az resource invoke-action \
      -n imageTemplateforSIGfromWinSIG01 \
      --action Run 
 
-# wait minimum of 30mins (this includes replication time to both regions)
+# wait minimum of 50mins (this includes replication time to both regions)
 ```
 
 
@@ -150,17 +150,15 @@ az vm create \
   --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
   --location $location
 
-# and login...
-
-ssh aibuser@<pubIp>
-
-You should see the image was customized with a Message of the Day as soon as your SSH connection is established!
-
-*******************************************************
-**            This VM was built from the:            **
-...
-
 ```
+Remote Desktop to the VM, using the Portal, or typing MSTSC at the Command Prompt (CMD).
+
+Then, Go to the Command Prompt, then run:
+```bash
+dir c:\
+```
+You should see these two directories created during image customization:
+buildActions2
 
 ## Clean Up
 ```bash
