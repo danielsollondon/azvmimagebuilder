@@ -149,7 +149,7 @@ az resource invoke-action \
 
 ```bash
 az vm create \
-  --resource-group $imageResourceGroup \
+  --resource-group $sigResourceGroup \
   --name aibImgWinVm001 \
   --admin-username aibuser \
   --admin-password $vmpassword \
