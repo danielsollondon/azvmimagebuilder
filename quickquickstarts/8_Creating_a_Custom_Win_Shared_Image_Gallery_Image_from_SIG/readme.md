@@ -67,6 +67,9 @@ additionalregion=eastus
 # get the current subID : 'az account show | grep id'
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
+# password for test VM
+vmpassword=<INSERT YOUR PASSWORD HERE>
+
 # name of the shared image gallery to used, e.g. myCorpGallery
 sigName=my22stSIG
 
