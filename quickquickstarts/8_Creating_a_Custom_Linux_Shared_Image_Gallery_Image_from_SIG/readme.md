@@ -179,7 +179,7 @@ az sig image-version list \
    --gallery-image-definition $imageDefName \
    --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"'
 
-# delete image version
+# For each image version, run the delete cmd:
 az sig image-version delete \
    -g $sigResourceGroup \
    --gallery-name $sigName \

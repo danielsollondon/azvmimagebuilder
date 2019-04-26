@@ -177,7 +177,7 @@ az sig image-version list \
    --gallery-image-definition $imageDefName \
    --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"'
 
-# delete image version
+# For each image version, run the delete cmd:
 az sig image-version delete \
    -g $sigResourceGroup \
    --gallery-name $sigName \
@@ -207,7 +207,7 @@ az group delete -n $sigResourceGroup -y
     * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
 
     ```bash
-    cat helloImageTemplateforSIGfromSIG.json
+    cat helloImageTemplateforSIGfromWinSIG.json
     ```
 
 * Want to try more???
