@@ -1,0 +1,87 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imagetemplatename": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        },
+        "sourceURI": {
+          "type": "string"
+        },
+        "sha256Checksum": {
+          "type": "string"
+        },
+        "inlineCmds": {
+          "type": "array"
+        },
+        "galleryImageId": {
+          "type": "string"
+        },
+        "sharedgalimagename": {
+          "type": "string"
+        }
+    },
+    
+    "variables": {
+      "sigresourceid": "[concat(parameters('galleryImageId'),parameters('sharedgalimagename'))]"
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imagetemplatename')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[parameters('api-version')]",
+        "location": "[parameters('svclocation')]",
+        "dependsOn": [],
+        "properties": {
+              "source": {
+                "type": "ISO",
+                    "sourceURI": "[parameters('sourceURI')]",
+                    "sha256Checksum": "[parameters('sha256Checksum')]"
+                
+            },
+            "customize": [
+              {
+                "type": "Shell",
+                "name": "RunScripts01",
+                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+            },
+            {
+              "type": "Shell",
+              "name": "setupBuildPath",
+              "inline": [
+                  "[parameters('inlineCmds')]"
+              ]
+          }
+            ],
+            "distribute": 
+                [
+                  {
+                    "type": "SharedImage",
+                    "galleryImageId": "[variables('sigresourceid')]",
+                    "runOutputName": "[parameters('sharedgalimagename')]",
+                    "artifactTags": {
+                        "source": "azVmImageBuilder",
+                        "releaseStatus": "staging",
+                        "type": "sig"
+                    },
+                    "replicationRegions": [
+                      "westcentralus"
+                    ]
+                  },
+                  {   "type":"VHD"
+                }
+                ]
+            }
+        }
+
+    
+    ]
+}    
