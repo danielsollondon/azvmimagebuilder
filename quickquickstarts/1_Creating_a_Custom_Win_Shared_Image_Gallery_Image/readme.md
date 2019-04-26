@@ -153,7 +153,7 @@ az vm create \
   --name aibImgWinVm001 \
   --admin-username aibuser \
   --admin-password $vmpassword \
-  --image $imageName \
+  --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
   --location $location
 
 ```
