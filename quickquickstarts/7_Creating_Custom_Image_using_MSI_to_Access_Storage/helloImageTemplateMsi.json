@@ -1,0 +1,48 @@
+{
+    "type": "Microsoft.VirtualMachineImages/imageTemplates",
+    "apiVersion": "2019-05-01-preview",
+    "location": "<region>",
+    "dependsOn": [],
+    "tags": {
+    "imagebuilderTemplate": "msiEnabled"
+        },
+    "identity": {
+    "type": "UserAssigned",
+          "userAssignedIdentities": {
+            "<imgBuilderId>": {}
+              
+        }
+        },
+    "properties": {
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "18.04.201903060"
+            
+        },
+        "customize": [
+            {
+                "type": "Shell",
+                "name": "RunScripts01",
+                "scriptUri": "<scriptUrl>"
+            }
+
+
+
+        ],
+        "distribute": 
+            [
+                {   "type":"ManagedImage",
+                    "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
+                    "location": "<region>",
+                    "runOutputName": "<runOutputName>",
+                    "artifactTags": {
+                        "source": "azVmImageBuilder",
+                        "baseosimg": "ubuntu1804"
+                    }
+                }
+            ]
+        }
+    }
