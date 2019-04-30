@@ -4,6 +4,7 @@ This article is to show you how you can create a basic customized image using th
 * PowerShell (ScriptUri) - Downloading a PowerShell script and executing it
 * PowerShell (inline) - Execute an array of PS commands
 * File - Copy a html file from github
+* buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
 
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.

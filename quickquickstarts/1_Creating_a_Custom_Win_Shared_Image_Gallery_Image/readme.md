@@ -165,7 +165,7 @@ Then, Go to the Command Prompt, then run:
 dir c:\
 ```
 You should see these two directories created during image customization:
-buildActions
+buildActions2
 
 
 ## Clean Up
