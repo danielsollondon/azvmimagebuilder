@@ -4,10 +4,10 @@ Release Date : 30th April 0900 PST
 This is an exciting release, there is just so much, here is the high level:
 * Patch your Windows Custom Images
     * Now you can select existing [Windows Custom SIG Images](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/8_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG) and [Custom Windows Managed Images](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image)!!!
-* Seemless authentication with Azure Storage
+* Seamless authentication with Azure Storage
     * No need to create file or script URLs with publically accessible SAS tokens on blobs anymore!! Image Builder now supports using [Managed User-Assigned Identity](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/7_Creating_Custom_Image_using_MSI_to_Access_Storage) and authenticating with Azure storage accounts. Smooth...yesss!!!
 * [Azure Shared Image Gallery](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG) as a source
-    * In combination with the Azure VM Image Builder, you now how a full image management system, with image versioning, region replication, scale management, and Role Based Access. 
+    * In combination with the Azure VM Image Builder, you now have a full image management system, with image versioning, region replication, scale management, and Role Based Access. 
 * [Add in files to the image](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image)
     * Such as your build share files, without having to write your own code.
 * Support for [long duration image builds](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image)
