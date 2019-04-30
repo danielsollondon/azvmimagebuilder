@@ -96,7 +96,7 @@ Review the 'lastRunStatus' for current runState.
 By default, the AIB will also run ‘deprovision’ code at the end of each image customization phase, to ‘generalize’ the image. Generalize is a process where the image is setup, so it can be reused to create multiple VMs, and you can pass in VM settings, such as hostname, username etc. In Windows, AIB executes Sysprep, and in Linux AIB runs ‘waagent -deprovision’. For Windows, we use a generic Sysprep command, however, it is understood, that this may not be suitable for every successful Windows generalization, so AIB will allow you to customize this command. Please note, AIB is an image automation tool, it is responsible for running Sysprep command successfully, but, you may need different Sysprep commands to make your image reusable. 
 
 
-If you are migrating existing customization, and you are using different deprovision commands, you can try the image builder generic commands, and if the VM creates fail, use your previous deprovision commands.
+If you are migrating existing customization, and you are using different Sysprep/waagent commands, you can try the image builder generic commands, and if the VM creates fail, use your previous Sysprep/waagent commands.
 
 >>>Note! If AIB creates a Windows custom image successfully, and you create a VM from it, then find the VM will not create successfully (i.e. the VM creation command does not complete/timeouts), you will need to review the Windows Server Sysprep documenation, or raise a support request with the Windows Server Sysprep Customer Services Support team, who can troubleshoot and advise on the correct Sysprep command.
 
