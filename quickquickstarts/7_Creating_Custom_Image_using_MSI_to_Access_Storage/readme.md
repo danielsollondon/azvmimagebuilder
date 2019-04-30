@@ -1,6 +1,6 @@
 # Create a Custom Image that will use an Azure User-Assigned Managed Identity to seemlessly access files Azure Storage 
 
-AIB supports using scripts, or copying files from multiple locations, such as GitHub and Azure storage etc. To use these, they must have been publically accessible to AIB, but you could protect Azure Storage blobs using SAS Tokens.
+AIB supports using scripts, or copying files from multiple locations, such as GitHub and Azure storage etc. To use these, they must have been externally accessible to AIB, but you could protect Azure Storage blobs using SAS Tokens.
 
 This article shows how to create a basic customized image using the Azure VM Image Builder, where the service will use a [User-assigned Managed Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) to access files in Azure storage for the image customization, without you having to make the files publically accessible, or setting up SAS tokens.
 
@@ -123,7 +123,7 @@ imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/p
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json -o helloImageTemplateMsi.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/7_Creating_Custom_Image_using_MSI_to_Access_Storage/helloImageTemplateMsi.json -o helloImageTemplateMsi.json
 
 cp templates/quickquickstarts/7_Creating_Custom_Image_using_MSI_to_Access_Storage/helloImageTemplateMsi.json helloImageTemplateMsi.json
 
