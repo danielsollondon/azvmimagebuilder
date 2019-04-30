@@ -80,8 +80,6 @@ In this case the fix was to prefix the command with 'sudo', but these logs are u
 Note! This is a private preview, not all the errors are refined yet, we are working to improve these all the time.
 
 ## Image Re-Customization
-Note : This is only currently supported on Linux!!
-
 If you find your re-customized image has not been created properly, such as fails to boot, login, has errors, please check the source image first, by creating a VM from it. Then check it boots, and errors.
 
 ## Status of an Image Build
