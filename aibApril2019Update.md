@@ -1,15 +1,35 @@
 # Azure VM Image Builder April 2019 Update
 
-Release Date : 15th April 2100 PST
-This is an exciting release, this is the high level:
-* We now have enabled the Azure Shared Image Gallery as a source, incombination with the Azure VM Image Builder, you now how a full image management system, with image versioning, region replication, scale management, and Role Based Access. 
-* Ability to copy in files to the image, such as you build share files, without having to write your own code.
+Release Date : 30th April 0900 PST
+This is an exciting release, there is just so much, here is the high level:
+* Patch your Windows Custom Images
+    * Now you can select existing [Windows Custom SIG Images](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/8_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG) and [Custom Windows Managed Images](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image)!!!
+* Seemless authentication with Azure Storage
+    * No need to create file or script URLs with publically accessible SAS tokens on blobs anymore!! Image Builder now supports using [Managed User-Assigned Identity](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/7_Creating_Custom_Image_using_MSI_to_Access_Storage) and authenticating with Azure storage accounts. Smooth...yesss!!!
+* [Azure Shared Image Gallery](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG) as a source
+    * In combination with the Azure VM Image Builder, you now how a full image management system, with image versioning, region replication, scale management, and Role Based Access. 
+* [Add in files to the image](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image)
+    * Such as your build share files, without having to write your own code.
+* Support for [long duration image builds](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image)
+    * Previously image builder was set to a 60min build timeout, now you can override this upto 16hrs.
+* Abililty to [override the Image Builder deprovision commands](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully)
+    * By default Image Builder run commands that prepare the image for reuse for you. The commands are either Windows Sysprep, or Linux waagent command. However, we are aware that many users will have custom Sysprep and waagent commands to work with certain software installs.
+
 
 ## Feature Details
+See documentation from MS Teams site for full details.
+
+* Additional Template Properties
+    * [buildTimeoutMinutes](https://github.com/danielsollondon/azvmimagebuilder/blob/1e720cf4f078f2b9c48ff3ff6882dd89a984af9e/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L11) - Customize your build timeout.
+    * [identity](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/7_Creating_Custom_Image_using_MSI_to_Access_Storage) - Add in your Azure MSI user identify.
+    * [tags](https://github.com/danielsollondon/azvmimagebuilder/blob/1e720cf4f078f2b9c48ff3ff6882dd89a984af9e/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L6) - Add tags to the template.
 * Additional Source
-    * SharedImageVersion - Use existing Shared Image Gallery (SIG) images - Take your SIG image version as a source, you can customize, then put it back into the SIG, and then recustomize that version again. This is currently Linux only, but expect Windows support very soon!!!
+    * [SharedImageVersion](https://github.com/danielsollondon/azvmimagebuilder/blob/1e720cf4f078f2b9c48ff3ff6882dd89a984af9e/quickquickstarts/8_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG/helloImageTemplateforSIGfromWinSIG.json#L8) - Use existing Shared Image Gallery (SIG) images - Take your SIG image version as a source, you can customize, then put it back into the SIG, and then recustomize that version again. 
 * Additional Customizer
-    * File - Select a location for your files and destination path inside your image, then image builder will handle the rest.
+    * [File](https://github.com/danielsollondon/azvmimagebuilder/blob/1e720cf4f078f2b9c48ff3ff6882dd89a984af9e/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L30) - Select a location for your files and destination path inside your image, then image builder will handle the rest.
+* [Additional Deprovision Command Customization](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully)
+    * You can add your own deprovision command in a file, then this will be read and executed by Image Builder.
+
 
 ## New Microsoft.VirtualMachineImages API Version : 2019-05-01-preview 
 The new API version is required for all the additional features listed, this will also become the default API used by Azure Resource Manager and Azure CLI. If you submit your templates now, it will require you to update you AIB configuration templates.
