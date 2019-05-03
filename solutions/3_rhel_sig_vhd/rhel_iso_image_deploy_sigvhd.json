@@ -18,7 +18,7 @@
           "type": "string"
         },
 
-        "sigDefId": {
+        "galleryImageId": {
           "type": "string"
         },
         "runOutputName": {
@@ -63,7 +63,7 @@
                 [
                   {
                     "type": "SharedImage",
-                    "sigDefId": "[variables('sigresourceid')]",
+                    "galleryImageId": "[parameters('galleryImageId')]",
                     "runOutputName": "[parameters('runOutputName')]",
                     "artifactTags": {
                         "source": "hybridpipeline",
