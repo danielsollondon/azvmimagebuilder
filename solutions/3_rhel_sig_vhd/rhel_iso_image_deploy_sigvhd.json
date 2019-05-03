@@ -71,7 +71,7 @@
                         "type": "sig"
                     },
                     "replicationRegions": [
-                      "westcentralus"
+                      "[parameters('svclocation')]"
                     ]
                   },
                   {   
