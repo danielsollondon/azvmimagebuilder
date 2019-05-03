@@ -82,7 +82,7 @@
                     "artifactTags": {
                         "source": "hybridpipeline",
                         "releaseStatus": "staging",
-                        "type": "sig"
+                        "type": "vhd"
                                     }
                   }
                 ]
