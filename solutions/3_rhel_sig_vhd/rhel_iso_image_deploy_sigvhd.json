@@ -20,10 +20,10 @@
         "inlineCmds": {
           "type": "array"
         },
-        "galleryImageId": {
+        "sigDefId": {
           "type": "string"
         },
-        "sharedgalimagename": {
+        "runOutputName": {
           "type": "string"
         }
     },
@@ -65,10 +65,10 @@
                 [
                   {
                     "type": "SharedImage",
-                    "galleryImageId": "[variables('sigresourceid')]",
-                    "runOutputName": "[parameters('sharedgalimagename')]",
+                    "sigDefId": "[variables('sigresourceid')]",
+                    "runOutputName": "[parameters('runOutputName')]",
                     "artifactTags": {
-                        "source": "azVmImageBuilder",
+                        "source": "hybridpipeline",
                         "releaseStatus": "staging",
                         "type": "sig"
                     },
@@ -76,8 +76,15 @@
                       "westcentralus"
                     ]
                   },
-                  {   "type":"VHD"
-                }
+                  {   
+                    "type":"VHD",
+                    "runOutputName": "rhelvhd",
+                    "artifactTags": {
+                        "source": "hybridpipeline",
+                        "releaseStatus": "staging",
+                        "type": "sig"
+                                    }
+                  }
                 ]
             }
         }
