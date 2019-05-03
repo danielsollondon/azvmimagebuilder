@@ -17,9 +17,7 @@
         "sha256Checksum": {
           "type": "string"
         },
-        "inlineCmds": {
-          "type": "array"
-        },
+
         "sigDefId": {
           "type": "string"
         },
@@ -57,7 +55,7 @@
               "type": "Shell",
               "name": "setupBuildPath",
               "inline": [
-                  "[parameters('inlineCmds')]"
+                "sudo mkdir /buildArtifacts", "sudo cp /tmp/index.html /buildArtifacts/index.html"
               ]
           }
             ],
