@@ -27,7 +27,7 @@
     },
     
     "variables": {
-      "sigresourceid": "[concat(parameters('galleryImageId'),parameters('sharedgalimagename'))]"
+
     },
 
 
