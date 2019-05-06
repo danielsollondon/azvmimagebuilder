@@ -6,4 +6,4 @@ New-Item C:\ImageBuilderWebApp -type Directory
 
 Set-Content C:\ImageBuilderWebApp\Default.htm "ImageBuilderWebApp Default Page"
 
-New-Item IIS:\Sites\ImageBuilderWebApp -physicalPath C:\ImageBuilderWebApp -bindings @{protocol="http";bindingInformation=":8080:"}
+New-Item IIS:\Sites\ImageBuilderWebApp -PhysicalPath C:\ImageBuilderWebApp -bindings @{protocol="http";bindingInformation=":8080:"}
