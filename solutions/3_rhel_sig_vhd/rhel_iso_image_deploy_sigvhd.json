@@ -5,9 +5,6 @@
       "imagetemplatename": {
         "type": "string"
         },
-        "api-version": {
-          "type": "string"
-        },
         "svclocation": {
             "type": "string"
         },
@@ -35,7 +32,7 @@
       {
         "name": "[parameters('imagetemplatename')]",
         "type": "Microsoft.VirtualMachineImages/imageTemplates",
-        "apiVersion": "[parameters('api-version')]",
+        "apiVersion": "2019-05-01-preview",
         "location": "[parameters('svclocation')]",
         "dependsOn": [],
         "properties": {
@@ -52,6 +49,12 @@
                 "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
             },
             {
+              "type": "File",
+              "name": "downloadBuildArtifacts",
+              "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
+              "destination":"/tmp/index.html"
+          },
+            {
               "type": "Shell",
               "name": "setupBuildPath",
               "inline": [
@@ -64,7 +67,7 @@
                   {
                     "type": "SharedImage",
                     "galleryImageId": "[parameters('galleryImageId')]",
-                    "runOutputName": "[parameters('runOutputName')]",
+                    "runOutputName": "rhelvhdsigro",
                     "artifactTags": {
                         "source": "hybridpipeline",
                         "releaseStatus": "staging",
