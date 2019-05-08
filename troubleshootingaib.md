@@ -134,8 +134,8 @@ Should you delete it, you will not be able to delete the AIB Image Template arti
 
 We are working to resolve this, but in the meantime, a workaroudn, if you have deleted the staging resource by accident, create a resource group with the same name.
 
-### You use AIB to out images versions into the Azure Shared Image Gallery (SIG), but you cannot update the SIG Image version.
-In the scenario where image builder has created images for the SIG, you will not be able to modify the version properties of that image. For example, if you want to replicate that image to more regions, using SIG commands / portal, this will fail, as the source image does not exist.
+### You use AIB to create images versions in the Azure Shared Image Gallery (SIG), but you cannot make changes the SIG Image version.
+In the scenario where image builder has created images for the SIG, you will not be able to modify the version properties of that image. For example, if you want to replicate that image to more regions, using SIG commands / portal, this will fail, as the source image does not exist. 
 
 We are working to resolve this, ETA, end of May.
 
