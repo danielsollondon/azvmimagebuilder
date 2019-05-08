@@ -28,7 +28,7 @@ PACKER ERR 2019/03/08 00:37:32 [INFO] RPC client: Communicator ended with: 1
 
 In this case the fix was to prefix the command with 'sudo', but these logs are useful for identifying where the time is being spent in your image build process.
 
-Note! This is a private preview, not all the errors are refined yet, we are working to improve these all the time.
+Note! This is a public preview, not all the errors are refined yet, we are working to improve these all the time.
 
 ## Common Errors when using image builder
 
