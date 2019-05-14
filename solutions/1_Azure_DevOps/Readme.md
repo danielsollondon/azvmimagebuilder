@@ -60,6 +60,7 @@ For your OS, select with PowerShell, or Shell.
 
 #### Build Path
 This task has been initially designed to be able to inject DevOps Build release artifacts into the image. To make this work, you will need to setup a Build Pipeline, and in the setup of the Release pipeline, you must add specific the repo of the build artifacts.
+
 ![alt text](./step4.PNG "Add an Artifact")
 
 Click on the Build Path button, to select the build folder you want to be placed on the image. The Image Builder task will copy all files and directories underneath it. 
