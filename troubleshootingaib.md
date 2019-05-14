@@ -1,4 +1,4 @@
-# Troubleshooing Azure VM Image Builder
+# Troubleshooting Azure VM Image Builder
 
 ## Collecting and Reviewing AIB Image Build Logs
 The build logs are stored in a storage account in the temporary (Resource Group) (RG) AIB creates when you create an Image Template.
