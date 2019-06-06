@@ -88,8 +88,8 @@ You can enter powershell inline commands separated by commas, and if you want to
 * Linux
 Similar to the above, commands are separated by commas, but you need to move the files:
 ```bash
-"sudo mkdir /lib/buildArtifacts",
-"sudo cp -r /tmp/webapp /lib/buildArtifacts/."
+sudo mkdir /lib/buildArtifacts
+sudo cp -r /tmp/webapp /lib/buildArtifacts/.
 ```
 
 #### Total length of image build
