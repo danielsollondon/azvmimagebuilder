@@ -10,6 +10,7 @@ Go to the [Visual Studio Marketplace](https://marketplace.visualstudio.com), sea
 ## Prereqs
 * You must have a VSTS DevOps account, and a Build Pipeline created
 * Create a Standard Azure Storage Account in the source image Resource Group, you can use other Resource Group/Storage accounts, but you must ensure the Image Builder has contributor permissions to the Storage account. This is used transfer the build artifacts from the DevOps task to the image.
+* Ensure you have registered for the Image Builder [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#register-for-image-builder--vm--storage-features).
 ```bash
 # create storage account and blob in resource group
 strResourceGroup=<ResourceGroupName>
