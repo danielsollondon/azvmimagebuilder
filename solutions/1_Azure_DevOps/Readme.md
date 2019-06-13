@@ -75,7 +75,7 @@ Lets use this example to explain how this works:
 In the 'C:\\', a directory named 'buildArtifacts' will be created, with the webapp directory.
 
 * Linux - 
-In /tmp, a directory named 'buildArtifacts' will be created, with all files and directories, you MUST move the files from this directory, otherwise, they will be deleted.
+In /tmp, the webapp directory will be created, with all files and directories, you MUST move the files from this directory, otherwise, they will be deleted.
 
 You will need to use a customization command(s) to move the files.
 
@@ -89,8 +89,8 @@ You can enter powershell inline commands separated by commas, and if you want to
 * Linux
 Similar to the above, commands are separated by commas, but you need to move the files:
 ```bash
-"sudo mkdir /lib/buildArtifacts",
-"sudo cp -r /tmp/buildArtifacts /lib/buildArtifacts/."
+sudo mkdir /lib/buildArtifacts
+sudo cp -r /tmp/webapp /lib/buildArtifacts/.
 ```
 
 #### Total length of image build
