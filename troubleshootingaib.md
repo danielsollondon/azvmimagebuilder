@@ -1,7 +1,107 @@
 # Troubleshooting Azure VM Image Builder
 
-## Collecting and Reviewing AIB Image Build Logs
-The build logs are stored in a storage account in the temporary (Resource Group) (RG) AIB creates when you create an Image Template.
+In this troubleshooting section, it will broken down into troubleshooting Image Template Submission errors, and Image Build errors.
+
+
+### Template Submission Errors & Troubleshooting
+If you submit an Image Template to the service, and there is a failure, the error message returned will be key to understanding the failure. The errors are returned by the calling code (PS/CLI etc), or by getting the output from the template submission, using the CLI below, the error will be in the `provisioningError` attribute.
+
+```bash
+az resource show \
+    --resource-group <imageTemplateResourceGroup> \
+    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+    -n <imageTemplateName>
+```
+
+#### Image Version Failure
+If you see an error similar to the below, you are likely to be using 'latest' as the source image version.
+
+```bash
+Build (Azure PIR Image) step failed: compute.VirtualMachineImagesClient#Get: Failure responding to request: StatusCode=400 -- Original Error: autorest/azure: Service returned an error. Status=400 Code="InvalidParameter" Message="The value of parameter version is invalid." Target="version"
+Document this.
+```
+This is what your image source would look like:
+```bash
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2019-Datacenter",
+                "version": "latest"
+```
+We currenty do not support latest, you must specify a version number, for example:
+```bash
+"version": "2019.0.20190214"
+```
+
+We are aware that many customers would like to use 'latest', this is on our backlog to resolve.
+
+If you need to identify what is the latest version number, you can use:
+
+[AZ PsCmdLets refence](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage)
+```PowerShell
+$skuName="<SKU>"
+Get-AzVMImage -Location $locName -Publisher $pubName -Offer $offerName -Sku $skuName | Select Version
+```
+
+[az cli refence](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage)
+```bash
+az vm image list --location westus --publisher Canonical --offer UbuntuServer --sku 18.04-LTS --all --output table
+```
+
+
+#### Image Template Update/Upgrade Error
+You may see the error below:
+```bash
+'Conflict'. Details: Update/Upgrade of image templates is currently not supported
+```
+We do not support updating existing Image Template artifact, you will need to either rename the new template, or delete the existing template.
+
+If you want to iterate through multiple image builds, you can build an image versioning into the template name, see [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/9_Updating_Image_Builder_Templates#updating-image-builder-templates) for an example.
+
+>> Please note, if you have submitted an Image Configuration template, and the submission initially failed, a failed template artifact will still exist, you must delete the failed template.
+
+#### RHEL ISO Download Failures
+When you submit an Image Configuration Template, you get an error similar to the below:
+Downloading external file (https://access.cdn.redhat.com/content/.../rhel-server-7.4-x86_64-dvd.iso?[REDACTED] to local file (<guid>.iso) [attempt 6 of 10] failed: Error downloading 'https://access.cdn.redhat.com/content/.../rhel-server-7.4-x86_64-dvd.iso?[REDACTED] to '<guid>.iso': 'Bad status downloading from url 'https://access.cdn.redhat.com/content/../rhel-server-7.4-x86_64-dvd.iso?[REDACTED] 403 Forbidden'
+
+This can happen for these reasons:
+* Your Azure subscription security policies do not allow access to the URL.
+* The URL is incorrect.
+* RHEL ISO token expired - When you copy the URL from the Red Hat download site, these are bound to a time period, if this has been exceeded, AIB will not be able to download the ISO, so please refresh the URL, and run the image template submission straight away.
+
+
+#### Permissions
+When you submit the Image configuration template, the Image Builder service will validate that it has access to all the build dependencies, such as scripts, ISOs, Managed Images, Shared Image Gallery image versions all exist.
+
+If you see a similar error to this:
+```bash
+Build (Managed Image) step failed: Error getting Managed Image '/subscriptions/.../providers/Microsoft.Compute/images/mymanagedmg1': Error getting managed image (...): compute.ImagesClient#Get: Failure responding to request: StatusCode=403 -- Original Error: autorest/azure: Service returned an error. Status=403 Code="AuthorizationFailed" Message="The client '......' with object id '......' does not have authorization to perform action 'Microsoft.Compute/images/read' over scope 
+```
+
+To allow Azure Image Builder to use existing source custom managed image or SIG image version, then the Azure Image Builder will need a minimum of ‘Reader’ access to those resource groups that contain the images,  you will need to provide ‘Reader’ permissions for the service "Azure Virtual Machine Image Builder" (app ID: cf32a0cc-373c-47c9-9156-0db11f6a6dfc) on the resource groups.
+
+Whilst you are checking permissions, when the image build runs the actual image build, you must allow Azure VM Image Builder to distribute images to either the managed images or to a Shared Image Gallery (SIG), you will need to set 'Contributor' permissions for the service "Azure Virtual Machine Image Builder" (app ID: cf32a0cc-373c-47c9-9156-0db11f6a6dfc) on the resource groups.
+
+#### Image Reference Errors
+During the submission of the image template, the Image Builder Service will check that the destination Resource group for the managed image exist, and the Shared Image Gallery (SIG), and SIG Definition, and SIG Image Version. All of these must continue to exist at the time of the image build runs, if not, you will see a similar error, 'ResourceNotFound' to below during the submission:
+```bash
+Build (Shared Image Version) step failed for Image Version '/subscriptions/.../providers/Microsoft.Compute/galleries/.../images/... /versions/0.23768.4001': Error getting Image Version '/subscriptions/.../resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/.../images/.../versions/0.23768.4001': Error getting image version '... :0.23768.4001': compute.GalleryImageVersionsClient#Get: Failure responding to request: StatusCode=404 -- Original Error: autorest/azure: Service returned an error. Status=404 Code="ResourceNotFound" Message="The Resource 'Microsoft.Compute/galleries/.../images/.../versions/0.23768.4001' under resource group '<rgName>' was not found."
+```
+#### Image Template Parameter Errors
+We have been asked on some occasions how you can parameterize an Image Builder Template, if you do this incorrectly, you may get a similar error to this:
+```bash
+Downloading external file (<myFile>) to local file (xxxxx.0.customizer.fp) [attempt 1 of 10] failed: Error downloading '<myFile>' to 'xxxxx.0.customizer.fp'..
+```
+
+There are some ways you can get parameters into the image builder template, for example:
+1. Use a stream editor to find and replace placeholders in an image configuration template, similar to quick start examples, using SED.
+2. Use Azure Resource Manager templates, and use parameters and variables within them, please see these examples [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates#deploying-image-builder-templates-with-azure-resource-manager-arm).
+
+
+## Image Build Errors & Troubleshooting
+### Collecting and Reviewing AIB Image Build Logs
+When the image build is running, logs are created, and stored in a storage account in the temporary Resource Group (RG), that AIB creates when you create an Image Template artifact.
 ```bash
 IT_<ImageResourceGroupName>_<TemplateName>
 ```
@@ -30,52 +130,27 @@ In this case the fix was to prefix the command with 'sudo', but these logs are u
 
 Note! This is a public preview, not all the errors are refined yet, we are working to improve these all the time.
 
-## Common Errors when using image builder
 
-### Using 'latest' as Image Version
-If you deploy an AIB Configuration template with 'latest', this will fail, for example:
-```bash
-        "source": {
-            "type": "PlatformImage",
-                "publisher": "MicrosoftWindowsServer",
-                "offer": "WindowsServer",
-                "sku": "2019-Datacenter",
-                "version": "latest"
-```
-You must specify a version number, for example:
-```bash
-"version": "2019.0.20190214"
-```
 
-We are aware that many customers would like to use 'latest', this is on our backlog to resolve.
-
-If you need to identify what is the latest version number, you can use 
-
-#### Windows
-[AZ PsCmdLets refence] https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage
-```PowerShell
-$skuName="<SKU>"
-Get-AzVMImage -Location $locName -Publisher $pubName -Offer $offerName -Sku $skuName | Select Version
-```
-#### Linux
-[az cli refence](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage)
-```bash
-az vm image list --location westus --publisher Canonical --offer UbuntuServer --sku 18.04-LTS --all --output table
-```
-
-### Image Template Submission
-•	Image Template already exists - either rename the template, or delete the existing.
-•	RHEL ISO token expired - these are bound to a time period, if this has been exceeded, AIB will not be able to download the ISO, so please refresh the URL.
-
-### Image Build
-* Unsupported Platform Image / RHEL ISO - We support a limited set, please refer to the 'Source' section of documentation for the list.
-* Customizer Failure - If one script reports failure, then the customizer will report failure. Check your scripts ahead of time, and that they will run in < 45mins.
+### Customizer Failures
+If one of the customizer (Shell/PowerShell/File etc) reports failure, then the customizer will report failure.
 
 The customization errors will look something like this:
 ```bash
 Deployment failed. Correlation ID: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx. Failed in building/customizing image: Failed while waiting for packerizer: Microservice has failed: Failed while processing request: Error when executing packerizer: Packer build command has failed: exit status 1
 ```
-So what do i do now?? Collect AIB Build logs.
+So what do i do now?? Collect AIB Build logs, and search for the customizer.
+
+### SIG Distribution Errors
+If the image builder cannot distribute to SIG or SIG Defintion, you will see errors.
+
+The error below is atypical, where the SIG or SIG Definition does not exist at image build time, remember at image template submission, image builder checks the SIG and SIG Definition exist, `The Resource 'Microsoft.Compute/galleries/.../images/myimage100' under resource group '...' was not found."`
+
+```bash
+[Distribute 0] Error getting Shared Gallery Image location for GalleryID:/subscriptions/.../resourceGroups/.../providers/Microsoft.Compute/galleries/.../images/myimage100, Location:. Error: Error returned from SIG client while getting shared gallery image location for sigResourceID: /subscriptions/.../resourceGroups/.../providers/Microsoft.Compute/galleries/.../images/myimage100. Error: Error getting location of shared gallery image: Error while doing a GET on shared gallery image for shared gallery image id: /subscriptions/.../resourceGroups/.../providers/Microsoft.Compute/galleries/.../images/myimage100. Error: compute.GalleryImagesClient#Get: Failure responding to request: StatusCode=404 -- Original Error: autorest/azure: Service returned an error. Status=404 Code="ResourceNotFound" Message="The Resource 'Microsoft.Compute/galleries/.../images/myimage100' under resource group '...' was not found."
+```
+The only resolution is to check that the SIG and SIG Image Definition exist before image build.
+
 
 ### Image Re-Customization Failures
 If you find your re-customized image has not been created properly, such as fails to boot, login, has errors, please check the source image first, by creating a VM from it. Then check it boots, and errors.
@@ -137,7 +212,7 @@ We are working to resolve this, but in the meantime, a workaroudn, if you have d
 ### You use AIB to create images versions in the Azure Shared Image Gallery (SIG), but you cannot make changes the SIG Image version.
 In the scenario where image builder has created images for the SIG, you will not be able to modify the version properties of that image. For example, if you want to replicate that image to more regions, using SIG commands / portal, this will fail, as the source image does not exist. 
 
-We are working to resolve this, ETA, end of May.
+We are working to resolve this, ETA, end of July.
 
 ## Contact US / Further Support & Questions & Feedback
 Please reach out to us on the:
