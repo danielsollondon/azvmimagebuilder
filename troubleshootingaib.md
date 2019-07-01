@@ -84,7 +84,7 @@ To allow Azure Image Builder to use existing source custom managed image or SIG 
 Whilst you are checking permissions, when the image build runs the actual image build, you must allow Azure VM Image Builder to distribute images to either the managed images or to a Shared Image Gallery (SIG), you will need to set 'Contributor' permissions for the service "Azure Virtual Machine Image Builder" (app ID: cf32a0cc-373c-47c9-9156-0db11f6a6dfc) on the resource groups.
 
 #### Image Reference Errors
-During the submission of the image template, the Image Builder Service will check that the destination Resource group for the managed image exist, and the Shared Image Gallery (SIG), and SIG Definition, and SIG Image Version. All of these must continue to exist at the time of the image build runs, if not, you will see a similar error, 'ResourceNotFound' to below during the submission:
+During the submission of the image template, the Image Builder Service will check that the destination Resource group for the managed image exist, and the Shared Image Gallery (SIG), and SIG Definition, and SIG Image Version. All of these must exist at the time of the submission and when the image build runs, if not, you will see a similar error, 'ResourceNotFound' to below during the submission:
 ```bash
 Build (Shared Image Version) step failed for Image Version '/subscriptions/.../providers/Microsoft.Compute/galleries/.../images/... /versions/0.23768.4001': Error getting Image Version '/subscriptions/.../resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/.../images/.../versions/0.23768.4001': Error getting image version '... :0.23768.4001': compute.GalleryImageVersionsClient#Get: Failure responding to request: StatusCode=404 -- Original Error: autorest/azure: Service returned an error. Status=404 Code="ResourceNotFound" Message="The Resource 'Microsoft.Compute/galleries/.../images/.../versions/0.23768.4001' under resource group '<rgName>' was not found."
 ```
@@ -98,6 +98,9 @@ There are some ways you can get parameters into the image builder template, for 
 1. Use a stream editor to find and replace placeholders in an image configuration template, similar to quick start examples, using SED.
 2. Use Azure Resource Manager templates, and use parameters and variables within them, please see these examples [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates#deploying-image-builder-templates-with-azure-resource-manager-arm).
 
+#### You cannot delete the Image Configuration Template Artifact
+Typically this is caused when you have deleted the staging resource group.
+>>>>>>>>>>>>>>>>>>>
 
 ## Image Build Errors & Troubleshooting
 ### Collecting and Reviewing AIB Image Build Logs
@@ -140,6 +143,23 @@ The customization errors will look something like this:
 Deployment failed. Correlation ID: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx. Failed in building/customizing image: Failed while waiting for packerizer: Microservice has failed: Failed while processing request: Error when executing packerizer: Packer build command has failed: exit status 1
 ```
 So what do i do now?? Collect AIB Build logs, and search for the customizer.
+
+#### Customizer Timeout Failures
+Typically, the build creation calling client or the Image Template `LastRunStatus` will return something similar to the below:
+```bash
+Deployment failed. Correlation ID: dxxxxx-xxxx-xxxx-xxxx-xxxxxxxxx. Failed in building/customizing image: Failed while waiting for packerizer: Timeout waiting for microservice to complete: 'context deadline exceeded'
+```
+The next steps are to check the Image Build logs, look to see why the timeout was hit, this maybe a long running customization, these can be caused because:
+
+1) Script customization may not supressing user interation for commands, such as `quiet` options, e.g. `apt-get install -y`, and the script execution is just waiting.
+2) You are using the `File` customizer to download artifacts > 20MB, see below for workarounds.
+2) Errors/dependencies in script cause the script to wait.
+4) [buildTimeoutInMinutes](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json) value is too low, generally the default timeout of 60mins will be too small for Windows.
+
+Before you troubleshoot further, run the scripts/commands on a VM from the commandline using the same OS / image build, and check they run correctly.
+
+#### File Customizer Failures
+The file customizer is only suitable for small file downloads, < 20MB. For larger file downloads use a Script or Inline command, the use code to download files, such as, Linux `wget` or `curl`, Windows, `Invoke-WebRequest`.
 
 ### SIG Distribution Errors
 If the image builder cannot distribute to SIG or SIG Defintion, you will see errors.
