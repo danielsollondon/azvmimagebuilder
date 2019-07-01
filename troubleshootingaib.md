@@ -153,7 +153,7 @@ The next steps are to check the Image Build logs, look to see why the timeout wa
 
 1) Script customization may not supressing user interation for commands, such as `quiet` options, e.g. `apt-get install -y`, and the script execution is just waiting.
 2) You are using the `File` customizer to download artifacts > 20MB, see below for workarounds.
-2) Errors/dependencies in script cause the script to wait.
+3) Errors/dependencies in script cause the script to wait.
 4) [buildTimeoutInMinutes](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json) value is too low, generally the default timeout of 60mins will be too small for Windows.
 
 Before you troubleshoot further, run the scripts/commands on a VM from the commandline using the same OS / image build, and check they run correctly.
