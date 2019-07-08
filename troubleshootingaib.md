@@ -219,7 +219,7 @@ while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Window
 #### Overriding the Commands
 To override the commands, use the PowerShell or Shell script provisioners to create the command files with the exact file name, and put them in the directories above. AIB will read these commands, these are written out to the AIB logs, ‘customization.log’. See here on how to collect AIB logs: https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#collecting-and-reviewing-aib-logs
 
-### You cannot delete an Image Template 
+### You cannot delete an Image Template Artifact
 When you create an AIB Image Template, this will be stored in the Resource Group you have specified during creation. You cannot see this by default, when you look at the resources in the Portal. You must select 'Show Hidden Types'.
 At the time you create the Image Template, an AIB staging resource group is setup, in the format: 
 ‘IT_<TemplateResourceGroup>_<TemplateName>’
@@ -227,12 +227,48 @@ This will contain a storage account of any files, scripts, ISO, that AIB needs f
 
 Should you delete it, you will not be able to delete the AIB Image Template artifact, you will get an error.
 
-We are working to resolve this, but in the meantime, a workaroudn, if you have deleted the staging resource by accident, create a resource group with the same name.
+We are working to resolve this, but in the meantime, a workaround, if you have deleted the staging resource by accident, create an empty resource group with the same name, as the one you deleted, e.g. `IT_<TemplateResourceGroup>_<TemplateName>`. 
+
+Then give the Image Builder contributor rights to it, so it can delete it:
+
+```bash
+# set your environment variables here!!!!
+
+# destination image resource group
+imageBuilderResourceGroup=<IT_<TemplateResourceGroup>_<TemplateName>>
+
+# location of where image resource group was located, you can check the subscription acitivity logs for this information too.
+location=WestUS2
+
+# your subscription
+# get the current subID : 'az account show | grep id'
+subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+
+# create resource group
+az group create -n $imageBuilderResourceGroup -l $location
+
+# assign permissions for that resource group
+az role assignment create \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role Contributor \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageBuilderResourceGroup
+```
+
+Now try to delete the Image Template Artifact:
+```bash
+az resource delete \
+    --resource-group <resourceGroupOfImageTemplateArtifact> \
+    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+    -n <imageTemplateName>
+```
 
 ### You use AIB to create images versions in the Azure Shared Image Gallery (SIG), but you cannot make changes the SIG Image version.
+
 In the scenario where image builder has created images for the SIG, you will not be able to modify the version properties of that image. For example, if you want to replicate that image to more regions, using SIG commands / portal, this will fail, as the source image does not exist. 
 
-We are working to resolve this, ETA, end of July.
+We are working to resolve this, ETA, end of July. 
+
+The only workaroud, is to get Image Builder to create a Managed Image, then inject that into the Shared Image Gallery, but do not delete the source Managed Image.
 
 ## Contact US / Further Support & Questions & Feedback
 Please reach out to us on the:
