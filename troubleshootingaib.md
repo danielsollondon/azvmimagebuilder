@@ -235,7 +235,7 @@ Then give the Image Builder contributor rights to it, so it can delete it:
 # set your environment variables here!!!!
 
 # destination image resource group
-imageBuilderResourceGroup=<IT_<TemplateResourceGroup>_<TemplateName>>
+imageBuilderResourceGroup=IT_<TemplateResourceGroup>_<TemplateName>
 
 # location of where image resource group was located, you can check the subscription acitivity logs for this information too.
 location=WestUS2
