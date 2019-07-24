@@ -1,0 +1,84 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imageTemplateName": {
+        "type": "string"
+        },
+        "svcLocation": {
+            "type": "string"
+        },
+        "managedImageResGroupId": {
+          "type": "string"
+        },
+        "managedImageName": {
+          "type": "string"
+        },
+        "packagesToInstall": {
+            "type": "string"
+        },
+        "targetOS": {
+            "type": "string"
+        }
+    },
+    
+    "variables": {
+      "resourceid": "[concat(parameters('managedImageResGroupId'),parameters('managedImageName'))]"
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imageTemplateName')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "2019-05-01-preview",
+        "location": "[parameters('svcLocation')]",
+        "dependsOn": [],
+        "properties": {
+            "source": {
+                "type": "PlatformImage",
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+                
+            },
+            "customize": [
+                {
+                    "type": "Shell",
+                    "name": "setEnvVarsMkdir",
+                    "inline": [
+                        "[concat('Target_OS=', parameters('targetOS'))]",
+                        "echo setting Target OS working directory: $Target_OS",
+                        "sudo mkdir /$Target_OS"
+                            ]
+                },
+                {
+                    "type": "Shell",
+                    "name": "installPackages",
+                    "inline": [
+                        "[concat('app_Packages=', parameters('packagesToInstall'))]", 
+                        "echo Packages to be installed: $app_Packages",
+                        "sudo apt-get install -y $app_Packages"
+                            ]
+                }
+            ],
+            "distribute": 
+                [
+                    {   "type":"ManagedImage",
+                        "imageId": "[variables('resourceid')]",
+                        "location": "[parameters('svcLocation')]",
+                        "runOutputName": "[parameters('managedimagename')]",
+                        "aritfactTags": {
+                          "source": "azVmImageBuilder",
+                          "releaseStatus": "staging",
+                          "type": "mdionly"
+                        }
+                    }
+                ]
+            }
+        }
+
+    
+    ]
+}    
