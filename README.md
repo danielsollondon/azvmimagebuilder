@@ -14,7 +14,7 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 
 3. Release Information
 
-* May 2019 Release (latest)
+## May 2019 Release (latest)
 
     Release Date : 10th May 1000 PST
     This is an exciting release, image builder has just [PUBLIC PREVIEW](https://cloudblogs.microsoft.com/opensource/2019/05/07/announcing-the-public-preview-of-azure-image-builder/)!!!!!
