@@ -14,7 +14,9 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 
 3. Release Information
 
-## May 2019 Release (latest)
+## Latest Release Information
+
+### May 2019 Release
 
 * Release Date : 10th May 1000 PST
     This is an exciting release, image builder has just [PUBLIC PREVIEW](https://cloudblogs.microsoft.com/opensource/2019/05/07/announcing-the-public-preview-of-azure-image-builder/)!!!!!
@@ -32,7 +34,7 @@ The beauty of these examples, they are heavily parameterized, so you just need t
         The quickstarts are in the process of bring migrated to Azure Docs, but the quick starts will be maintained until there is a full transition, and you will be notified.
 
 
-## [April 2019 Release](/aibApril2019Update.md)
+### [April 2019 Release](/aibApril2019Update.md)
 * Features added (links to example config templates):
     * Patch your Windows Custom Images - select existing [Windows Custom SIG Images](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/8_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG) and [Custom Windows Managed Images](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image)!!!
     * Seemless authentication with Azure Storage - using [Managed User-Assigned Identity](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/7_Creating_Custom_Image_using_MSI_to_Access_Storage) and authenticating with Azure storage accounts. 
