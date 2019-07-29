@@ -16,7 +16,7 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 
 ## May 2019 Release (latest)
 
-    Release Date : 10th May 1000 PST
+* Release Date : 10th May 1000 PST
     This is an exciting release, image builder has just [PUBLIC PREVIEW](https://cloudblogs.microsoft.com/opensource/2019/05/07/announcing-the-public-preview-of-azure-image-builder/)!!!!!
 
     The whole team is excited to make this milestone, and thanks the Private preview community for their engagement, feedback, and helping shape the product. 
