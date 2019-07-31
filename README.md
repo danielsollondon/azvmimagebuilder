@@ -1,8 +1,8 @@
 # Azure VM Image Builder Template Repo
 !!!!!Azure VM Image Builder is now in PUBLIC Preview!!!!!
-To use this, see this [blog](https://azure.microsoft.com/en-us/blog/announcing-private-preview-of-azure-vm-image-builder/) and sign up!
 
-This repo contains mutliple examples and test templates for Azure VM Image Builder.
+
+Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder.
 
 
 1. [Quick QuickStarts Examples](/quickquickstarts/readme.md).
