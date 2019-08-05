@@ -9,7 +9,7 @@
 
     "properties": {
 
-        "buildTimeoutInMinutes" : 80,
+        "buildTimeoutInMinutes" : 100,
         
         "source": {
             "type": "PlatformImage",
