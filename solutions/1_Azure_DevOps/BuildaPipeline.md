@@ -134,6 +134,8 @@ az vm open-port -g $aibResourceGroup -n $vmName --port 8080 --priority 100
 
 ```
 
+Take the IP Address from the CLI output, then, from your local browser, goto: `http://<ipAddress>:8080`, if the image customization has worked, you should see a webpage.
+
 ## Clean Up
 
 * Delete VSTS Project
