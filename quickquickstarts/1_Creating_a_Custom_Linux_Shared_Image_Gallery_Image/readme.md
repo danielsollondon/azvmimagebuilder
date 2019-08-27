@@ -110,6 +110,7 @@ sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIG.json
 sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIG.json
 
 ```
+>> Note, this example shows limited customizations, to see more possible customizations, see this [example](./0_Creating_a_Custom_Linux_Managed_Image).
 
 ## Step 3 : Create the Image
 

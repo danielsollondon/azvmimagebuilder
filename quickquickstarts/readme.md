@@ -7,9 +7,7 @@ Welcome to the Azure VM Image Builder QuickStarts, these are some key scenarios 
 Get started with the short walkthrough video below, or go straight to the Quick Starts below.
 
 [<img src="./mediumVideoplay.png" alt="drawing" width="450"/>
-](https://microsoft.sharepoint.com/teams/AzureVMImageBuilder/Shared%20Documents/General/QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4)
-
-Note, if you have not registered and want to see the video, you can download it from GitHub [here](./QuickQuickStart_Creating_a_Custom_Linux_Managed_Image.mp4).
+](https://youtu.be/IgKARHm5Yus)
 
 **Second time using Image Builder??**  
 On the 12th March we have just released a whole wave of New Features and API version, see here for [details](/aibMarch2019Update.md).
