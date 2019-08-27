@@ -29,7 +29,7 @@ On the 12th March we have just released a whole wave of New Features and API ver
 
 ** Note: The quickstarts are designed to show you the different types of configuration you can have, many of these are supported on Windows and Linux, there will be more Windows examples soon!!
 
-Any questions, please ask on the [MS Teams Channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47), the Azure Image Builder Dev team is there during the week, Pacific time.
+Any questions or feedback, please [here](https://aka.ms/aibfeedback), the Azure Image Builder Dev team is there during the week, Pacific time.
 
 These are designed to get you started quickly, where at a minimum you just need to supply your subscriptionID (except for the RHEL example), showing you how the Azure VM Image Builder can be used to build images to meet these requirements:
 
