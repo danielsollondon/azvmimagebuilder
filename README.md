@@ -4,6 +4,12 @@
 
 Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder.
 
+What is Image Builder??
+Get started with the short intro video below, or go straight to the Quick Starts below.
+
+
+[<img src="./introToAIB.png" alt="drawing" width="250"/>](https://youtu.be/nalr2rHRDew)
+
 
 1. [Quick QuickStarts Examples](/quickquickstarts/readme.md).
 You can run these immediately using the Azure CloudShell from the Portal, and see multiple scenarios that the VM Image Builder supports. 
