@@ -40,7 +40,7 @@ These are designed to get you started quickly, where at a minimum you just need 
 
 ## Next Steps
 * Want to learn more???
-    * Explore the detailed documentation in the [MS Teams channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) (Files).
+    * Explore the detailed documentation in [MS Docs](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json) (Files).
 
 * Want to try more???
-* Image Builder does support deployment through Azure Resource Manager, see here in the repo for [examples](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates), you will also see how you can use a RHEL ISO source too, and manu other capabilities.
+* Image Builder does support deployment through Azure Resource Manager, see here in the repo for [examples](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/4_Using_ENV_Variables), you will also see how you can use a RHEL ISO source too, and manu other capabilities.
