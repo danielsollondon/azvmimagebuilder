@@ -8,7 +8,7 @@ What is Image Builder??
 Get started with the short intro video below, or go straight to the Quick Starts below.
 
 
-[<img src="./introToAIB.png" alt="drawing" width="250"/>](https://youtu.be/nalr2rHRDew)
+[<img src="./introToAIB.png" alt="drawing" width="325"/>](https://youtu.be/nalr2rHRDew)
 
 
 1. [Quick QuickStarts Examples](/quickquickstarts/readme.md).
