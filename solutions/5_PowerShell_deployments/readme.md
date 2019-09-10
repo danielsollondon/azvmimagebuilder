@@ -91,7 +91,7 @@ A big thanks to brettmillerb, for [this](https://gist.github.com/brettmillerb/69
 
 ```powerShell
 ### Step 1: Update context
-$currentAzContext = Get-AzContext
+$currentAzureContext = Get-AzContext
 
 ### Step 2: Get instance profile
 $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
