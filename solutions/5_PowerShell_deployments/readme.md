@@ -13,7 +13,6 @@ This walk through is intended to be a copy and paste exercise, and will provide 
 ## PreReqs
 You must have the latest Azure PowerShell CmdLets installed, see [here](https://docs.microsoft.com/en-us/powershell/azure/overview?view=azps-2.6.0) for install details.
 
-You must have the latest Azure PowerShell CmdLets installed, see [here](https://docs.microsoft.com/en-us/powershell/azure/overview?view=azps-2.6.0) for install details.
 
 ```PowerShell
 # Register for Azure Image Builder Feature
