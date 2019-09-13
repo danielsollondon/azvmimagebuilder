@@ -13,6 +13,8 @@ To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell 
 
 Happy Image Building!!!
 
+>> Note!! You will notice the code below is all in Bash, with AZ CLI. We now have PowerShell equivalent example in preview [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/5_PowerShell_deployments#using-powershell-to-create-a-windows-10-custom-image-using-azure-vm-image-builder-preview-example). 
+
 ### Register for Image Builder / VM / Storage Features
 ```bash
 az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview

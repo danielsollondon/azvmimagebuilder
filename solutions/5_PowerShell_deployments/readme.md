@@ -10,6 +10,28 @@ This walk through is intended to be a copy and paste exercise, and will provide 
 
 >>>Note! This example is currently being tested, so there maybe bugs in it, if you find a bug, please raise an issue.
 
+## PreReqs
+You must have the latest Azure PowerShell CmdLets installed, see [here](https://docs.microsoft.com/en-us/powershell/azure/overview?view=azps-2.6.0) for install details.
+
+You must have the latest Azure PowerShell CmdLets installed, see [here](https://docs.microsoft.com/en-us/powershell/azure/overview?view=azps-2.6.0) for install details.
+
+```PowerShell
+# Register for Azure Image Builder Feature
+Register-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderNamespace Microsoft.VirtualMachineImages
+
+Get-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderNamespace Microsoft.VirtualMachineImages
+# wait until RegistrationState is set to 'Registered'
+
+# check you are registered for the providers, ensure RegistrationState is set to 'Registered'.
+Get-AzResourceProvider -ProviderNamespace Microsoft.VirtualMachineImages
+Get-AzResourceProvider -ProviderNamespace Microsoft.Storage 
+
+# If they do not saw registered, run the commented out code below.
+
+## Register-AzResourceProvider -ProviderNamespace Microsoft.VirtualMachineImages
+## Register-AzResourceProvider -ProviderNamespace Microsoft.Storage
+```
+
 ## Step 1: Set up environment and variables
 
 ```powerShell
