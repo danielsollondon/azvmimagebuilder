@@ -1,15 +1,21 @@
 # Create a Custom Image that will use an Azure User-Assigned Managed Identity to seemlessly access files Azure Storage 
 
-AIB supports using scripts, or copying files from multiple locations, such as GitHub and Azure storage etc. To use these, they must have been externally accessible to AIB, but you could protect Azure Storage blobs using SAS Tokens.
+AIB supports using scripts, or copying files from multiple locations, such as GitHub and Azure storage etc. 
 
 This article shows how to create a basic customized image using the Azure VM Image Builder, where the service will use a [User-assigned Managed Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) to access files in Azure storage for the image customization, without you having to make the files publically accessible, or setting up SAS tokens.
 
-In the example below, you will create two resource groups, one will be used for the custom image created, and the other one will just host an Azure Storage Account, that includes a scipt file. This simulates a real life scenario, where you may have build artifacts, or image files in different storage accounts, outside of Image Builder. You will create a user-assigned identity, then grant that read permissions on the script file, but you will not set any public access to that file. You will then use the Shell customizer to download and run that script from the storage account.
+
+In the example below, you will create two resource groups, one will be used for the custom image created, and the other one will just host an Azure Storage Account, that includes a scipt file. You will create a user-assigned identity, then grant that read permissions on the script file, and pass that identity to Image Builder. 
+
+Here is a short video on how the example below works.
+
+[<img src="./aibMsi.png" alt="drawing" width="450"/>
+](https://youtu.be/aalpp2a8wv0)
 
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
-## Step 1 : Enable Prereqs
+## Step 1: Enable Prereqs
 
 Happy Image Building!!!
 
@@ -61,7 +67,17 @@ runOutputName=u1804ManImgMsiro
 
 # create resource group for Image Template
 az group create -n $imageResourceGroup -l $location
+```
+## Step 2: Assign permissions for the resource group where the image will be created
+```bash
+az role assignment create \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role Contributor \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+```
 
+## Step 3: Create another Resource Group for a Storage Account to host scripts
+```bash
 # create resource group for the script storage
 az group create -n $strResourceGroup -l $location
 
@@ -85,15 +101,10 @@ az storage blob copy start --destination-blob customizeScript.sh \
                            --account-name $scriptStorageAcc \
                            --source-uri https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh
 ## wait a minute
-
-
-# assign permissions for the resource group where the image will be created
-az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
-    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 ```
-## Step 2 : Create User-Assigned Managed Identity and Set Permissions 
+
+
+## Step 4: Create User-Assigned Managed Identity and Grant Permissions 
 For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
 
 ```bash
@@ -112,7 +123,7 @@ az role assignment create \
 # create the user identity URI
 imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
 ```
-## Step 3 : Modify HelloImage Example
+## Step 5: Configure the Image Builder Template
 
 ```bash
 # download the example and configure it with your vars
@@ -130,21 +141,19 @@ sed -i -e "s%<runOutputName>%$runOutputName%g" helloImageTemplateMsi.json
 
 ```
 
-## Step 4 : Create the Image
+## Step 5a: Submit the Image Configuration to the VM Image Builder Service
 
 ```bash
-# submit the image confiuration to the VM Image Builder Service
-
 az resource create \
     --resource-group $imageResourceGroup \
     --properties @helloImageTemplateMsi.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateMsi01
+```
 
-
-# start the image build
-
+# Step 6: Start the image build
+```bash
 az resource invoke-action \
      --resource-group $imageResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
@@ -155,7 +164,7 @@ az resource invoke-action \
 ```
 
 
-## Step 5 : Create the VM
+## Step 7 : Create the VM
 
 ```bash
 az vm create \
