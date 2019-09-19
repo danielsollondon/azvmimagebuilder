@@ -8,5 +8,5 @@ This task is designed to take your repo/build artifacts, and inject them into a 
 ## [Documentation](./DocsReadme.md)
 Details on the inputs for the task.
 
-## [End to End Example](./BuildaPipeline.md)
+## [End to End Example (with video guide!!)](./BuildaPipeline.md)
 Step by step guide on how to create a custom image build pipeline, where you can bake your apps into an image, configure the OS, and then distribute globally.
