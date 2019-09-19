@@ -7,6 +7,11 @@ There are many occasions where an application owner will want to test and deploy
 
 In this end to end example, we are going to demostrate how you can use Azure DevOps to take your build artifacts from your repo, and inject them into a VM image, so you can install, configure your application, and OS.
 
+Here is a complete walkthrough, step by step video on how the example below.
+
+[<img src="./aibDevOps.png" alt="drawing" width="450"/>
+](https://youtu.be/lqIA0VHe5Do)
+
 ## Prerequisites
 1. Ensure you have registered for the Image Builder [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#register-for-image-builder--vm--storage-features).
 2. You must have a VSTS DevOps account
