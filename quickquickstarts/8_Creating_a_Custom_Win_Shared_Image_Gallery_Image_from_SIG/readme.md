@@ -4,6 +4,7 @@ This article is to show you how you can create a basic customized image using th
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
+>>> Note! Azure Image Builder automatically runs sysprep to generalize the image, this is a generic sysprep command, which you can [overide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully) if you are aware of more favorable settings. However, for *Windows are there limits on how many times (8), an image can be sysprep'd*, see [here](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep) for more details. Therefore exercise caution on how many times you layer customizations.
 
 ## Step 1 : Enable Prereqs
 

@@ -117,6 +117,8 @@ Go to the RG > Storage Account > Blobs > packerlogs >  click on the directory > 
 
 Download the customization.log/RedHatBuilder.log, search / grep for ERROR.
 
+>>> Note!!! If you do not see any logs during the image build, check that you have 'Owner' permssions to the staging resource group, 'IT_<ImageResourceGroupName>_<TemplateName>'.
+
 Here is an example when you do not run inline commands with the correct elevated user permissions:
 
 ```bash
