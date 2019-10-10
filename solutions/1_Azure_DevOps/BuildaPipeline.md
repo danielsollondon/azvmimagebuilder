@@ -23,6 +23,11 @@ Here is a complete walkthrough, step by step video on how the example below.
 
 ### Code to do steps 4 to 6
 ```bash
+# Set the active Subscription
+# no leading spaces, no double quoutes, remove the <>
+subName=<INSERT YOUR SUBSCRIPTION NAME HERE>
+az account set --subscription $subName
+
 # Setup environment variables
 aibResourceGroup=aibDevOpsImg
 
