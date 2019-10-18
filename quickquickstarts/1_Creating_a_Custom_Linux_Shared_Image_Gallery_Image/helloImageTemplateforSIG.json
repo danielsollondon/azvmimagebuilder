@@ -3,7 +3,11 @@
     "apiVersion": "2019-05-01-preview",
     "location": "<region1>",
     "dependsOn": [],
+    
     "properties": {
+
+        "buildTimeoutInMinutes" : 80,
+        
         "source": {
             "type": "PlatformImage",
                 "publisher": "Canonical",
@@ -15,8 +19,33 @@
         "customize": [
             {
                 "type": "Shell",
-                "name": "HelloImageScript1",
+                "name": "RunScripts01",
                 "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+            },
+        
+            
+            {
+                "type": "File",
+                "name": "downloadBuildArtifacts",
+                "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
+                "destination":"/tmp/index.html"
+            },
+
+            {
+                "type": "Shell",
+                "name": "setupBuildPath",
+                "inline": [
+                    "sudo mkdir /buildArtifacts",
+                    "sudo cp /tmp/index.html /buildArtifacts/index.html"
+                ]
+            },
+
+            {
+                "type": "Shell",
+                "name": "InstallUpgrades",
+                "inline": [
+                    "sudo apt install unattended-upgrades"
+                ]
             }
         ],
         "distribute": 
