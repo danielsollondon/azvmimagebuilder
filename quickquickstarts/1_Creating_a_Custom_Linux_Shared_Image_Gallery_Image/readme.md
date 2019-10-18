@@ -54,6 +54,7 @@ additionalregion=eastus
 
 # your subscription
 # get the current subID : 'az account show | grep id'
+# or you can use this: subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
 
 # name of the shared image gallery, e.g. myCorpGallery
