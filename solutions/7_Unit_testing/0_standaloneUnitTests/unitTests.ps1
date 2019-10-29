@@ -12,20 +12,23 @@
  
  
      # install Pester, and run install unit tests
-     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
+     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Scope CurrentUser
  
  
-     Install-PackageProvider -Name Nuget -MinimumVersion 2.8.5.201 -Force
+ 
+     #Install-PackageProvider -Name Nuget -MinimumVersion 2.8.5.201 -Force
  
      ## this installs the oldest
      # Cert is different from PS Gallery so we need to do some additional parameters
-     Install-Module -Name Pester -Force -SkipPublisherCheck
+     Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
+ 
  
      # Now you can update the module
      Update-Module -Name Pester
  
      # force update to right module
-     Import-Module -Name Pester
+     Remove-module -Name pester
+     Import-Module -Name Pester -Force
  
      # setup paths
      $path ="c:\pester"
