@@ -1,4 +1,8 @@
-$fsLogixTestURL=
+ # Download, Install Pester, Upgrade, and run Unit test
+
+# set test file location
+$Testfxlogixinstall = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/7_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.ps1'
+$TestfxlogixinstallTests = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/7_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.Tests.ps1'
 
 
 # install Pester, and run install unit tests
@@ -35,9 +39,9 @@ Catch
 
 
 # copy down tests from git
-cd $path\tests
 
-Invoke-WebRequest $fsLogixTestURL -OutFile $path\$installerFile
+Invoke-WebRequest $Testfxlogixinstall -OutFile $path\tests\Test-fxlogix-install.ps1
+Invoke-WebRequest $TestfxlogixinstallTests -OutFile $path\tests\Test-fxlogix-install.Tests.ps1    
 
 
 $resultsFile = "$path\tests\TestResults.xml"
