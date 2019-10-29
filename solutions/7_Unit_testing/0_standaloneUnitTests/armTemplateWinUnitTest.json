@@ -29,10 +29,10 @@
         
             "source": {
                 "type": "PlatformImage",
-                    "publisher": "MicrosoftWindowsServer",
-                    "offer": "WindowsServer",
-                    "sku": "2019-Datacenter",
-                    "version": "2019.0.20190214"
+                    "publisher": "MicrosoftWindowsDesktop",
+                    "offer": "Windows-10",
+                    "sku": "rs5-pro",
+                    "version": "17763.805.1910061628"
                 
             },
             "customize": [
