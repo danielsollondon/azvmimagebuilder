@@ -9,7 +9,7 @@
   
   
       # install Pester, and run install unit tests
-      #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Scope CurrentUser, not needed if usng bypass.
+      #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Scope CurrentUser, not needed if usng -executionpolicy bypass in calling command, which AIB does.
   
   
       Write-host 'Installing Nuget'
