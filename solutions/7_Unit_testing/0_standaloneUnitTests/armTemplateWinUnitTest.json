@@ -1,0 +1,78 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imageTemplateName": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        }
+    },
+    
+    "variables": {
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imageTemplateName')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[parameters('api-version')]",
+        "location": "[parameters('svclocation')]",
+        "dependsOn": [],
+        "properties": {
+            "buildTimeoutInMinutes" : 100,
+        
+            "source": {
+                "type": "PlatformImage",
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "2019-Datacenter",
+                    "version": "2019.0.20190214"
+                
+            },
+            "customize": [
+
+                    {
+                        "type": "PowerShell",
+                        "name": "InstallFsLogic",
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/7_Unit_testing/0_standaloneUnitTests/install.ps1"
+                    },
+                    {
+                        "type": "WindowsRestart",
+                        "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\buildArtifacts\\azureImageBuilderRestart.txt",
+                        "restartTimeout": "5m"
+                    },
+                    {
+                        "type": "PowerShell",
+                        "name": "UnitTests",
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/7_Unit_testing/0_standaloneUnitTests/unitTests.ps1"
+                    }
+
+            ],
+            "distribute": 
+            [
+                {   
+                    "type": "SharedImage",
+                    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
+                    "runOutputName": "<runOutputName>",
+                    "artifactTags": {
+                        "source": "azureVmImageBuilder",
+                        "baseosimg": "windows10"
+                    },
+                    "replicationRegions": [
+                      "<region1>",
+                      "<region2>"
+                    ]
+                }
+            ]
+            }
+        }
+
+    
+    ]
+}    
