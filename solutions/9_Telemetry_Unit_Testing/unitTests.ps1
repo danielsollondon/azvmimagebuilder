@@ -72,12 +72,12 @@ Try
 
     # copy down tests from git
 
-    Invoke-WebRequest $Testfxlogixinstall -OutFile $path\tests\Test-webAppInstall-install.ps1
-    Invoke-WebRequest $TestfxlogixinstallTests -OutFile $path\tests\Test-webAppInstall-install.Tests.ps1   
+    Invoke-WebRequest $TestWebAppInstall -OutFile $path\tests\Test-webAppInstall-install.ps1
+    Invoke-WebRequest $TestWebAppInstallTests -OutFile $path\tests\Test-webAppInstall-install.Tests.ps1   
 
-    cd $path\tests
-    $resultsFile = "$path\tests\TestResults.xml"
-}
+
+    }
+    
 
 Catch
 {
@@ -94,6 +94,10 @@ Catch
 
 # Run pester test
 Write-host 'Running Pester'
+cd $path\tests
+    $resultsFile = "$path\tests\TestResults.xml"
+
+Write-host $resultsFile
 send-aibRealTime -endpoint $endPoint -jobId $jobId -stepType 'test' -stepName 'iis unit tests' -msg 'iis webapp pester tests starting' 
 $result = Invoke-Pester -PassThru -OutputFile $resultsFile -OutputFormat NUnitXml
 
@@ -114,3 +118,5 @@ If ($result.FailedCount -ne 0) {
    
 
 
+
+ 

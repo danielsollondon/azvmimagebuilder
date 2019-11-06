@@ -74,9 +74,6 @@ Try
         # Open firewall port for 8080
         New-NetFirewallRule -DisplayName "Allow Outbound Port 8080" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
 
-        # Clean up buildArtifacts directory
-        Remove-Item -Path "C:\buildArtifacts\*" -Force -Recurse
-
         send-aibRealTime -endpoint $endPoint -jobId $jobId -stepType 'customize' -stepName 'iis config' -msg 'iis setup and config completed' -status 'success'
 }
 Catch
