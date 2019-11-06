@@ -28,6 +28,8 @@ az provider show -n Microsoft.VirtualMachineImages | grep registrationState
 az provider show -n Microsoft.Storage | grep registrationState
 
 az provider show -n Microsoft.Compute | grep registrationState
+
+az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
 If they do not saw registered, run the commented out code below.
@@ -37,6 +39,8 @@ If they do not saw registered, run the commented out code below.
 ## az provider register -n Microsoft.Storage
 
 ## az provider register -n Microsoft.Compute
+
+## az provider register -n Microsoft.KeyVault
 
 ```
 
