@@ -39,8 +39,8 @@ Try
 
 
  # set test file location
-    $TestWebAppInstall = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/10_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.ps1'
-    $TestWebAppInstallTests = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/10_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.Tests.ps1'
+    $TestWebAppInstall = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/9_Telemetry_Unit_Testing/webAppTests/Test-webAppInstall-install.ps1'
+    $TestWebAppInstallTests = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/9_Telemetry_Unit_Testing/webAppTests/Test-webAppInstall-install.Tests.ps1'
 
 
     # install Pester, and run install unit tests
@@ -72,8 +72,8 @@ Try
 
     # copy down tests from git
 
-    Invoke-WebRequest $Testfxlogixinstall -OutFile $path\tests\Test-fxlogix-install.ps1
-    Invoke-WebRequest $TestfxlogixinstallTests -OutFile $path\tests\Test-fxlogix-install.Tests.ps1    
+    Invoke-WebRequest $Testfxlogixinstall -OutFile $path\tests\Test-webAppInstall-install.ps1
+    Invoke-WebRequest $TestfxlogixinstallTests -OutFile $path\tests\Test-webAppInstall-install.Tests.ps1   
 
     cd $path\tests
     $resultsFile = "$path\tests\TestResults.xml"
