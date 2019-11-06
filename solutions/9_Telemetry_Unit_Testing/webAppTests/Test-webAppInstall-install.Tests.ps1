@@ -19,7 +19,7 @@ Describe "Test-webAppInstall-install" {
     }
 
     It 'Check page response status code' {
-        $appTest.StatusCode | Should -Be '200'
+        $appTest.StatusCode | Should -Be '500'
 
     }
     It 'Check page contents status contains Overview' {
