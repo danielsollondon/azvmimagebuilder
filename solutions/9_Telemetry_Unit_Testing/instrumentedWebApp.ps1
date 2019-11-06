@@ -47,7 +47,7 @@ Try
         New-Item $path -type Directory
         }
         # Copy over build artifacts
-        Copy-Item "C:\buildArtifacts\webApp\*" -Destination "C:\ImageBuilderWebApp" -Recurse -Force
+        Copy-Item "C:\buildArtifacts\webApp\Default.htm" -Destination "C:\ImageBuilderWebApp" -Recurse -Force
         
         send-aibRealTime -endpoint $endPoint -jobId $jobId -stepType 'customize' -stepName 'iis install' -msg 'iis install completed' -status 'success'
 }

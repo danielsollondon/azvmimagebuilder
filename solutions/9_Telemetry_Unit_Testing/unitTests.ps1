@@ -1,5 +1,7 @@
 Param ($endPoint, $jobId)
 
+Write-Host $endPoint, $jobId
+
 # Download, Install Pester, Upgrade, and run Unit test
 
 ## Enable Telemetry
@@ -37,8 +39,8 @@ Try
 
 
  # set test file location
-    $TestWebAppInstall = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/7_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.ps1'
-    $TestWebAppInstallTests = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/7_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.Tests.ps1'
+    $TestWebAppInstall = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/10_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.ps1'
+    $TestWebAppInstallTests = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/10_Unit_testing/0_standaloneUnitTests/fslogixTests/Test-fxlogix-install.Tests.ps1'
 
 
     # install Pester, and run install unit tests
@@ -86,6 +88,7 @@ Catch
 
     $FailedItem = $_.Exception.ItemName
     Write-Host $FailedItem
+
 }
 
 
@@ -93,6 +96,7 @@ Catch
 Write-host 'Running Pester'
 send-aibRealTime -endpoint $endPoint -jobId $jobId -stepType 'test' -stepName 'iis unit tests' -msg 'iis webapp pester tests starting' 
 $result = Invoke-Pester -PassThru -OutputFile $resultsFile -OutputFormat NUnitXml
+
 
 
 If ($result.FailedCount -ne 0) {
@@ -104,9 +108,9 @@ If ($result.FailedCount -ne 0) {
   }  Else {
 
   Write-host 'Tests have passed...Yeee haaaaaa'
-  send-aibRealTime -endpoint $endPoint -jobId $jobId -stepType 'test' -stepName 'iis unit tests' -msg 'iis webapp pester tests completed' -status 'success'
+  send-aibRealTime -endpoint $endPoint -jobId $jobId -stepType 'test' -stepName 'iis unit tests' -msg 'iis webapp pester tests starting' -status 'success'
 
 } 
    
-s 
+
 
