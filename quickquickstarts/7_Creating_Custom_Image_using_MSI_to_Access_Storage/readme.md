@@ -7,6 +7,8 @@ This article shows how to create a basic customized image using the Azure VM Ima
 
 In the example below, you will create two resource groups, one will be used for the custom image created, and the other one will just host an Azure Storage Account, that includes a scipt file. You will create a user-assigned identity, then grant that read permissions on the script file, and pass that identity to Image Builder. 
 
+>>> Note! A PowerShell version of this quickstart is in development [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/testingArea/7_Creating_Custom_Win_Image_using_MSI_to_Access_Storage), expect this to be released mid-Decemeber.
+
 Here is a short video on how the example below works.
 
 [<img src="./aibMsi.png" alt="drawing" width="450"/>
