@@ -10,6 +10,11 @@
     "properties": {
 
         "buildTimeoutInMinutes" : 100,
+
+        "vmProfile": 
+                {
+                "vmSize": "Standard_D1_v2"
+                },
         
         "source": {
             "type": "PlatformImage",
@@ -23,6 +28,7 @@
             {
                 "type": "PowerShell",
                 "name": "CreateBuildPath",
+                "runElevated": false,
                 "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testPsScript.ps1"
             },
             {
@@ -40,6 +46,7 @@
             {
                 "type": "PowerShell",
                 "name": "settingUpMgmtAgtPath",
+                "runElevated": false,
                 "inline": [
                     "mkdir c:\\buildActions",
                     "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt"

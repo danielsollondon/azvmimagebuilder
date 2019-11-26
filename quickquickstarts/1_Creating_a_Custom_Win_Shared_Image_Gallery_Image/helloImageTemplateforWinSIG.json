@@ -4,6 +4,14 @@
     "location": "<region1>",
     "dependsOn": [],
     "properties": {
+        
+        "buildTimeoutInMinutes" : 100,
+
+        "vmProfile": 
+        {
+        "vmSize": "Standard_D1_v2"
+        },
+
         "source": {
             "type": "PlatformImage",
             "publisher": "MicrosoftWindowsServer",
@@ -16,6 +24,7 @@
             {
                 "type": "PowerShell",
                 "name": "settingUpMgmtAgtPath",
+                "runElevated": false,
                 "inline": [
                     "mkdir c:\\buildActions",
                     "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt" 
