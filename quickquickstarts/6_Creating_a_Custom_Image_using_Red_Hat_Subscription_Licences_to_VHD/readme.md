@@ -22,15 +22,19 @@ az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachine
 # check you are registered for the providers
 
 az provider show -n Microsoft.VirtualMachineImages | grep registrationState
-
 az provider show -n Microsoft.Storage | grep registrationState
+az provider show -n Microsoft.Compute | grep registrationState
+az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
 If they do not saw registered, run the commented out code below.
 ```bash
 ## az provider register -n Microsoft.VirtualMachineImages
-
 ## az provider register -n Microsoft.Storage
+## az provider register -n Microsoft.Compute
+## az provider register -n Microsoft.KeyVault
+
+
 ```
 
 ## Set Permissions & Create Resource Group for Image Builder Images
@@ -150,13 +154,4 @@ az group delete -n $imageResourceGroup
 ```
 
 ## Next Steps
-* Want to learn more???
-    * Explore the documentation in the [MS Teams channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) (Files).
-    * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
-
-    ```bash
-    cat helloImageTemplate.json
-    ```
-
-* Want to try more???
-* Image Builder does support deployment through Azure Resource Manager, see here in the repo for [examples](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates), you will also see how you can use a RHEL ISO source too, and manu other capabilities.
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../quickquickstarts/nextSteps.md)]

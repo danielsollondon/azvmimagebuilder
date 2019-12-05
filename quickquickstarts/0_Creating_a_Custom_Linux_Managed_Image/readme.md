@@ -1,10 +1,19 @@
 # Create a Custom Image from an Azure Platform Vanilla OS Image
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region. This covers using 4 different customizations:
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region. This covers using mutliple customizations to illustrate some high level functionality:
 * Shell (ScriptUri) - Downloading a bash script and executing it
+* Shell (ScriptUri) with file validation, using sha256Checksum:
+    * Checksum your Script file locally, then pass this to Image Builder to compare the checksum during the image build. 
+    * To generate the sha256Checksum, using a terminal on Mac/Linux run:
+    ```bash
+    sha256sum <fileName>
+    ```
 * Shell (inline) - Execute an array of commands
-* File - Copy a html file from github
+* File - Copy a html file from github to a specified, pre-created directory
+    * This also supports *sha256Checksum* property too.
 * buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
+* vmProfile - By default Image Builder will use a "Standard_D1_v2" build VM, you can override this, for example, if you want to customize an Image for a GPU VM, you need a GPU VM size.
+
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -18,20 +27,25 @@ az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMac
 
 az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview | grep state
 
+az feature show --namespace Microsoft.KeyVault --name VirtualMachineTemplatePreview | grep state
+
 # wait until it says registered
 
 # check you are registered for the providers
 
 az provider show -n Microsoft.VirtualMachineImages | grep registrationState
-
 az provider show -n Microsoft.Storage | grep registrationState
+az provider show -n Microsoft.Compute | grep registrationState
+az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
 If they do not saw registered, run the commented out code below.
 ```bash
 ## az provider register -n Microsoft.VirtualMachineImages
-
 ## az provider register -n Microsoft.Storage
+## az provider register -n Microsoft.Compute
+## az provider register -n Microsoft.KeyVault
+
 ```
 
 ## Set Permissions & Create Resource Group for Image Builder Images
@@ -144,13 +158,4 @@ az group delete -n $imageResourceGroup
 ```
 
 ## Next Steps
-* Want to learn more???
-    * Explore the documentation in the [MS Teams channel](https://teams.microsoft.com/l/channel/19%3a03e8b2922c5b44eaaaf3d0c7cd1ff448%40thread.skype/General?groupId=a82ee7e2-b2cc-49e6-967d-54da8319979d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) (Files).
-    * Look at the composition of the Image Builder Template, look in the 'Properties' you will see the source image, customization script it runs, and where it distributes it.
-
-    ```bash
-    cat helloImageTemplateLinux.json
-    ```
-
-* Want to try more???
-* Image Builder does support deployment through Azure Resource Manager, see here in the repo for [examples](https://github.com/danielsollondon/azvmimagebuilder/tree/master/armTemplates), you will also see how you can use a RHEL ISO source too, and manu other capabilities.
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../quickquickstarts/nextSteps.md)]

@@ -9,4 +9,4 @@ If you want to learn more:
         * Please raise a GitHub issue
     * [Image Builder Permissions](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md)
     * Join the Community
-        * We have a private MS Teams channel where the image builder team take questions and feedback, sign up [here]().
+        * We have a private MS Teams channel where the image builder team take questions and feedback, sign up [here](https://aka.ms/aibfeedback).

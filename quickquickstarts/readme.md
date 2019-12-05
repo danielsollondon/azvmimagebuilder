@@ -40,4 +40,4 @@ These are designed to get you started quickly, where at a minimum you just need 
 * Management - e.g. managing images updates and global region replication
 
 ## Next Steps
-[!INCLUDE [Next Steps](../quickquickstarts/nextSteps.md)]
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../quickquickstarts/nextSteps.md)]
