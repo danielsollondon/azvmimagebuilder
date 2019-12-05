@@ -1,6 +1,6 @@
 # Azure VM Image Builder Quick QuickStarts
 
-Welcome to the Azure VM Image Builder QuickStarts, these are some key scenarios you can test using Azure CloudShell in the Portal, or Azure CLI.
+Welcome to the Azure VM Image Builder QuickStarts, these are some key features you can test using Azure CloudShell in the Portal, Azure CLI, PowerShell.
 
 **First time using Image Builder??** 
 
@@ -10,8 +10,9 @@ Get started with the short walkthrough video below, or go straight to the Quick 
 ](https://youtu.be/IgKARHm5Yus)
 
 **Second time using Image Builder??**  
-On the 12th March we have just released a whole wave of New Features and API version, see here for [details](/aibMarch2019Update.md).
+We constantly update features, see the [Latest Release Information](https://github.com/danielsollondon/azvmimagebuilder#latest-release-information)!
 
+We are always adding new quick starts, but these are some key examples:
 
 1. [Create a Custom Linux Image from an Azure Platform Vanilla OS Image.](./0_Creating_a_Custom_Linux_Managed_Image/readme.md)
 
@@ -39,8 +40,4 @@ These are designed to get you started quickly, where at a minimum you just need 
 * Management - e.g. managing images updates and global region replication
 
 ## Next Steps
-* Want to learn more???
-    * Explore the detailed documentation in [MS Docs](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json) (Files).
-
-* Want to try more???
-* Image Builder does support deployment through Azure Resource Manager, see here in the repo for [examples](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/4_Using_ENV_Variables), you will also see how you can use a RHEL ISO source too, and manu other capabilities.
+[!INCLUDE [Next Steps](../quickquickstarts/nextSteps.md)]
