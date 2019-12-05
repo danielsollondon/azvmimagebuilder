@@ -28,7 +28,7 @@ GA - Early 2020
 ### December 2019 Updates
 We constantly update the Image Builder Service, and its been a while since we summarized recent updates here:
 
-* [PowerShell Customizer Elevated Permssions](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json#L31)
+* [PowerShell Customizer Elevated Permissions](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json#L31)
     * PowerShell Support for running commands and scripts with elevated permissions
 * [Checksum File Validation](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L37)
     * PowerShell / Shell / File Customizer Support for checkSum
