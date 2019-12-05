@@ -37,8 +37,9 @@ We constantly update the Image Builder Service, and its been a while since we su
     * The default timeout of the image is currently 4hours, but can be reduced or increased upto 16hours.
 * [Change Build VM Size](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L13)
     * By default Image Builder will use a "Standard_D1_v2" build VM, but you may want to use a different VM size, since you may restrict this through Azure Policy, you have customizations that are compute intensive, or you need customize images that can only be run on certain types of VM Size types, e.g. if you want to customize an Image for a GPU VM, you need a GPU VM size.
-* [Windows Client / Virtual Desktop OS Support](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L37)
-    * Many customers are testing Image Builder to support customizing Windows Desktop images.
+* [Windows Client / Virtual Desktop OS Support](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image)
+    * Many customers are testing Image Builder to support customizing Windows Desktop images, see the PowerShell example on how you can get started building Win10 Images.
+    * Win10 client images supported [here](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview#os-support).
 * [DevOps Task Updates](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/1_Azure_DevOps#the-azure-vm-image-builder-devops-task)
     * Specify source Azure Market Place OS image versions
     * Improved performance and reliability enhancements for Windows builds
