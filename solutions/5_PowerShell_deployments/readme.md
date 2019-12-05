@@ -1,4 +1,4 @@
-# Using PowerShell to Create a Windows 10 Custom Image using Azure VM Image Builder (Preview Example)
+# Using PowerShell to Create a Windows Server Custom Image using Azure VM Image Builder
 
 Most of the examples for Azure VM Image Builder (AIB) using the Azure CLI, this example shows how you can use PowerShell to do the same.
 
@@ -24,11 +24,15 @@ Get-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderNamesp
 # check you are registered for the providers, ensure RegistrationState is set to 'Registered'.
 Get-AzResourceProvider -ProviderNamespace Microsoft.VirtualMachineImages
 Get-AzResourceProvider -ProviderNamespace Microsoft.Storage 
+Get-AzResourceProvider -ProviderNamespace Microsoft.Compute
+Get-AzResourceProvider -ProviderNamespace Microsoft.KeyVault
 
 # If they do not saw registered, run the commented out code below.
 
 ## Register-AzResourceProvider -ProviderNamespace Microsoft.VirtualMachineImages
 ## Register-AzResourceProvider -ProviderNamespace Microsoft.Storage
+## Register-AzResourceProvider -ProviderNamespace Microsoft.Compute
+## Register-AzResourceProvider -ProviderNamespace Microsoft.KeyVault
 ```
 
 ## Step 1: Set up environment and variables
@@ -182,6 +186,8 @@ Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force
 ```powerShell
 Remove-AzResourceGroup $imageResourceGroup -Force
 ```
+## Next Steps
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../../quickquickstarts/nextSteps.md)]
 
 
 

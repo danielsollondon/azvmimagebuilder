@@ -13,13 +13,39 @@ Here is a complete walkthrough, step by step video on how the example below.
 ](https://youtu.be/lqIA0VHe5Do)
 
 ## Prerequisites
-1. Ensure you have registered for the Image Builder [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#register-for-image-builder--vm--storage-features).
+1. Ensure you have registered for the Image Builder and enable requirements (see code below).
 2. You must have a VSTS DevOps account
 3. Install the extension from [Visual Studio Marketplace](https://marketplace.visualstudio.com/azuredevops), DevOps, search for 'Image Builder.'
-4. Create a Resource Group(RG) - this will be used for image distribution
-5. Create Azure Shared Image Gallery (SIG) and Image Definition – this will be created in the RG above
-6. Create a storage account – is used transfer the repo artifacts from the DevOps task to the image.
+4. Create a Resource Group(RG) - this will be used for image distribution (see code below).
+5. Create Azure Shared Image Gallery (SIG) and Image Definition – this will be created in the RG above (see code below).
+6. Create a storage account – is used transfer the repo artifacts from the DevOps task to the image (see code below).
 
+### Code to do steps 1 - Register and enable requirements
+```bash
+az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview
+
+az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview | grep state
+
+# register and enable for shared image gallery
+az feature register --namespace Microsoft.Compute --name GalleryPreview
+
+# wait until it says registered
+
+# check you are registered for the providers
+az provider show -n Microsoft.VirtualMachineImages | grep registrationState
+az provider show -n Microsoft.Storage | grep registrationState
+az provider show -n Microsoft.Compute | grep registrationState
+az provider show -n Microsoft.KeyVault | grep registrationState
+```
+
+If they do not saw registered, run the commented out code below.
+```bash
+## az provider register -n Microsoft.VirtualMachineImages
+## az provider register -n Microsoft.Storage
+## az provider register -n Microsoft.Compute
+## az provider register -n Microsoft.KeyVault
+
+```
 
 ### Code to do steps 4 to 6
 ```bash
@@ -182,3 +208,8 @@ az sig delete -r $sigName -g $aibResourceGroup
 
 # delete RG
 az group delete -n $aibResourceGroup -y
+```
+
+## Next Steps
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../../quickquickstarts/nextSteps.md)]
+

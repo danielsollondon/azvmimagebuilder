@@ -1,5 +1,5 @@
 # Documentation for the Azure VM Image Builder DevOps Task  
-Task version: v1
+Current task version: v1.0.31 
 
 ## V1 Design Purpose
 This task is designed to take your build artifacts, and inject them into a VM image, so you can install, configure your application, and OS.
@@ -10,9 +10,36 @@ Go to the [Visual Studio Marketplace](https://marketplace.visualstudio.com), sea
 ## Prereqs
 * You must have a VSTS DevOps account, and a Build Pipeline created
 * Create a Standard Azure Storage Account in the source image Resource Group, you can use other Resource Group/Storage accounts, but you must ensure the Image Builder has contributor permissions to the Storage account. This is used transfer the build artifacts from the DevOps task to the image.
-* Ensure you have registered for the Image Builder [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#register-for-image-builder--vm--storage-features).
+* Register and enable requirements, as per below:
+```bash
+az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview
+
+az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview | grep state
+
+# register and enable for shared image gallery
+az feature register --namespace Microsoft.Compute --name GalleryPreview
+
+# wait until it says registered
+
+# check you are registered for the providers
+az provider show -n Microsoft.VirtualMachineImages | grep registrationState
+az provider show -n Microsoft.Storage | grep registrationState
+az provider show -n Microsoft.Compute | grep registrationState
+az provider show -n Microsoft.KeyVault | grep registrationState
+```
+
+If they do not saw registered, run the commented out code below.
+```bash
+## az provider register -n Microsoft.VirtualMachineImages
+## az provider register -n Microsoft.Storage
+## az provider register -n Microsoft.Compute
+## az provider register -n Microsoft.KeyVault
+
+```
 ```bash
 # create storage account and blob in resource group
+subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+z account set -s $subscriptionID
 strResourceGroup=<ResourceGroupName>
 location=westus
 scriptStorageAcc=aibstordot$(date +'%s')
@@ -33,7 +60,7 @@ Select from the drop down menu which subscription you want the Image Builder to 
 
 ### Resource Group
 This is the Resource Group where the temporary Image Template artifact will be stored. 
-As discussed in the other docs, when creating a template artifact , this creates a temporary Image Builder resource group, ‘'IT_<DestinationResourceGroup>_<TemplateName>'. This stores the image metadata, such as scripts. At the end of the task, we delete the Image Template artifact, and therefore, temporary Image Builder Resource Group.
+As discussed in the other docs, when creating a template artifact , this creates an additional temporary Image Builder resource group, ‘'IT_<DestinationResourceGroup>_<TemplateName>'. This stores the image metadata, such as scripts. At the end of the task, we delete the Image Template artifact, and therefore, temporary Image Builder Resource Group.
  
 ### Location
 This is the location where the Image Builder will run, we only support a set amount of locations. The source images must be present in this location, so for example, if you are using Shared Image Gallery, a replica must exist in that region.
@@ -50,7 +77,7 @@ The source images must be of the supported Image Builder OS's. You can choose ex
 ```
 
 * Marketplace Base Images
-Image Builder will select the 'latest' version of the supported OS's, you cannot specify an image version.
+Image Builder will defaults to using the 'latest' version of the supported OS's, you can specify an image version (optional).
 
 ### Customize
 
@@ -112,7 +139,7 @@ There are 3 distribute types supported:
     /subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>
     ```
     * Locations
-* Azure Shared Image Gallery - this must already exist! The 
+* Azure Shared Image Gallery - this MUST already exist!  
     * ResourceID: 
     ```bash
     /subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<galleryName>/images/<imageDefName>
@@ -161,6 +188,13 @@ The image template, and ‘'IT_<DestinationResourceGroup>_<TemplateName>' will b
 
 You can take the '$(imageUri)' VSTS variable and use this in the next task, or just take its value and build a VM.
 
+## Output DevOps Variables
+* Pub/offer/SKU/Version of the source marketplace image:
+    * $(pirPublisher)
+    * $(pirOffer)
+    * $(pirSku)
+    * $(pirVersion)
+
 ## FAQ
 1. Can i use an existing image template i have already created, outside of DevOps?
 No, but stay tuned!!
@@ -168,5 +202,25 @@ No, but stay tuned!!
 2. Can i specifiy the image template name?
 No, we generate a unique template name, then destroy it after.
 
-3. The image builder failed, how can i troubleshoot, review the [troubleshooting guide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md)
+3. The image builder failed, how can i troubleshoot?
+* If there is a build failure the DevOps task will not delete the staging resource group, this is so you can access the staging resource group, that contains the build customization log.
+* You will see an error in the DevOps Log for the VM Image Builder task, and see the customization.log location, as per below:
+![alt text](./devOpsTaskError.png "devOps Error")
+* Review the [troubleshooting guide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md) to see common issues and resolutions. 
+* After investigating the failure, to delete the staging resource group, delete the Image Template Resource artifact, this is prefixed with 't_', and can be found in the DevOps task build log:
+
+```text
+...
+Source for image:  { type: 'SharedImageVersion',
+  imageVersionId: '/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<galleryName>/images/<imageDefName>/versions/<imgVersionNumber>' }
+...
+template name:  t_1556938436xxx
+...
+```
+The Image Template Resource artifact will be in the resource group specified initially in the task, you just need to delete it. Note, if deleting via the Azure Portal, when in the resource group, select 'Show Hidden Types', to view the artifact.
+
+* If you still see issues, raise a GitHub issue here.
+
+## Next Steps
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../../quickquickstarts/nextSteps.md)]
 

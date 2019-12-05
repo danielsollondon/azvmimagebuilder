@@ -22,6 +22,44 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 
 ## Latest Release Information
 
+### Timelines
+GA - Early 2020
+
+### December 2019 Updates
+We constantly update the Image Builder Service, and its been a while since we summarized recent updates here:
+
+* [PowerShell Customizer Elevated Permssions](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json#L31)
+    * PowerShell Support for running commands and scripts with elevated permissions
+* [Checksum File Validation](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L37)
+    * PowerShell / Shell / File Customizer Support for checkSum
+    * Checksum the file a file locally, then Image Builder will checksum and validate.
+* [Increase Build Time](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L11)
+    * The default timeout of the image is currently 4hours, but can be reduced or increased upto 16hours.
+* [Change Build VM Size](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L13)
+    * By default Image Builder will use a "Standard_D1_v2" build VM, but you may want to use a different VM size, since you may restrict this through Azure Policy, you have customizations that are compute intensive, or you need customize images that can only be run on certain types of VM Size types, e.g. if you want to customize an Image for a GPU VM, you need a GPU VM size.
+* [Windows Client / Virtual Desktop OS Support](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L37)
+    * Many customers are testing Image Builder to support customizing Windows Desktop images.
+* [DevOps Task Updates](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/1_Azure_DevOps#the-azure-vm-image-builder-devops-task)
+    * Specify source Azure Market Place OS image versions
+    * Improved performance and reliability enhancements for Windows builds
+    * Improved Build Log support
+        * Source Azure Market Place Image Pub/offer/SKU/Version emitted into DevOps variables.
+  
+* Supportability
+    * Improved error messages, with log error location
+    * Multiple bug and reliability enhancements
+    * Support for raising image builder Microsoft support cases
+    * [Join the Image Builder Community MS Teams Channel](https://aka.ms/aibfeedback)
+        * Give feedback, share ideas, contact the engineering team
+
+* [Shared Image Gallery Version Modifications](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/11_Modifying_SIG_Versions_Post_Build#modifying-shared-image-gallery-versions-post-image-build)
+    * Support for Image Version updates post image build, such as updating regions, replicas etc is now supported.
+
+* PowerShell examples
+    * [Create a Windows Custom Image and distibute to Shared Image Gallery](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image)
+    * [Create a Windows Custom Image and distibute to Managed Image](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/5_PowerShell_deployments#using-powershell-to-create-a-windows-10-custom-image-using-azure-vm-image-builder-preview-example)
+
+
 ### May 2019 Release
 
 * Release Date : 10th May 1000 PST

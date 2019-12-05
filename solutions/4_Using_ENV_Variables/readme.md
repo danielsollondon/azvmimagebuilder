@@ -169,3 +169,7 @@ az resource delete \
 
 az group delete -n $imgResourceGroup 
 ```
+
+## Next Steps
+If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../../quickquickstarts/nextSteps.md)]
+
