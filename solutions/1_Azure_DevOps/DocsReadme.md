@@ -96,7 +96,7 @@ Click on the Build Path button, to select the build folder you want to be placed
 When the image is being created, Image Builder will deploy them into different paths, depending on OS.
 
 >> Note!!!
-When adding a Repo artifact, you may find the directory is prefixed with'_', this can issues with the inline commands, use the appropriate quotes in the commands.
+When adding a Repo artifact, you may find the directory is prefixed with'_', this can cause issues with the inline commands, use the appropriate quotes in the commands.
 
 Lets use this example to explain how this works:
 ![alt text](./buildArtifacts.PNG "Add an Artifact")
@@ -106,8 +106,6 @@ In the 'C:\\', a directory named 'buildArtifacts' will be created, with the weba
 
 * Linux - 
 In /tmp, the webapp directory will be created, with all files and directories, you MUST move the files from this directory, otherwise, they will be deleted.
-
-You will need to use a customization command(s) to move the files.
 
 #### Inline Customization Script
 * Windows
