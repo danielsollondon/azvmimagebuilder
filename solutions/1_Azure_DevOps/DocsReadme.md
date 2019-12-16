@@ -95,6 +95,9 @@ Click on the Build Path button, to select the build folder you want to be placed
 
 When the image is being created, Image Builder will deploy them into different paths, depending on OS.
 
+>> Note!!!
+When adding a Repo artifact, you may find the directory is prefixed with'_', this can issues with the inline commands, use the appropriate quotes in the commands.
+
 Lets use this example to explain how this works:
 ![alt text](./buildArtifacts.PNG "Add an Artifact")
 
@@ -114,10 +117,39 @@ You can enter powershell inline commands separated by commas, and if you want to
 ```
 
 * Linux
-Similar to the above, commands are separated by commas, but you need to move the files:
+On Linux systems the build artifacts are put into the '/tmp' directory, however, on many Linux OS's, on a reboot, the /tmp directory contents are deleted, so if you want these to exist in the image, you must create another directory, and copy them over, for example:
+
 ```bash
 sudo mkdir /lib/buildArtifacts
-sudo cp -r /tmp/webapp /lib/buildArtifacts/.
+sudo cp -r "/tmp/_ImageBuilding/webapp" /lib/buildArtifacts/.
+```
+
+If you are ok using the "/tmp" directory, then you can use the code below to execute the script.
+
+```bash
+# grant execute permissions to execute scripts
+sudo chmod +x "/tmp/_ImageBuilding/webapp/coreConfig.sh"
+echo "running script"
+sudo . "/tmp/AppsAndImageBuilderLinux/_WebApp/coreConfig.sh"
+```
+
+#### What happens to the build artifacts after the image build?
+>> Note! Image Builder does not automatically remove the build artifacts, it is strongly suggested that you always have code to remove the build artifacts!
+
+* Windows - Image builder deploys files to the 'c:\buildArtifacts' directory, this is a persisted directory, and therefore you must remove the 'c:\buildArtifacts' directory, you can do this in your within the script you execute, for example:
+
+```PowerShell
+# Clean up buildArtifacts directory
+Remove-Item -Path "C:\buildArtifacts\*" -Force -Recurse
+
+# Delete the buildArtifacts directory
+Remove-Item -Path "C:\buildArtifacts" -Force 
+```
+
+* Linux - As previously mentioned, the build artifacts are put into thr '/tmp' directory, however, on many Linux OS's, on a reboot, the /tmp directory contents are deleted, it is strongly suggested that you have code to remove the contents, and not rely on the OS to remove the contents:
+
+```bash
+sudo rm -R "/tmp/AppsAndImageBuilderLinux"
 ```
 
 #### Total length of image build
@@ -194,7 +226,8 @@ You can take the '$(imageUri)' VSTS variable and use this in the next task, or j
     * $(pirOffer)
     * $(pirSku)
     * $(pirVersion)
-
+* Image URI - The ResourceID of the distributed image:
+    * $(imageUri)
 ## FAQ
 1. Can i use an existing image template i have already created, outside of DevOps?
 No, but stay tuned!!

@@ -15,3 +15,6 @@ New-NetFirewallRule -DisplayName "Allow Outbound Port 8080" -Direction Inbound -
 
 # Clean up buildArtifacts directory
 Remove-Item -Path "C:\buildArtifacts\*" -Force -Recurse
+
+# Delete the buildArtifacts directory
+Remove-Item -Path "C:\buildArtifacts" -Force 
