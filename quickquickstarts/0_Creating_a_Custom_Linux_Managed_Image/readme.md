@@ -12,7 +12,11 @@ This article is to show you how you can create a basic customized image using th
 * File - Copy a html file from github to a specified, pre-created directory
     * This also supports *sha256Checksum* property too.
 * buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
-* vmProfile - By default Image Builder will use a "Standard_D1_v2" build VM, you can override this, for example, if you want to customize an Image for a GPU VM, you need a GPU VM size.
+* vmProfile:
+    * vmSize
+        By default Image Builder will use a "Standard_D1_v2" build VM, you can override this, for example, if you want to customize an Image for a GPU VM, you need a GPU VM size. This is optional.
+    * osDiskSizeGB
+        * By default, Image Builder will not change the size of the image, it will use the size from the source image. You can adjust the size of the OS Disk (Win and Linux), note, do not go too small than the minimum required space required for the OS. This is optional, and a value of 0 means leave the same size as the source image.
 
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.

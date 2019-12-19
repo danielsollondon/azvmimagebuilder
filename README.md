@@ -25,6 +25,14 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 ### Timelines
 GA - Early 2020
 
+### December 2019 Updates Part 2
+The work never ends, latest customization support:
+
+* [osDiskSizeGB](https://github.com/danielsollondon/azvmimagebuilder/blob/b6a9c80612b24d94cb2cd8863ba81c4e77f2e528/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L16)
+    * You can adjust the size of the OS Disk (Win and Linux). Details for this are in these quickstarts [Windows](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#create-a-windows-custom-image-from-an-azure-platform-vanilla-os-image) and [Linux](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image#create-a-custom-image-from-an-azure-platform-vanilla-os-image)
+
+* There will be more updates in January! On behalf of the team, thank you to everyone who has tried Image Builder, and given feedback, we really appreciate it. Happy Holidays!!!!
+
 ### December 2019 Updates
 We constantly update the Image Builder Service, and its been a while since we summarized recent updates here:
 
