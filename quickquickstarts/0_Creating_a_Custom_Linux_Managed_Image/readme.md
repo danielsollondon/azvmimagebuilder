@@ -44,7 +44,7 @@ az provider show -n Microsoft.Compute | grep registrationState
 az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
-If they do not saw registered, run the commented out code below.
+If they do not say registered, run the commented out code below.
 ```bash
 ## az provider register -n Microsoft.VirtualMachineImages
 ## az provider register -n Microsoft.Storage
