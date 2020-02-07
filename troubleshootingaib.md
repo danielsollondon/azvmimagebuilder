@@ -136,7 +136,6 @@ In this case the fix was to prefix the command with 'sudo', but these logs are u
 Note! This is a public preview, not all the errors are refined yet, we are working to improve these all the time.
 
 
-
 ### Customizer Failures
 If one of the customizer (Shell/PowerShell/File etc) reports failure, then the customizer will report failure.
 
@@ -185,6 +184,16 @@ az resource show --resource-group $imageBuilderTemplateResGrp --resource-type  M
 ```
 
 Review the 'lastRunStatus' for current runState.
+
+### Getting Status of the image distribution
+Each distribution you specify in the template has runOutput property, this holds metadata about the distribution, for example, it will show which SIG version has been created, or VHD.
+
+```bash
+$runOutputName=<distributionRunOutput>
+az resource show \
+    --ids "/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/$imageTemplateName/runOutputs/$runOutputName"  \
+    --api-version=2019-05-01-preview
+```
 
 ### VMs created from AIB images do not create successfully
 
