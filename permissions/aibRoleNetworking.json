@@ -1,0 +1,17 @@
+{
+    "Name": "Azure Image Builder Service Networking Role",
+    "IsCustom": true,
+    "Description": "Image Builder access to create resources for the image build",
+    "Actions": [
+        "Microsoft.Network/loadBalancers/write",
+        "Microsoft.Network/virtualNetworks/read",
+        "Microsoft.Network/virtualNetworks/subnets/join/action"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/<subscriptionID>/resourceGroups/<vnetRgName>"
+    ]
+  }
+
