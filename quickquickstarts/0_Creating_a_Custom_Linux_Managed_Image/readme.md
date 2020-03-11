@@ -1,24 +1,14 @@
 # Create a Custom Image from an Azure Platform Vanilla OS Image
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region. This covers using mutliple customizations to illustrate some high level functionality:
+
+This covers using mutliple customizations to illustrate some high level functionality:
 * Shell (ScriptUri) - Downloading a bash script and executing it
-* Shell (ScriptUri) with file validation, using sha256Checksum:
-    * Checksum your Script file locally, then pass this to Image Builder to compare the checksum during the image build. 
-    * To generate the sha256Checksum, using a terminal on Mac/Linux run:
-    ```bash
-    sha256sum <fileName>
-    ```
 * Shell (inline) - Execute an array of commands
 * File - Copy a html file from github to a specified, pre-created directory
-    * This also supports *sha256Checksum* property too.
 * buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
-* vmProfile:
-    * vmSize
-    
-        By default Image Builder will use a "Standard_D1_v2" build VM, you can override this, for example, if you want to customize an Image for a GPU VM, you need a GPU VM size. This is optional.
-    * osDiskSizeGB
-        * By default, Image Builder will not change the size of the image, it will use the size from the source image. You can adjust the size of the OS Disk (Win and Linux), note, do not go too small than the minimum required space required for the OS. This is optional, and a value of 0 means leave the same size as the source image.
-
+* vmProfile - specifying a vmSize and Network properties
+* osDiskSizeGB - you can increase the size of image
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -59,14 +49,14 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # destination image resource group
-imageResourceGroup=aibmdi
+imageResourceGroup=aibmdi001
 
 # location (see possible locations in main docs)
 location=WestUS2
 
 # your subscription
 # get the current subID : 'az account show | grep id'
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 
 # name of the image to be created
 imageName=aibCustomLinuxImg01
@@ -77,10 +67,23 @@ runOutputName=aibCustLinManImg01ro
 # create resource group
 az group create -n $imageResourceGroup -l $location
 
-# assign permissions for that resource group
+
+# setting AIB SPN Permissions to distribute a Managed Image or Shared Image 
+
+# download preconfigured example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the AIB SPN
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --role "Azure Image Builder Service Image Creation Role" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
 ```
@@ -157,8 +160,14 @@ az resource delete \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateLinux01
 
-az group delete -n $imageResourceGroup
+az role assignment delete \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role "Azure Image Builder Service Image Creation Role" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
+az role definition delete --name "Azure Image Builder Service Image Creation Role"
+
+az group delete -n $imageResourceGroup
 
 ```
 
