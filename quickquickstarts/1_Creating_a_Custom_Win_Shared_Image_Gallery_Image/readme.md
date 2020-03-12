@@ -213,7 +213,7 @@ Now the build is finished you can build a VM from the image, use the examples fr
 # Clean Up
 
 >>> Note!!!
->>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *8_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
+>>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *2_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
 
 Delete the resource group template first, do not just delete the entire resource group, otherwise the staging resource group (*IT_*) used by AIB will not be cleaned up.
 

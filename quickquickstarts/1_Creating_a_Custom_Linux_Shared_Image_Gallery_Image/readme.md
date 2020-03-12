@@ -63,8 +63,8 @@ additionalregion=eastus
 
 # your subscription
 # get the current subID : 'az account show | grep id'
-# or you can use this: subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 
 # name of the shared image gallery, e.g. myCorpGallery
 sigName=my21stSIG
@@ -137,7 +137,6 @@ sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIG.json
 sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIG.json
 
 ```
->> Note, this example shows limited customizations, to see more possible customizations, see this [example](./0_Creating_a_Custom_Linux_Managed_Image).
 
 ## Step 3 : Create the Image
 
@@ -188,7 +187,7 @@ You should see the image was customized with a Message of the Day as soon as you
 ```
 
 ## Clean Up
->>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
+>>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *2_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
 
 ```bash
 # BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
