@@ -72,10 +72,10 @@ Microsoft.Network/virtualNetworks/subnets/join/action
 ```
 
 ## Creating Azure Role Definition and Assignment from Actions
-The examples below show creating a Role Definition from the actions above, but these are being applied at the resource group level, but you should evaluate and test if these are granular enough for your requirements. For example the scope is set to the resource group, you maybe able to refine it to a specific resource.
+The examples below show creating a Role Definition from the actions above, but these are being applied at the resource group level, but you should evaluate and test if these are granular enough for your requirements. For example the scope is set to the resource group, you maybe able to refine it to a specific Shared Image Gallery. The image actions allow read and write, you should decide what is appropriate for your environment, for example, you may create a role to allow AIB to read images from resource group 1 and allow it to write images to resource group 2.
 
 ### AZ CLI Examples
-#### Setting AIB SPN Permissions to distribute a Managed Image or Shared Image 
+#### Setting AIB SPN Permissions to use source custom image and distribute a custom image
 ```bash
 # set your variables
 subscriptionID=<subID>
@@ -122,12 +122,12 @@ az role assignment create \
 ```
 
 ### Azure PowerShell Examples
-#### Setting AIB SPN Permissions to distribute a Managed Image or Shared Image 
+#### Setting AIB SPN Permissions to use source custom image and distribute a custom image
 ```powerShell
 # set your variables
 
 # download preconfigured example
-$aibRoleImageCreationUrl="https://raw.githubusercontent.com/../aibRoleImageCreation.json"
+$aibRoleImageCreationUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json"
 $aibRoleImageCreationPath = "aibRoleImageCreation.json"
 
 Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPath -UseBasicParsing
@@ -150,7 +150,7 @@ New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinit
 # set your variables
 
 # download preconfigured example
-$aibRoleNetworkingUrl="https://raw.githubusercontent.com/../aibRoleNetworking.json"
+$aibRoleNetworkingUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleNetworking.json"
 $aibRoleNetworkingPath = "aibRoleNetworking.json"
 
 Invoke-WebRequest -Uri $aibRoleNetworkingUrl -OutFile $aibRoleNetworkingPath -UseBasicParsing
