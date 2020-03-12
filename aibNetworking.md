@@ -70,6 +70,6 @@ Private Link service requires an IP from the given vnet and subnet. Currently, A
     * [AZ CLI Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-allow-it-to-use-an-existing-vnet)
     * [PowerShell Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-allow-it-to-use-an-existing-vnet-1)
 4. Allow AIB to read/write source images and create images
-    * [AZ CLI Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-distribute-a-managed-image-or-shared-image)
-    * [PowerShell Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-distribute-a-managed-image-or-shared-image-1)
+    * [AZ CLI Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-use-source-custom-image-and-distribute-a-custom-image)
+    * [PowerShell Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-use-source-custom-image-and-distribute-a-custom-image-1)
 5. Ensure you are using VNET in the same region as the AIB service region.
