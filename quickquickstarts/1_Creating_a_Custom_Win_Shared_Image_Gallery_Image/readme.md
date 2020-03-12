@@ -1,10 +1,18 @@
 # Using PowerShell to Create a Windows Server Custom Image using Azure VM Image Builder
 
-Most of the examples for Azure VM Image Builder (AIB) using the Azure CLI, this example shows how you can use PowerShell to do the same.
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distibute to the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries), where you can replicate regions, control the scale, and share inside and outside your organizations.
 
-This walk through is based off the [Create a Windows Custom Image from an Azure Platform Vanilla OS Image Quick Start](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image), that is deployed using Azure CLI.
+This covers using mutliple customizations to illustrate some high level functionality:
+* PowerShell (ScriptUri) - Downloading a bash script and executing it
+* PowerShell (inline) - Execute an array of commands
+* File - Copy a html file from github to a specified, pre-created directory
+* buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
+* vmProfile - specifying a vmSize and Network properties
+* osDiskSizeGB - you can increase the size of image
+* WindowsRestart - this will allow for restarts between software installs
+* WindowsUpdate - update the image with the latest Windows Updates, note this will handle its own required reboots.
 
-The main key difference is that we use an ARM template with the AIB template nested inside, this simplifies deploying the AIB Configuration Template, and gives you other benefits for free, such as variables and parameter inputs etc. You can also pass parameters from the commandline too, which you will see here.
+To simplify deploying an AIB configuration template with PowerShell CLI, this example uses an Azure Resource Manager (ARM) template with the AIB template nested inside, and gives you other benefits for free, such as variables and parameter inputs etc. You can also pass parameters from the commandline too, which you will see here.
 
 This walk through is intended to be a copy and paste exercise, and will provide you with a custom Win Server image (AIB also supports client images), showing you how you can easily create a custom image.
 
@@ -45,7 +53,7 @@ Import-Module Az.Accounts
 $currentAzContext = Get-AzContext
 
 # destination image resource group
-$imageResourceGroup="aibwinsig"
+$imageResourceGroup="aibwinsig01"
 
 # location (see possible locations in main docs)
 $location="westus"
@@ -56,22 +64,34 @@ $subscriptionID=$currentAzContext.Subscription.Id
 # name of the image to be created
 $imageName="aibCustomImgWin10"
 
-# image distribution metadata reference name
-$runOutputName="aibCustWinManImg02ro"
-
 # image template name
 $imageTemplateName="helloImageTemplateWin02ps"
 
 # distribution properties object name (runOutput), i.e. this gives you the properties of the managed image on completion
 $runOutputName="winclientR01"
 
-
 # create resource group
 New-AzResourceGroup -Name $imageResourceGroup -Location $location
-
-# assign permissions for that resource group, so that AIB can distribute the image to it
-New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -Scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup -RoleDefinitionName Contributor
 ```
+
+# Assign permissions for AIB SPN to distribute images and connect to a network
+
+```powerShell
+$aibRoleImageCreationUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json"
+$aibRoleImageCreationPath = "aibRoleImageCreation.json"
+
+Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPath -UseBasicParsing
+
+((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $aibRoleImageCreationPath
+((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<rgName>', $imageResourceGroup) | Set-Content -Path $aibRoleImageCreationPath
+
+# create role definitions from role configurations examples, this avoids granting
+New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
+
+# grant role definition to image builder service principal
+New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+```
+
 # Create the Shared Image Gallery
 ```powerShell
 $sigGalleryName= "my22stSIG"
@@ -111,7 +131,7 @@ Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
 
 
 # Submit the template
-Your template must be submitted to the service, this will download any dependent artifacts (scripts etc), and store them in the staging Resource Group, prefixed, *IT_*.
+Your template must be submitted to the service, this will download any dependent artifacts (scripts etc), validate, check permissions, and store them in the staging Resource Group, prefixed, *IT_*.
 ```powerShell
 New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2019-05-01-preview" -imageTemplateName $imageTemplateName -svclocation $location
 ```
@@ -120,7 +140,7 @@ New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFi
 To build the image you need to invoke 'Run'.
 
 ```powerShell
-Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview" -Action Run
+Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview" -Action Run -Force
 ```
 >> Note, the command will not wait for the image builder service to complete the image build, you can query the status below.
 
@@ -190,7 +210,7 @@ $runOutJsonStatus
 ## Create a VM
 Now the build is finished you can build a VM from the image, use the examples from [here](https://docs.microsoft.com/en-us/powershell/module/az.compute/new-azvm?view=azps-2.5.0#examples).
 
-## Clean Up
+# Clean Up
 
 >>> Note!!!
 >>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *8_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
@@ -200,10 +220,15 @@ Delete the resource group template first, do not just delete the entire resource
 ### Get ResourceID of the Image Template
 ```powerShell
 $resTemplateId = Get-AzResource -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview"
-```
-### Delete Image Template Artifact
-```powerShell
+
+# Delete Image Template Artifact
 Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force
+```
+### Delete role assignment
+```powerShell
+Remove-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -ResourceGroupName $imageResourceGroup 
+
+Remove-AzRoleDefinition -Name "Azure Image Builder Service Image Creation Role" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 ```
 ### Delete Resource Group
 ```powerShell
