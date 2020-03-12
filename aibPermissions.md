@@ -1,6 +1,19 @@
-# AIB Permissions Explained and Requirements
-## Registering for the Service
-When you register for the AIB Image Builder Service (AIB), this grants the AIB Service permission to create, manage and delete a staging resource group (IT_*), and have rights to add resources to it, that are required for the image build. 
+# Azure VM Image Builder Permissions Explained and Requirements
+
+This document is to explain permissions granted and required for Azure VM Image Builder Service (AIB), covering these topics:
+
+* Permissions granted registering for the Service
+* Requirements
+    * Allowing AIB to Distribute Images
+    * Allowing AIB to Customize existing Custom Images
+    * Allowing AIB to Customize Images on your existing VNETs
+* Creating AIB Azure Role Definition and assignment to build image
+    * AZ CLI Examples
+    * Azure PowerShell Examples
+* Using Managed Identity to allowing Image Builder to Access Azure Storage
+
+## Permissions granted registering for the Service
+When you register for the (AIB), this grants the AIB Service permission to create, manage and delete a staging resource group (IT_*), and have rights to add resources to it, that are required for the image build. 
 
 AIB does *NOT* have permission to access other resources in other resource groups in the subscription, you need to take explicit actions to allow that to happen. Without these actions the builds will fail.
 
@@ -35,7 +48,7 @@ Microsoft.Compute/galleries/images/versions/read
 Microsoft.Compute/galleries/images/versions/write
 ```
 
-## Allowing AIB to Customize existing Custom Images
+### Allowing AIB to Customize existing Custom Images
 For AIB to build images from source custom images (Managed Images / Shared Image Gallery), the AIB service must be allowed to read the images into these resource groups, to do this, you need to grant the AIB Service Principal Name (SPN) reader rights on the resource group where the image is located. 
 
 ```bash
@@ -48,7 +61,7 @@ Microsoft.Compute/galleries/images/read
 Microsoft.Compute/galleries/images/versions/read
 ```
 
-## Allowing AIB to Customize Images on your existing VNETs
+### Allowing AIB to Customize Images on your existing VNETs
 AIB has the capability to deploy and use an existing VNET in your subcription, thus allowing customizations access to connected resources. 
 
 You can avoid granting the AIB SPN contributor for it to deploy a VM to an existing VNET, but it's SPN will need these Azure Actions on the VNET resource group:
@@ -152,7 +165,7 @@ New-AzRoleDefinition -InputFile  ./aibRoleNetworking.json
 # grant role definition to image builder service principal
 New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Networking Role" -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 ```
-## Allowing Image Builder to Access Azure Storage
+## Using Managed Identity to allowing Image Builder to Access Azure Storage
 If you want to seemlessly authenticate with Azure Storage, and use Private Containers, then you need to give AIB an Azure User-Assigned Managed Identity, which it can use to authenticate with Azure Storage.
 
 >>> Note! AIB only uses the identity at image template submission time, the build VM does not have access to the identity during image build!!!
