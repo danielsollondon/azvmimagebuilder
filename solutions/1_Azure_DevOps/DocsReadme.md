@@ -86,6 +86,19 @@ Initialy, we are just supporting two customerizers, 'Shell', and 'PowerShell' an
 
 For your OS, select with PowerShell, or Shell.
 
+#### Windows Update Task
+For Windows only, the task will run Windows Update at the end of the customizations for the task, it will handle the reboots it requires.
+
+This is the Windows Update configuration that is executed:
+```json
+    "type": "WindowsUpdate",
+    "searchCriteria": "IsInstalled=0",
+    "filters": [
+        "exclude:$_.Title -like '*Preview*'",
+        "include:$true"
+```
+It will install important and recommended Windows Updates, that are not preview.
+
 #### Build Path
 This task has been initially designed to be able to inject DevOps Build release artifacts into the image. To make this work, you will need to setup a Build Pipeline, and in the setup of the Release pipeline, you must add specific the repo of the build artifacts.
 
@@ -177,6 +190,9 @@ There are 3 distribute types supported:
     * Regions: list of regions, comma separated, e.g. westus, eastus, centralus
 * VHD
     * You cannot pass any values to this, Image Builder will emit the VHD to the temporary Image Builder resource group, ‘'IT_<DestinationResourceGroup>_<TemplateName>', in the 'vhds' container. When you start the release build, image builder will emit logs, and when it has finished, it will emit the VHD URL.
+
+### Optional Settings
+* [VM Size](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json#vmprofile) - You can override the VM size, from the default of *Standard_D1_v2*. You may do this to reduce total customization time, or because you want to create the images that depend on certain VM sizes, such as GPU / HPC etc.
 
 ## How it works
 When you create the release, the task will:
