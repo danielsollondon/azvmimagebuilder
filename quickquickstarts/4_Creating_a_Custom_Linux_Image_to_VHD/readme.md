@@ -56,13 +56,6 @@ runOutputName=aibCustomVhd01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
-
-# assign permissions for that resource group
-az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
-    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
-
 ```
 
 ## Step 2 : Modify HelloImage Example
