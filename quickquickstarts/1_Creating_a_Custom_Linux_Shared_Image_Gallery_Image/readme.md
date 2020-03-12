@@ -1,6 +1,16 @@
 # Create a Linux Custom Image, then Distribute and Version over Multiple Regions
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distibute to the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries), where you can replicate regions, control the scale, and share inside and outside your organizations.
+
+This covers using mutliple customizations to illustrate some high level functionality:
+
+This covers using mutliple customizations to illustrate some high level functionality:
+* Shell (ScriptUri) - Downloading a bash script and executing it
+* Shell (inline) - Execute an array of commands
+* File - Copy a html file from github to a specified, pre-created directory
+* buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
+* vmProfile - specifying a vmSize and Network properties
+* osDiskSizeGB - you can increase the size of image
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -67,13 +77,30 @@ runOutputName=u1804SigRo
 
 # create resource group
 az group create -n $sigResourceGroup -l $location
+```
 
-# assign permissions for that resource group
+### Assign AIB SPN Permissions to distribute a Managed Image or Shared Image 
+```bash
+# download preconfigured example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the AIB SPN
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --role "Azure Image Builder Service Image Creation Role" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
 
+```
+
+### create SIG
+```bash
 # create SIG
 az sig create \
     -g $sigResourceGroup \
@@ -165,6 +192,13 @@ You should see the image was customized with a Message of the Day as soon as you
 
 ```bash
 # BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
+
+az role assignment delete \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role "Azure Image Builder Service Image Creation Role" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+
+az role definition delete --name "Azure Image Builder Service Image Creation Role"
 
 # delete AIB Template
 az resource delete \
