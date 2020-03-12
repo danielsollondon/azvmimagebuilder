@@ -67,9 +67,9 @@ Private Link service requires an IP from the given vnet and subnet. Currently, A
     * [AZ CLI Example](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Linux_Image_on_Existing_VNET#disable-private-service-policy-on-subnet)
     * [PowerShell Example](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET#disable-private-service-policy-on-subnet)
 3. Allow AIB to create an ALB and add VMs to the VNET
-    * [AZ CLI Example]()
-    * [PowerShell Example]()
-4. Allow AIB to read source images and create images
-    * [AZ CLI Example]()
-    * [PowerShell Example]()
+    * [AZ CLI Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-allow-it-to-use-an-existing-vnet)
+    * [PowerShell Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-allow-it-to-use-an-existing-vnet-1)
+4. Allow AIB to read/write source images and create images
+    * [AZ CLI Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-distribute-a-managed-image-or-shared-image)
+    * [PowerShell Example](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#setting-aib-spn-permissions-to-distribute-a-managed-image-or-shared-image-1)
 5. Ensure you are using VNET in the same region as the AIB service region.
