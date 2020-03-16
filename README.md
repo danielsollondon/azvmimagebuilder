@@ -39,7 +39,7 @@ It has been a busy year already, and we are so pleased to announce this new func
 * [Permissions documentation](./aibPermissions.md)
     * We listened to feedback for clarity on permissions required for AIB, and be more granular on permissions required.
     * The quickstarts and solutions are being updated with new permission enablement steps over time.
-* [Networking documentation](./aibNetworking)
+* [Networking documentation](./aibNetworking.md)
     * We have documented details for AIB networking, options, and requirements.
 * DevOps Task Update
     * [Windows Update](https://github.com/danielsollondon/azvmimagebuilder/blob/master/solutions/1_Azure_DevOps/DocsReadme.md#windows-update-task) - Support for running Windows Update at end of task
