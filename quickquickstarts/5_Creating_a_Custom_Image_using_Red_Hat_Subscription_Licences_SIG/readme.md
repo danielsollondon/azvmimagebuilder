@@ -2,6 +2,14 @@
 
 This article is to show you how you can create a customized image using the Azure VM Image Builder from a RHEL ISO, and distribute to two Azure regions..
 
+> NOTICE! We are deprecating the ability to create images from RHEL ISO sources, however we will shortly be releasing an alternative.
+
+```bash
+Timelines:
+* 31st March - Image Templates with RHEL ISO sources will now longer be accepted by the resource provider.
+* 30th April - Image Templates that contain RHEL ISO sources will not be processed any more.
+```
+
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID, rhelChecksum, rhelLinkAddress** variables below.
 
 ## Step 1 : Enable Prereqs
@@ -65,15 +73,30 @@ imageDefName=rhel75
 
 # create resource group
 az group create -n $sigResourceGroup -l $location
+```
 
+## Assign AIB SPN Permissions to distribute a Managed Image or Shared Image 
+```bash
+# download preconfigured example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
 
-# assign permissions for that resource group
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the AIB SPN
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --role "Azure Image Builder Service Image Creation Role" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
 
+```
 
+### Create SIG
+```bash
 # create SIG
 az sig create \
     -g $sigResourceGroup \
@@ -201,6 +224,14 @@ az resource delete \
     --resource-group $sigResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateRhelByosSig001
+
+# delete role assignments
+az role assignment delete \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role "Azure Image Builder Service Image Creation Role" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+
+az role definition delete --name "Azure Image Builder Service Image Creation Role"
 
 # get image version created by AIB, this always starts with 0.*
 sigDefImgVersion=$(az sig image-version list \

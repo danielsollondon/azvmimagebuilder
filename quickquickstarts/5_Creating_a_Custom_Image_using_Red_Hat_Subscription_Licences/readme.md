@@ -1,6 +1,12 @@
 # Create a custom RHEL image using a RHEL ISO where you can use eligible Red Hat licences
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder.
+> NOTICE! We are deprecating the ability to create images from RHEL ISO sources, however we will shortly be releasing an alternative.
+
+```bash
+Timelines:
+* 31st March - Image Templates with RHEL ISO sources will now longer be accepted by the resource provider.
+* 30th April - Image Templates that contain RHEL ISO sources will not be processed any more.
+```
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID, rhelChecksum, rhelLinkAddress** variables below.
 
@@ -58,11 +64,24 @@ runOutputName=aibCustRhManImg01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
+```
 
-# assign permissions for that resource group
+# setting AIB SPN Permissions to distribute a Managed Image or Shared Image 
+```bash
+# download preconfigured example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the AIB SPN
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --role "Azure Image Builder Service Image Creation Role" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
 ```
@@ -166,6 +185,13 @@ az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateRhelBYOS01
+
+az role assignment delete \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role "Azure Image Builder Service Image Creation Role" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+
+az role definition delete --name "Azure Image Builder Service Image Creation Role"
 
 az group delete -n $imageResourceGroup
 

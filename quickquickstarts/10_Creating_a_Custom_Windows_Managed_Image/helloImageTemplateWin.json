@@ -22,7 +22,7 @@
                 "publisher": "MicrosoftWindowsServer",
                 "offer": "WindowsServer",
                 "sku": "2019-Datacenter",
-                "version": "2019.0.20190214"
+                "version": "latest"
             
         },
         "customize": [
@@ -52,6 +52,15 @@
                     "mkdir c:\\buildActions",
                     "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt"
                 ]
+                },
+                {
+                    "type": "WindowsUpdate",
+                    "searchCriteria": "IsInstalled=0",
+                    "filters": [
+                        "exclude:$_.Title -like '*Preview*'",
+                        "include:$true"
+                                ],
+                    "updateLimit": 20
                 }
         ],
         "distribute": 

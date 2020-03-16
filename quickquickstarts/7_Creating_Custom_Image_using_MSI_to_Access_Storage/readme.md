@@ -62,7 +62,7 @@ location=WestUS2
 
 # your subscription
 # get the current subID : 'az account show | grep id'
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 
 # name of the image to be created
 imageName=aibCustLinuxImgMsi01
@@ -75,10 +75,22 @@ az group create -n $imageResourceGroup -l $location
 ```
 ## Step 2: Assign permissions for the resource group where the image will be created
 ```bash
+# download preconfigured role example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the AIB SPN
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --role "Azure Image Builder Service Image Creation Role" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+
 ```
 
 ## Step 3: Create another Resource Group for a Storage Account to host scripts
@@ -200,6 +212,13 @@ az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateMsi01
+
+az role assignment delete \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role "Azure Image Builder Service Image Creation Role" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+
+az role definition delete --name "Azure Image Builder Service Image Creation Role"
 
 az group delete -n $imageResourceGroup
 

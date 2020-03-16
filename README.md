@@ -22,32 +22,58 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 
 ## Latest Release Information
 
-### Timelines
-GA - Early 2020
+### Timelines (updated March 2020)
+GA - Q2 2020
+
+### March 2020 Updates
+It has been a busy year already, and we are so pleased to announce this new functionality:
+* [Removal of Public IP address requirement, and use an existing VNET](./aibNetworking)
+    * You can now allow image builder to use your existing VNET, so you can connect to existing configuration servers (DSC, Chef, Puppet etc.), file shares, or any other routable servers/services.
+    * Try the end 2 end [Windows](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET#create-a-windows-linux-image-allowing-access-to-an-existing-azure-vnet) and [Linux](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Linux_Image_on_Existing_VNET#create-a-custom-linux-image-allowing-access-to-an-existing-azure-vnet) examples now!
+* [European Region Support]()
+    * We now the AIB service in *NorthEurope* and *WestEurope*! 
+* [Windows Update customizer](https://github.com/danielsollondon/azvmimagebuilder/blob/f7aac8e6f57fb8ee332af3390a7da303a425d88b/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET/existingVNETWindows.json#L80)
+    * The [community Windows Update Provisioner](https://packer.io/docs/provisioners/community-supported.html) for Packer was integrated into Image Builder, that allows Windows Updates to be installed, and handles reboots during the process. 
+* ['Latest'](https://github.com/danielsollondon/azvmimagebuilder/blob/master/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET/existingVNETWindows.json#L47) image version support
+    * Instead of you need to specify a version for Azure Market Place (AMP) images, you can now specify. When the image is created, AIB will use the latest version. This means you can rerun the same image template after the source images in AMP are updated, such as monthly. 
+* [Permissions documentation](./aibPermissions.md)
+    * We listened to feedback for clarity on permissions required for AIB, and be more granular on permissions required.
+    * The quickstarts and solutions are being updated with new permission enablement steps over time.
+* [Networking documentation](./aibNetworking)
+    * We have documented details for AIB networking, options, and requirements.
+* DevOps Task Update
+    * [Windows Update](https://github.com/danielsollondon/azvmimagebuilder/blob/master/solutions/1_Azure_DevOps/DocsReadme.md#windows-update-task) - Support for running Windows Update at end of task
+    * [Change VM size](https://github.com/danielsollondon/azvmimagebuilder/blob/master/solutions/1_Azure_DevOps/DocsReadme.md#optional-settings) - Change the VM size to make resource intensive image builds faster, and also build on specilist VM sizes, such as GPU or HPC enabled sizes.
+* RHEL ISO Source Deprecation
+    * We are removing this functionality from image builder, as there are now [RHEL Bring Your Own Subscription images](https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/redhat/byos), please review the timelines below:
+        * 31st March - Image Templates with RHEL ISO sources will now longer be accepted by the resource provider.
+        * 30th April - Image Templates that contain RHEL ISO sources will not be processed any more.
+
+The offical Microsoft docs for image builder will be updated this month to relect these updates.
+
 
 ### December 2019 Updates Part 2
 The work never ends, latest customization support:
 
-* [osDiskSizeGB](https://github.com/danielsollondon/azvmimagebuilder/blob/b6a9c80612b24d94cb2cd8863ba81c4e77f2e528/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L16)
-    * You can adjust the size of the OS Disk (Win and Linux). Details for this are in these quickstarts [Windows](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#create-a-windows-custom-image-from-an-azure-platform-vanilla-os-image) and [Linux](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image#create-a-custom-image-from-an-azure-platform-vanilla-os-image)
+* [osDiskSizeGB](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json#osdisksizegb)
 
 * There will be more updates in January! On behalf of the team, thank you to everyone who has tried Image Builder, and given feedback, we really appreciate it. Happy Holidays!!!!
 
 ### December 2019 Updates
 We constantly update the Image Builder Service, and its been a while since we summarized recent updates here:
 
-* [PowerShell Customizer Elevated Permissions](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json#L31)
+* [PowerShell Customizer Elevated Permissions](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#powershell-customizer)
     * PowerShell Support for running commands and scripts with elevated permissions
-* [Checksum File Validation](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L37)
+* [Checksum File Validation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#powershell-customizer)
     * PowerShell / Shell / File Customizer Support for checkSum
     * Checksum the file a file locally, then Image Builder will checksum and validate.
-* [Increase Build Time](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L11)
+* [Increase Build Time](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#properties-buildtimeoutinminutes)
     * The default timeout of the image is currently 4hours, but can be reduced or increased upto 16hours.
-* [Change Build VM Size](https://github.com/danielsollondon/azvmimagebuilder/blob/a6f9692efa17f2ec8b96b0caf9890e81fa770fcc/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json#L13)
+* [Change Build VM Size](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#vmprofile)
     * By default Image Builder will use a "Standard_D1_v2" build VM, but you may want to use a different VM size, since you may restrict this through Azure Policy, you have customizations that are compute intensive, or you need customize images that can only be run on certain types of VM Size types, e.g. if you want to customize an Image for a GPU VM, you need a GPU VM size.
-* [Windows Client / Virtual Desktop OS Support](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image)
+* [Windows Client / Virtual Desktop OS Support](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview#os-support)
     * Many customers are testing Image Builder to support customizing Windows Desktop images, see the PowerShell example on how you can get started building Win10 Images.
-    * Win10 client images supported [here](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview#os-support).
+    * Change [this](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image) quickstart to start building custom WVD images with the Shared Image Gallery.
 * [DevOps Task Updates](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/1_Azure_DevOps#the-azure-vm-image-builder-devops-task)
     * Specify source Azure Market Place OS image versions
     * Improved performance and reliability enhancements for Windows builds
@@ -66,7 +92,6 @@ We constantly update the Image Builder Service, and its been a while since we su
 
 * PowerShell examples
     * [Create a Windows Custom Image and distibute to Shared Image Gallery](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image)
-    * [Create a Windows Custom Image and distibute to Managed Image](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/5_PowerShell_deployments#using-powershell-to-create-a-windows-10-custom-image-using-azure-vm-image-builder-preview-example)
 
 
 ### May 2019 Release

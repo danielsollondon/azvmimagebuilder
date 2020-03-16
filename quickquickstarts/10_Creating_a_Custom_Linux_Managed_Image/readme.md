@@ -1,4 +1,4 @@
-# Create a Custom Image from an Azure Platform Vanilla OS Image
+# Create a Custom Managed Image from an Azure Platform Vanilla OS Image
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region. This covers using mutliple customizations to illustrate some high level functionality:
 
@@ -34,7 +34,7 @@ az provider show -n Microsoft.Compute | grep registrationState
 az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
-If they do not saw registered, run the commented out code below.
+If they do not show registered, run the commented out code below.
 ```bash
 ## az provider register -n Microsoft.VirtualMachineImages
 ## az provider register -n Microsoft.Storage
@@ -66,10 +66,10 @@ runOutputName=aibCustLinManImg01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
+```
 
-
-# setting AIB SPN Permissions to distribute a Managed Image or Shared Image 
-
+### setting AIB SPN Permissions to distribute a Managed Image or Shared Image 
+```bash
 # download preconfigured example
 curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
 
@@ -93,7 +93,7 @@ az role assignment create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json -o helloImageTemplateLinux.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/10_Creating_a_Custom_Linux_Managed_Image/helloImageTemplateLinux.json -o helloImageTemplateLinux.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateLinux.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateLinux.json

@@ -1,17 +1,16 @@
-# Create a Windows Custom Image from an Azure Platform Vanilla OS Image
+# Create a Windows Custom Managed Image from an Azure Platform Vanilla OS Image
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region.This covers using 4 different customizations:
-* PowerShell (ScriptUri) - Downloading a PowerShell script and executing it.
-* PowerShell (inline) - Execute an array of PS commands
-    * Both Powershell Inline and Script URI can use the *runElevated* option, this allows the PS script/commands to run with elevated permissions.
-* File - Copy a html file from github
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region.
+
+This covers using mutliple customizations to illustrate some high level functionality:
+* PowerShell (ScriptUri) - Downloading a bash script and executing it
+* PowerShell (inline) - Execute an array of commands
+* File - Copy a html file from github to a specified, pre-created directory
 * buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
-* vmProfile:
-    * vmSize
-    
-        By default Image Builder will use a "Standard_D1_v2" build VM, you can override this, for example, if you want to customize an Image for a GPU VM, you need a GPU VM size. This is optional.
-    * osDiskSizeGB
-        * By default, Image Builder will not change the size of the image, it will use the size from the source image. You can adjust the size of the OS Disk (Win and Linux), note, do not go too small than the minimum required space required for the OS. This is optional, and a value of 0 means leave the same size as the source image.
+* vmProfile - specifying a vmSize and Network properties
+* osDiskSizeGB - you can increase the size of image
+* WindowsRestart - this will allow for restarts between software installs
+* WindowsUpdate - update the image with the latest Windows Updates, note this will handle its own required reboots.
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -37,7 +36,7 @@ az provider show -n Microsoft.Compute | grep registrationState
 az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
-If they do not saw registered, run the commented out code below.
+If they do not show registered, run the commented out code below.
 ```bash
 ## az provider register -n Microsoft.VirtualMachineImages
 ## az provider register -n Microsoft.Storage
@@ -61,7 +60,8 @@ location=WestUS2
 vmpassword=<INSERT YOUR PASSWORD HERE>
 # your subscription
 # get the current subID : 'az account show | grep id'
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
+
 
 # name of the image to be created
 imageName=aibCustomImgWini01
@@ -71,11 +71,24 @@ runOutputName=aibCustWinManImg01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
+```
 
-# assign permissions for that resource group
+### Assign AIB SPN Permissions to distribute a Managed Image or Shared Image 
+```bash
+# download preconfigured example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the AIB SPN
 az role assignment create \
     --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --role "Azure Image Builder Service Image Creation Role" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
 ```
@@ -85,7 +98,7 @@ az role assignment create \
 ```bash
 # download the example and configure it with your vars
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json -o helloImageTemplateWin.json
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/10_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json -o helloImageTemplateWin.json
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateWin.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateWin.json
@@ -102,10 +115,10 @@ sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateWin.json
 
 az resource create \
     --resource-group $imageResourceGroup \
-    --properties @helloImageTemplateWin.json \
+    --properties @helloImageTemplateWin02.json \
     --is-full-object \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateWin01
+    -n helloImageTemplateWin02
 # wait approx 1-3mins, depending on external links
 
 # start the image build
@@ -113,7 +126,7 @@ az resource create \
 az resource invoke-action \
      --resource-group $imageResourceGroup \
      --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n helloImageTemplateWin01 \
+     -n helloImageTemplateWin \
      --action Run 
 
 # wait approx 15mins
@@ -146,6 +159,13 @@ az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateWin01
+
+az role assignment delete \
+    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
+    --role "Azure Image Builder Service Image Creation Role" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+
+az role definition delete --name "Azure Image Builder Service Image Creation Role"
 
 az group delete -n $imageResourceGroup
 

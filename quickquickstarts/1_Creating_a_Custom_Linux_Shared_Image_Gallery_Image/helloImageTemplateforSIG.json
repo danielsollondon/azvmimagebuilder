@@ -10,7 +10,8 @@
 
         "vmProfile": 
             {
-            "vmSize": "Standard_D1_v2"
+            "vmSize": "Standard_D1_v2",
+            "osDiskSizeGB": 30
             },
         
         "source": {
@@ -18,7 +19,7 @@
                 "publisher": "Canonical",
                 "offer": "UbuntuServer",
                 "sku": "18.04-LTS",
-                "version": "18.04.201903060"
+                "version": "latest"
             
         },
         "customize": [

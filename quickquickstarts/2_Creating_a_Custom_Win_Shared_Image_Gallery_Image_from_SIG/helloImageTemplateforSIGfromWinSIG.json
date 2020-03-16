@@ -18,6 +18,15 @@
                     "mkdir c:\\buildActions2",
                     "echo Azure-Image-Builder-Was-Here  > c:\\buildActions2\\buildActionsOutput.txt" 
                         ]
+            },
+            {
+                "type": "WindowsUpdate",
+                "searchCriteria": "IsInstalled=0",
+                "filters": [
+                    "exclude:$_.Title -like '*Preview*'",
+                    "include:$true"
+                            ],
+                "updateLimit": 20
             }
         ],
         "distribute": 

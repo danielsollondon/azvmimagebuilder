@@ -24,8 +24,15 @@
         "apiVersion": "[parameters('api-version')]",
         "location": "[parameters('svclocation')]",
         "dependsOn": [],
+        
         "properties": {
             "buildTimeoutInMinutes" : 100,
+
+            "vmProfile": 
+                    {
+                    "vmSize": "Standard_D1_v2",
+                    "osDiskSizeGB": 127
+                    },
         
             "source": {
                 "type": "PlatformImage",
