@@ -27,7 +27,7 @@ GA - Q2 2020
 
 ### March 2020 Updates
 It has been a busy year already, and we are so pleased to announce this new functionality:
-* [Removal of Public IP address requirement, and use an existing VNET](./aibNetworking)
+* [Removal of Public IP address requirement, and use an existing VNET](./aibNetworking.json)
     * You can now allow image builder to use your existing VNET, so you can connect to existing configuration servers (DSC, Chef, Puppet etc.), file shares, or any other routable servers/services.
     * Try the end 2 end [Windows](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET#create-a-windows-linux-image-allowing-access-to-an-existing-azure-vnet) and [Linux](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Linux_Image_on_Existing_VNET#create-a-custom-linux-image-allowing-access-to-an-existing-azure-vnet) examples now!
 * [European Region Support]()
