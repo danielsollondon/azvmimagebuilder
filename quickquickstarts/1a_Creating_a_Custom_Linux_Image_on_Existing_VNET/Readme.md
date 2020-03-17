@@ -110,6 +110,8 @@ az network vnet subnet update \
   --disable-private-link-service-network-policies true 
 ```
 
+For more information on image builder networking, please review this [document](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibNetworking.md#networking-with-azure-vm-image-builder).
+
 ## Step 2 : Modify the Example template and create role for AIB
 
 ```bash
@@ -156,7 +158,7 @@ az role assignment create \
     --role "Azure Image Builder Service Networking Role" \
  --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
 ```
-For more information on image builder permissions, please review this [document]().
+For more information on image builder permissions, please review this [document](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#azure-vm-image-builder-permissions-explained-and-requirements).
 
 ## Step 3 : Create the Image
 

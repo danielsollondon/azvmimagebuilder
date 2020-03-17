@@ -30,7 +30,7 @@ It has been a busy year already, and we are so pleased to announce this new func
 * [Removal of Public IP address requirement, and use an existing VNET](./aibNetworking.md)
     * You can now allow image builder to use your existing VNET, so you can connect to existing configuration servers (DSC, Chef, Puppet etc.), file shares, or any other routable servers/services.
     * Try the end 2 end [Windows](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET#create-a-windows-linux-image-allowing-access-to-an-existing-azure-vnet) and [Linux](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/1a_Creating_a_Custom_Linux_Image_on_Existing_VNET#create-a-custom-linux-image-allowing-access-to-an-existing-azure-vnet) examples now!
-* [European Region Support]()
+* [European Region Support](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-overview?toc=/azure/virtual-machines/windows/toc.json&bc=/azure/virtual-machines/windows/breadcrumb/toc.json#regions)
     * We now the AIB service in *NorthEurope* and *WestEurope*! 
 * [Windows Update customizer](https://github.com/danielsollondon/azvmimagebuilder/blob/f7aac8e6f57fb8ee332af3390a7da303a425d88b/quickquickstarts/1a_Creating_a_Custom_Win_Image_on_Existing_VNET/existingVNETWindows.json#L80)
     * The [community Windows Update Provisioner](https://packer.io/docs/provisioners/community-supported.html) for Packer was integrated into Image Builder, that allows Windows Updates to be installed, and handles reboots during the process. 
