@@ -14,7 +14,7 @@ This covers using mutliple customizations to illustrate some high level function
 
 This walk through is intended to be a copy and paste exercise, and will provide you with a custom Win Server image (AIB also supports client images), showing you how you can easily create a custom image.
 
->>> Note! Azure Image Builder automatically runs sysprep to generalize the image, this is a generic sysprep command, which you can [overide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully) if you are aware of more favorable settings. However, for *Windows there are limits on how many times (8), an image can be sysprep'd*, see [here](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep) for more details. Therefore exercise caution on how many times you layer customizations.
+> Note! Azure Image Builder automatically runs sysprep to generalize the image, this is a generic sysprep command, which you can [overide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully) if you are aware of more favorable settings. However, for *Windows there are limits on how many times (8), an image can be sysprep'd*, see [here](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep) for more details. Therefore exercise caution on how many times you layer customizations.
 
 
 ## Step 1 : Enable Prereqs
@@ -150,15 +150,22 @@ Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPa
 # Assign permissions for AIB SPN to distribute images and connect to a network
 
 ```powerShell
-# create role definitions from role configurations examples, this avoids granting
+# setup role def names, these need to be unique
+$timeInt=$(get-date -UFormat "%s")
+$imageRoleDefName="Azure Image Builder Image Def"+$timeInt
+$networkRoleDefName="Azure Image Builder Network Def"+$timeInt
+
+
+# create role definitions from role configurations examples, this avoids granting contributor to the SPN
 New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
 New-AzRoleDefinition -InputFile  ./aibRoleNetworking.json
 
+# get ObjectId of the Azure Image Builder SPN for PS cmdlet
+$imageBuilderSpnObjId = $(Get-AzADServicePrincipal -ApplicationId cf32a0cc-373c-47c9-9156-0db11f6a6dfc).Id
 
 # grant role definition to image builder service principal
-New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
-
-New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Networking Role" -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
+New-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+New-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 ```
 For more information on image builder permissions, please review this [document](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#azure-vm-image-builder-permissions-explained-and-requirements).
 
@@ -258,15 +265,13 @@ Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force
 ```
 ### Delete role assignment
 ```powerShell
-Remove-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -ResourceGroupName $imageResourceGroup 
+## remove role assignments
+Remove-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+Remove-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 
-Remove-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Networking Role" -ResourceGroupName $vnetRgName
-
-
-Remove-AzRoleDefinition -Name "Azure Image Builder Service Image Creation Role" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
-
-Remove-AzRoleDefinition -Name "Azure Image Builder Service Networking Role" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
-
+## remove definitions
+Remove-AzRoleDefinition -Id $imageRoleDefObjId -Force
+Remove-AzRoleDefinition -Id $networkRoleObjId -Force
 ```
 
 ### Delete Resource Groups
