@@ -156,6 +156,10 @@ $imageRoleDefName="Azure Image Builder Image Def"+$timeInt
 $networkRoleDefName="Azure Image Builder Network Def"+$timeInt
 
 
+# update the role defintion names
+((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<imageRoleDefName>',$imageRoleDefName) | Set-Content -Path $aibRoleImageCreationPath
+((Get-Content -path $aibRoleNetworkingPath -Raw) -replace '<networkRoleDefName>',$networkRoleDefName) | Set-Content -Path $aibRoleNetworkingPath
+
 # create role definitions from role configurations examples, this avoids granting contributor to the SPN
 New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
 New-AzRoleDefinition -InputFile  ./aibRoleNetworking.json
