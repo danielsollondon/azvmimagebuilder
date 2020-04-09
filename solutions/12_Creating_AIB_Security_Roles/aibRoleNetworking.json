@@ -1,5 +1,5 @@
 {
-    "Name": "Azure Image Builder Service Networking Role",
+    "Name": "<networkRoleDefName>",
     "IsCustom": true,
     "Description": "Image Builder access to create resources for the image build",
     "Actions": [
