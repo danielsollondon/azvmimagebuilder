@@ -1,7 +1,7 @@
 {
     "type": "Microsoft.VirtualMachineImages/imageTemplates",
     "apiVersion": "2019-05-01-preview",
-    "location": "<region>",
+    "location": "<region1>",
     "dependsOn": [],
     "tags": {
     "imagebuilderTemplate": "msiEnabled"
@@ -34,14 +34,18 @@
         ],
         "distribute": 
             [
-                {   "type":"ManagedImage",
-                    "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
-                    "location": "<region>",
+                {   
+                    "type": "SharedImage",
+                    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
                     "runOutputName": "<runOutputName>",
                     "artifactTags": {
-                        "source": "azVmImageBuilder",
+                        "source": "azureVmImageBuilder",
                         "baseosimg": "ubuntu1804"
-                    }
+                    },
+                    "replicationRegions": [
+                      "<region1>",
+                      "<region2>"
+                    ]
                 }
             ]
         }
