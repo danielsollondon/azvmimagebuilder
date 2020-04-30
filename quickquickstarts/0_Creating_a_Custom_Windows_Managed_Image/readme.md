@@ -271,14 +271,14 @@ Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force
 ```
 ### Delete role assignment
 ```powerShell
-Remove-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -ResourceGroupName $imageResourceGroup 
 
-Remove-AzRoleDefinition -Name "Azure Image Builder Service Image Creation Role" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+Remove-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+
+## remove definitions
+Remove-AzRoleDefinition -Name "$idenityNamePrincipalId" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
 ## delete identity
 Remove-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName
-
-
 ```
 
 ### Delete Resource Groups
