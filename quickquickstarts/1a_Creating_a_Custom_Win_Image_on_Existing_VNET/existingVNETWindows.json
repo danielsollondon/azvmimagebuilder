@@ -24,6 +24,17 @@
         "apiVersion": "[parameters('api-version')]",
         "location": "[parameters('svclocation')]",
         "dependsOn": [],
+        "tags": {
+            "imagebuilderTemplate": "AzureVMImageBuilderVNET",
+            "userIdentity": "enabled"
+                },
+            "identity": {
+                "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                        "<imgBuilderId>": {}
+                            
+                    }
+                    },
     "properties": {
 
         "buildTimeoutInMinutes" : 100,
