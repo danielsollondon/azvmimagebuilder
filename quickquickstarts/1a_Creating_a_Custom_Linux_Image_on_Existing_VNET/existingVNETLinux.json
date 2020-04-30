@@ -4,8 +4,16 @@
     "location": "<region>",
     "dependsOn": [],
     "tags": {
-        "imagebuilderTemplate": "ubuntu1804"
+        "imagebuilderTemplate": "AzureVMImageBuilderVNET",
+        "userIdentity": "enabled"
             },
+        "identity": {
+            "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                    "<imgBuilderId>": {}
+                        
+                }
+                },
     "properties": {
 
         "buildTimeoutInMinutes" : 80,
