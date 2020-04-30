@@ -120,7 +120,6 @@ New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
 # grant role definition to image builder service principal
 New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
-
 ### NOTE: If you see this error: 'New-AzRoleDefinition: Role definition limit exceeded. No more role definitions can be created.' See this article to resolve:
 https://docs.microsoft.com/en-us/azure/role-based-access-control/troubleshooting
 
@@ -278,7 +277,7 @@ Remove-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $i
 Remove-AzRoleDefinition -Name "$idenityNamePrincipalId" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
 ## delete identity
-Remove-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName
+Remove-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName -Force
 ```
 
 ### Delete Resource Groups
