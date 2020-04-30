@@ -4,8 +4,16 @@
     "location": "<region>",
     "dependsOn": [],
     "tags": {
-        "imagebuilderTemplate": "ubuntu1804"
+        "imagebuilderTemplate": "ubuntu1804",
+        "userIdentity": "enabled"
             },
+        "identity": {
+            "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                    "<imgBuilderId>": {}
+                        
+                }
+                },
     "properties": {
 
         "buildTimeoutInMinutes" : 80,
