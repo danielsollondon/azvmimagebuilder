@@ -1,7 +1,7 @@
 # Getting the Latest Image Version ResourceID from Shared Image Gallery
 This code is designed to be used in a DevOps AZ CLI task, to get the lastest SIG version, you can then pass it into a DevOps variable, and use the resourceID in the proceeding Azure VM Image Builder Task.
 
-# Using AZ CLI
+## Using AZ CLI
 
 ```bash
 # set resource group name
@@ -27,7 +27,7 @@ sigDefImgVersionId=$(az sig image-version list \
    --subscription $subscriptionID --query [].'id' -o json | grep 0. | tr -d '"' | tr -d '[:space:]' )
 ```
 
-# bash script to get all image versions
+### bash script to get all image versions for a DevOps Task
 ```bash
 echo INFO Get All Available Image Versions:
 
@@ -47,8 +47,9 @@ echo "##vso[task.setvariable variable=sigLatest]$latestSigId"
 ```
 
 
-# PowerShell
+## PowerShell
 
+```powerShell
 # get all versions from SIG def
 $getAllImageVersions=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName)
 
@@ -60,4 +61,4 @@ $sortedVersionList=$($versionPubList | Select-Object Name, PublishedDate | Sort-
 
 # get latest version resource id
 $sigDefImgVersionId=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName -Name $sortedVersionList.name).Id
-
+```
