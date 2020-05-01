@@ -78,6 +78,7 @@ nsgName=aibdemoNsg
 
 # create resource group for image and image template resource
 az group create -n $imageResourceGroup -l $location
+
 ```
 
 ## Step 2: Configure Networking
@@ -139,7 +140,34 @@ sed -i -e "s/<vnetRgName>/$vnetRgName/g" aibRoleNetworking.json
 
 ```
 
-### Step 3: Permissions
+
+## Step 3: Create a user identify and assign permissions for the resource group where the image will be created, and permissions to join the existing VNET
+
+### Create User-Assigned Managed Identity and Grant Permissions 
+For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
+
+```bash
+# create user assigned identity for image builder to access the storage account where the script is located
+idenityName=aibBuiUserId$(date +'%s')
+az identity create -g $imageResourceGroup -n $idenityName
+
+# get identity id
+imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
+
+# get the user identity URI, needed for the template
+imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+
+# update the template
+sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" existingVNETLinux.json
+
+# make role name unique, to avoid clashes in the same AAD Domain
+imageRoleDefName="Azure Image Builder Image Def"$(date +'%s')
+netRoleDefName="Azure Image Builder Network Def"$(date +'%s')
+
+# update the definitions
+sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aibRoleImageCreation.json
+sed -i -e "s/Azure Image Builder Service Networking Role/$netRoleDefName/g" aibRoleNetworking.json
+```
 Instead of granting image builder lower granularity, increased privilge, you can create two roles, one gives the builder permissions to create an image, the other allows it to connect the build VM and loadbalancer to your VNET.
 
 ```bash
@@ -147,16 +175,17 @@ Instead of granting image builder lower granularity, increased privilge, you can
 az role definition create --role-definition ./aibRoleImageCreation.json
 az role definition create --role-definition ./aibRoleNetworking.json
 
-# grant role definition to image builder service principal
+# grant role definition to the user assigned identity
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Image Creation Role" \
+    --assignee $imgBuilderCliId \
+    --role $imageRoleDefName \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Networking Role" \
- --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
+    --assignee $imgBuilderCliId \
+    --role $netRoleDefName \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
+
 ```
 For more information on image builder permissions, please review this [document](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#azure-vm-image-builder-permissions-explained-and-requirements).
 
@@ -217,20 +246,26 @@ az resource delete \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n existingVNETLinuxTemplate01
 
+
+# delete permissions asssignments, roles and identity
 az role assignment delete \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Image Creation Role" \
+    --assignee $imgBuilderCliId \
+    --role $imageRoleDefName \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
 az role assignment delete \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Networking Role" \
- --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
+    --assignee $imgBuilderCliId \
+    --role $netRoleDefName \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
 
-az role definition delete --name "Azure Image Builder Service Networking Role"
-az role definition delete --name "Azure Image Builder Service Image Creation Role"
+
+az role definition delete --name "$imageRoleDefName"
+az role definition delete --name "$netRoleDefName"
+
+az identity delete --ids $imgBuilderId
 
 az group delete -n $imageResourceGroup
+az group delete -n $vnetRgName
 
 # delete VNET created
 # BEWARE!!!!! In this example, you have either used an existing VNET or created one for this example. Do not delete your existing VNET. If you want to delete the VNET Resource group used in this example '$vnetRgName', modify the above code.
