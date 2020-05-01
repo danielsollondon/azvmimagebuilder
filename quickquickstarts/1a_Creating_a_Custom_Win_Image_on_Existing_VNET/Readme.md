@@ -1,4 +1,4 @@
-# Create a Windows Linux Image allowing access to an existing Azure VNET
+# Create a Windows Image allowing access to an existing Azure VNET
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, which has access to existing resources on a VNET. For the end to end example, the build VM will be deployed on to a VNET you specify in your subscription, either an existing one, or a new one. Using this model means the image builder service does not require any public network connectivity.
 
@@ -51,7 +51,7 @@ Import-Module Az.Accounts
 $currentAzContext = Get-AzContext
 
 # destination image resource group
-$imageResourceGroup="aibImageRG2"
+$imageResourceGroup="aibImageRG"
 
 # location (see possible locations in main docs)
 $location="westus2"
@@ -68,7 +68,7 @@ $imageName="win2019image01"
 $runOutputName="win2019ManImg02ro"
 
 # image template name
-$imageTemplateName="window2019VnetTemplate01"
+$imageTemplateName="window2019VnetTemplate03"
 
 # distribution properties object name (runOutput), i.e. this gives you the properties of the managed image on completion
 $runOutputName="winSvrSigR01"
@@ -137,6 +137,33 @@ Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPa
 ((Get-Content -path $templateFilePath -Raw) -replace '<vnetName>',$vnetName) | Set-Content -Path $templateFilePath
 ((Get-Content -path $templateFilePath -Raw) -replace '<subnetName>',$subnetName) | Set-Content -Path $templateFilePath
 ((Get-Content -path $templateFilePath -Raw) -replace '<vnetRgName>',$vnetRgName) | Set-Content -Path $templateFilePath
+```
+
+# Assign permissions, create user idenity and role for AIB for distributing images and connecting to network.
+
+```powerShell
+# setup role def names, these need to be unique
+$timeInt=$(get-date -UFormat "%s")
+$imageRoleDefName="Azure Image Builder Image Def"+$timeInt
+$networkRoleDefName="Azure Image Builder Network Def"+$timeInt
+$idenityName="aibIdentity"+$timeInt
+
+# create user identity
+## Add AZ PS module to support AzUserAssignedIdentity
+Install-Module -Name Az.ManagedServiceIdentity
+
+# create identity
+New-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName
+
+$idenityNameResourceId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName).Id
+$idenityNamePrincipalId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName).PrincipalId
+
+# update template with identity
+((Get-Content -path $templateFilePath -Raw) -replace '<imgBuilderId>',$idenityNameResourceId) | Set-Content -Path $templateFilePath
+
+# update the role defintion names
+((Get-Content -path $aibRoleImageCreationPath -Raw) -replace 'Azure Image Builder Service Image Creation Role',$imageRoleDefName) | Set-Content -Path $aibRoleImageCreationPath
+((Get-Content -path $aibRoleNetworkingPath -Raw) -replace 'Azure Image Builder Service Networking Role',$networkRoleDefName) | Set-Content -Path $aibRoleNetworkingPath
 
 # update role definitions
 ((Get-Content -path $aibRoleNetworkingPath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $aibRoleNetworkingPath
@@ -145,31 +172,14 @@ Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPa
 ((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $aibRoleImageCreationPath
 ((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<rgName>', $imageResourceGroup) | Set-Content -Path $aibRoleImageCreationPath
 
-```
-
-# Assign permissions for AIB SPN to distribute images and connect to a network
-
-```powerShell
-# setup role def names, these need to be unique
-$timeInt=$(get-date -UFormat "%s")
-$imageRoleDefName="Azure Image Builder Image Def"+$timeInt
-$networkRoleDefName="Azure Image Builder Network Def"+$timeInt
-
-
-# update the role defintion names
-((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<imageRoleDefName>',$imageRoleDefName) | Set-Content -Path $aibRoleImageCreationPath
-((Get-Content -path $aibRoleNetworkingPath -Raw) -replace '<networkRoleDefName>',$networkRoleDefName) | Set-Content -Path $aibRoleNetworkingPath
-
 # create role definitions from role configurations examples, this avoids granting contributor to the SPN
 New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
 New-AzRoleDefinition -InputFile  ./aibRoleNetworking.json
 
-# get ObjectId of the Azure Image Builder SPN for PS cmdlet
-$imageBuilderSpnObjId = $(Get-AzADServicePrincipal -ApplicationId cf32a0cc-373c-47c9-9156-0db11f6a6dfc).Id
+# grant role definition to image builder user identity
+New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 
-# grant role definition to image builder service principal
-New-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
-New-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 ```
 For more information on image builder permissions, please review this [document](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#azure-vm-image-builder-permissions-explained-and-requirements).
 
@@ -187,6 +197,8 @@ To build the image you need to invoke 'Run'.
 
 ```powerShell
 Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview" -Action Run -Force
+
+>>>> WAITING ON IMAGE BUILD
 
 ```
 >> Note, the command will not wait for the image builder service to complete the image build, you can query the status below.
@@ -215,6 +227,7 @@ Write-Verbose ("Tenant: {0}" -f  $currentAzureContext.Subscription.Name)
 ### Step 4: Get token  
 $token = $profileClient.AcquireAccessToken($currentAzureContext.Tenant.TenantId)
 $accessToken=$token.AccessToken
+
 ```
 
 ## Get Image Build Status and Properties
@@ -266,24 +279,31 @@ $resTemplateId = Get-AzResource -ResourceName $imageTemplateName -ResourceGroupN
 
 ### Delete Image Template Artifact
 Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force
+
 ```
 ### Delete role assignment
 ```powerShell
 ## remove role assignments
-Remove-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
-Remove-AzRoleAssignment -ObjectId $imageBuilderSpnObjId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
+Remove-AzRoleAssignment -ObjectId $idenityNamePrincipalId  -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+Remove-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 
 ## remove definitions
 Remove-AzRoleDefinition -Id $imageRoleDefObjId -Force
 Remove-AzRoleDefinition -Id $networkRoleObjId -Force
+
+## delete identity
+Remove-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName -Force
 ```
 
 ### Delete Resource Groups
 ```powerShell
 Remove-AzResourceGroup $imageResourceGroup -Force
 
+
 # delete VNET created
 # BEWARE!!!!! In this example, you have either used an existing VNET or created one for this example. Do not delete your existing VNET. If you want to delete the VNET Resource group used in this example '$vnetRgName', modify the above code.
 ```
 ## Next Steps
 If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../quickquickstarts/nextSteps.md)]
+
+
