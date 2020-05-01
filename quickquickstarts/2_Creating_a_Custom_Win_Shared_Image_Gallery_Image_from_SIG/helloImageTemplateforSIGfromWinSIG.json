@@ -19,10 +19,12 @@
 
     "resources": [
     {
-    "type": "Microsoft.VirtualMachineImages",
-    "apiVersion": "2019-05-01-preview",
-    "location": "<region1>",
+    "name": "[parameters('imageTemplateName')]",
+    "type": "Microsoft.VirtualMachineImages/imageTemplates",
+    "apiVersion": "[parameters('api-version')]",
+    "location": "[parameters('svclocation')]",
     "dependsOn": [],
+    
     "tags": {
         "imagebuilderTemplate": "AzureVMImageBuilderSIGonSIG",
         "userIdentity": "enabled"
