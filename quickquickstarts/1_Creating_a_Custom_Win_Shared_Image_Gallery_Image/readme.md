@@ -122,7 +122,7 @@ https://docs.microsoft.com/en-us/azure/role-based-access-control/troubleshooting
 ## Step 3 : Create the Shared Image Gallery
 
 ```powerShell
-$sigGalleryName= "my22stSIG"
+$sigGalleryName= "myaibsig01"
 $imageDefName ="winSvrimages"
 
 # additional replication region
