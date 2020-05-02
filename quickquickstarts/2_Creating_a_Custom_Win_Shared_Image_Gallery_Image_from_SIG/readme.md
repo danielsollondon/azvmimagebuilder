@@ -2,6 +2,8 @@
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
 
+This Quick Start assumes you have completed 1_Creating_a_Custom_Win_Shared_Image_Gallery_Image, and therefore the variables below, will be preset to those variable names, for continuity, but you can always update them yourself.
+
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
 >>> Note! Azure Image Builder automatically runs sysprep to generalize the image, this is a generic sysprep command, which you can [overide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully) if you are aware of more favorable settings. However, for *Windows there are limits on how many times (8), an image can be sysprep'd*, see [here](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep) for more details. Therefore exercise caution on how many times you layer customizations.
@@ -38,166 +40,212 @@ If they do not saw registered, run the commented out code below.
 
 ```
 
-## Step 1 : Set Permissions & Create Shared Image Gallery (SIG)
+## Step 1 : Set Variables
 
->>> NOTE!!! 
-For Preview AIB will only support creating custom images in the same Resource Group as the source custom managed image. For example, if your existing managed custom images resides in RG1, then you must make sure the sigResourceGroup variable below is set to RG1. In the quick start below, we will create a SIG in that RG.
+```powerShell
 
-This Quick Start assumes you have completed 1_Creating_a_Custom_Linux_Shared_Image_Gallery_Image, and therefore the variables below, will be preset to those variable names, for continuity, but you can always update them yourself.
+# Step 2: get existing context
+$currentAzContext = Get-AzContext
 
-```bash
-# set your environment variables here!!!!
+# destination image resource group
+$imageResourceGroup="aibwinsig01"
 
-# Create SIG  resource group
-sigResourceGroup=aibwinsig
+# location (see possible locations in main docs)
+$location="westus"
 
-# location of SIG (see possible locations in main docs)
-location=westus
+# your subscription, this will get your current subscription
+$subscriptionID=$currentAzContext.Subscription.Id
 
-# additional region to replication image to
-additionalregion=eastus
+# name of the image to be created
+$imageName="aibCustomImgSvr2"
 
-# your subscription
-# get the current subID : 'az account show | grep id'
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+# image template name
+$imageTemplateName="helloImageTemplateWin03ps"
 
-# password for test VM
-vmpassword=<INSERT YOUR PASSWORD HERE>
+# distribution properties object name (runOutput), i.e. this gives you the properties of the managed image on completion
+$runOutputName="winserverR02"
 
-# name of the shared image gallery to used, e.g. myCorpGallery
-sigName=my22stSIG
+$sigGalleryName= "myaibsig01"
+$imageDefName ="winSvrimages"
 
-# name of the image definition to be used, e.g. ProdImages
-imageDefName=winSvrimages
+# additional replication region
+$replRegion2="eastus"
+```
 
-# image distribution metadata reference name
-runOutputName=w2019SigRo2
+## Step 2 : Permissions, create user idenity and role for AIB
 
-# get image version created in SIG from previous example
-sigDefImgVersionId=$(az sig image-version list \
-   -g $sigResourceGroup \
-   --gallery-name $sigName \
-   --gallery-image-definition $imageDefName \
-   --subscription $subscriptionID --query [].'id' -o json | grep 0. | tr -d '"' | tr -d '[:space:]')
+### Create user identity or use previous identity
+```powerShell
+# setup role def names, these need to be unique
+$idenityObject=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup | Where-Object {$_.Name -Match "aibIdentity*"})
+
+
+$idenityNameResourceId=$idenityObject.Id
+$idenityNamePrincipalId=$idenityObject.PrincipalId
+$idenityName=$idenityObject.Name
+```
+### (Optional) Assign permissions for identity to read source images and distribute images
+In the previous example you have setup a SIG, with a user identity, that has permissions to read and write to the SIG. This is enough permissions for this example as we will be reading the SIG image version created in the prereq example, but just incase you are experimenting, and want to read an image version from another SIG, you will need to give the user identity permissions to access it, with the role definition.
+
+```powerShell
+$imageRoleDefName=<Get from previous example>
+# grant role definition to image builder service principal
+New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName contributor -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
 ```
 
->>Note! If you already have your own Shared Image Gallery, and did not follow the previous example, you will need to assign permissions for Image Builder to access the Resource Group, so it can access the SIG.
-```bash
-# assign permissions for that resource group
-az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
-    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+## Step 3 : Get latest image version for source
+
+# get all versions from SIG def
+$getAllImageVersions=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName)
+
+# get name and expand publishing date for a version
+$versionPubList=$($getAllImageVersions | Select-Object -Property Name -ExpandProperty PublishingProfile)
+
+# order by published date (leaving in more columns for induvidual validation)
+$sortedVersionList=$($versionPubList | Select-Object Name, PublishedDate | Sort-Object PublishedDate -Descending | Select-Object Name -First 1)
+
+# get latest version resource id
+$sigDefImgVersionId=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName -Name $sortedVersionList.name).Id
+
+
+## Step 4 : Configure the Image Template
+
+# Configure the Image Template
+This command will download and update the template with the parameters specified earlier.
+```powerShell
+
+$templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/2_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG/helloImageTemplateforSIGfromWinSIG.json"
+$templateFilePath = "helloImageTemplateforSIGfromWinSIG.json"
+
+Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
+
+((Get-Content -path $templateFilePath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $templateFilePath
+((Get-Content -path $templateFilePath -Raw) -replace '<rgName>',$imageResourceGroup) | Set-Content -Path $templateFilePath
+((Get-Content -path $templateFilePath -Raw) -replace '<region>',$location) | Set-Content -Path $templateFilePath
+((Get-Content -path $templateFilePath -Raw) -replace '<runOutputName>',$runOutputName) | Set-Content -Path $templateFilePath
+
+((Get-Content -path $templateFilePath -Raw) -replace '<imageDefName>',$imageDefName) | Set-Content -Path $templateFilePath
+((Get-Content -path $templateFilePath -Raw) -replace '<sharedImageGalName>',$sigGalleryName) | Set-Content -Path $templateFilePath
+((Get-Content -path $templateFilePath -Raw) -replace '<region1>',$location) | Set-Content -Path $templateFilePath
+((Get-Content -path $templateFilePath -Raw) -replace '<region2>',$replRegion2) | Set-Content -Path $templateFilePath
+
+((Get-Content -path $templateFilePath -Raw) -replace '<imgBuilderId>',$idenityNameResourceId) | Set-Content -Path $templateFilePath
+
+((Get-Content -path $templateFilePath -Raw) -replace '<sigDefImgVersionId>',$sigDefImgVersionId) | Set-Content -Path $templateFilePath
+
+
 ```
 
 
-## Step 2 : Modify HelloImage Example
+# Submit the template
+Your template must be submitted to the service, this will download any dependent artifacts (scripts etc), validate, check permissions, and store them in the staging Resource Group, prefixed, *IT_*.
+```powerShell
+New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2019-05-01-preview" -imageTemplateName $imageTemplateName -svclocation $location
+```
+ 
+# Build the image
+To build the image you need to invoke 'Run'.
 
-```bash
-# download the example and configure it with your vars
+```powerShell
+Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview" -Action Run -Force
+```
+>> Note, the command will not wait for the image builder service to complete the image build, you can query the status below.
 
-curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/2_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG/helloImageTemplateforSIGfromWinSIG.json -o helloImageTemplateforSIGfromWinSIG.json
 
-sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateforSIGfromWinSIG.json
-sed -i -e "s/<rgName>/$sigResourceGroup/g" helloImageTemplateforSIGfromWinSIG.json
-sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateforSIGfromWinSIG.json
-sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateforSIGfromWinSIG.json
-sed -i -e "s%<sigDefImgVersionId>%$sigDefImgVersionId%g" helloImageTemplateforSIGfromWinSIG.json
+# Get Status of the Image Build and Query 
+As there are currently no specific Azure PowerShell cmdlets for image builder, we need to construct API calls, with the authentication, this is just an example, note, you can use existing alternatives you may have.
 
-sed -i -e "s/<region1>/$location/g" helloImageTemplateforSIGfromWinSIG.json
-sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIGfromWinSIG.json
-sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIGfromWinSIG.json
+## Authentication Setup
+We need to start, by getting the Bearer Token from your existing session.
+
+>>> References
+A big thanks to brettmillerb, for [this](https://gist.github.com/brettmillerb/69c557f269515ea903364948238a41ab) simple method.
+
+
+```powerShell
+### Step 1: Update context
+$currentAzureContext = Get-AzContext
+
+### Step 2: Get instance profile
+$azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+$profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
+    
+Write-Verbose ("Tenant: {0}" -f  $currentAzureContext.Subscription.Name)
+ 
+### Step 4: Get token  
+$token = $profileClient.AcquireAccessToken($currentAzureContext.Tenant.TenantId)
+$accessToken=$token.AccessToken
+```
+
+## Get Image Build Status and Properties
+
+### Query the Image Template for Current or Last Run Status and Image Template Settings
+```powerShell
+$managementEp = $currentAzureContext.Environment.ResourceManagerUrl
+
+
+$urlBuildStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/{2}?api-version=2019-05-01-preview", $managementEp, $currentAzureContext.Subscription.Id,$imageTemplateName)
+
+$buildStatusResult = Invoke-WebRequest -Method GET  -Uri $urlBuildStatus -UseBasicParsing -Headers  @{"Authorization"= ("Bearer " + $accessToken)} -ContentType application/json 
+$buildJsonStatus =$buildStatusResult.Content
+$buildJsonStatus
 
 ```
 
-## Step 3 : Create the Image
+The image build for this example will take approximately 30mins, when you query the status, you need to look for *lastRunStatus*, below shows the build is still running, if it had completed successfully, it would show 'suceeded'.
 
-```bash
-# submit the image confiuration to the VM Image Builder Service
-
-az resource create \
-    --resource-group $sigResourceGroup \
-    --properties @helloImageTemplateforSIGfromWinSIG.json \
-    --is-full-object \
-    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n imageTemplateforSIGfromWinSIG01
-
-
-# start the image build
-
-az resource invoke-action \
-     --resource-group $sigResourceGroup \
-     --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
-     -n imageTemplateforSIGfromWinSIG01 \
-     --action Run 
-
-# wait minimum of 50mins (this includes replication time to both regions)
+```text
+  "lastRunStatus": {
+   "startTime": "2019-08-21T00:39:40.61322415Z",
+   "endTime": "0001-01-01T00:00:00Z",
+   "runState": "Running",
+   "runSubState": "Building",
+   "message": ""
+  },
 ```
 
+### Query the Distribution properties
+If you are distributing to a VHD location, need Managed Image Location properties, or Shared Image Gallery replications status, you need to query the 'runOutput', everytime you have a distribution target, you will have a unique runOutput, to describe properties of the distribution type.
 
-## Step 4 : Create the VM
+```powerShell
+$managementEp = $currentAzureContext.Environment.ResourceManagerUrl
+$urlRunOutputStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/$imageTemplateName/runOutputs/{2}?api-version=2019-05-01-preview", $managementEp, $currentAzureContext.Subscription.Id, $runOutputName)
 
-```bash
-az vm create \
-  --resource-group $sigResourceGroup \
-  --name aibImgWinVm002 \
-  --admin-username aibuser \
-  --admin-password $vmpassword \
-  --image "/subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/latest" \
-  --location $location
-
+$runOutStatusResult = Invoke-WebRequest -Method GET  -Uri $urlRunOutputStatus -UseBasicParsing -Headers  @{"Authorization"= ("Bearer " + $accessToken)} -ContentType application/json 
+$runOutJsonStatus =$runOutStatusResult.Content
+$runOutJsonStatus
 ```
-Remote Desktop to the VM, using the Portal, or typing MSTSC at the Command Prompt (CMD).
+## Create a VM
+Now the build is finished you can build a VM from the image, use the examples from [here](https://docs.microsoft.com/en-us/powershell/module/az.compute/new-azvm?view=azps-2.5.0#examples).
 
-Then, Go to the Command Prompt, then run:
-```bash
-dir c:\
+# Clean Up
+
+>>> Note!!!
+>>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *2_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
+
+Delete the resource group template first, do not just delete the entire resource group, otherwise the staging resource group (*IT_*) used by AIB will not be cleaned up.
+
+### Get ResourceID of the Image Template
+```powerShell
+$resTemplateId = Get-AzResource -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview"
+
+# Delete Image Template Artifact
+Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force
 ```
-You should see these two directories created during image customization:
-buildActions2
+### Delete role assignment
+```powerShell
+Remove-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
-## Clean Up
-```bash
-# BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
+## remove definitions
+Remove-AzRoleDefinition -Name "$idenityNamePrincipalId" -Force -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
-# delete AIB Template
-az resource delete \
-    --resource-group $sigResourceGroup \
-    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n imageTemplateforSIGfromWinSIG01
-
-# list image versions created by AIB, this always starts with 0.*
-az sig image-version list \
-   -g $sigResourceGroup \
-   --gallery-name $sigName \
-   --gallery-image-definition $imageDefName \
-   --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"'
-
-# For each image version, run the delete cmd:
-az sig image-version delete \
-   -g $sigResourceGroup \
-   --gallery-name $sigName \
-   --gallery-image-definition $imageDefName \
-   --subscription $subscriptionID \
-   --gallery-image-version <imageVersionNumber>
-   #<imageVersionNumber e.g. 0.23725.5933> \
-
-# delete image definition
-az sig image-definition delete \
-   -g $sigResourceGroup \
-   --gallery-name $sigName \
-   --gallery-image-definition $imageDefName \
-   --subscription $subscriptionID
-
-# delete SIG
-az sig delete -r $sigName -g $sigResourceGroup
-
-# delete RG
-az group delete -n $sigResourceGroup -y
-
+## delete identity
+Remove-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName -Force
 ```
-
+### Delete Resource Group
+```powerShell
+Remove-AzResourceGroup $imageResourceGroup -Force
+```
 ## Next Steps
 If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../quickquickstarts/nextSteps.md)]
-

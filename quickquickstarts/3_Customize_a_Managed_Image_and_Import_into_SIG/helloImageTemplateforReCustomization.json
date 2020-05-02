@@ -3,6 +3,18 @@
     "apiVersion": "2019-05-01-preview",
     "location": "<region1>",
     "dependsOn": [],
+
+    "tags": {
+        "imagebuilderTemplate": "AzureVMImageBuilderSIGonSIG",
+        "userIdentity": "enabled"
+            },
+        "identity": {
+            "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                    "<imgBuilderId>": {}
+                        
+                }
+                        },
     "properties": {
         "source": {
             "type": "ManagedImage",
