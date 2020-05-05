@@ -13,9 +13,9 @@ This document is to explain permissions granted and required for Azure VM Image 
 * Using Managed Identity to allowing Image Builder to Access Azure Storage
 
 ## Permissions granted registering for the Service
-When you register for the (AIB), this grants the AIB Service permission to create, manage and delete a staging resource group (IT_*), and have rights to add resources to it, that are required for the image build. 
+When you register for the (AIB), this grants the AIB Service permission to create, manage and delete a staging resource group (IT_*), and have rights to add resources to it, that are required for the image build. This is done by an AIB Service Principal Name (SPN) being made available in your subscription during a successful registration.
 
-AIB does *NOT* have permission to access other resources in other resource groups in the subscription, you need to take explicit actions to allow that to happen. Without these actions the builds will fail.
+The AIB SPN does *NOT* have permission to access other resources in other resource groups in the subscription, you need to grant explicit actions to allow that to happen. Without these actions the builds will fail.
 
 To allow AIB to create,manage and delete a staging resource group you must register for the service:
 * AZ CLI
@@ -27,13 +27,35 @@ az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMac
 Register-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderNamespace Microsoft.VirtualMachineImages
 ```
 
-## Requirements
-The privilges below highlight what actions AIB requires, and you can create a Custom Role Definition and assign it to the AIB SPN, see the examples at the end of the document.
+## Requirements 
+You must create an [Azure user-assigned managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-manage-ua-identity-cli) for use with AIB, this will be used during the image build to read images, write images, and access Azure storage. You then need to grant it permission to do specific actions below in your subscription.
+
+> Note! Previously with AIB, you would use the AIB SPN, and grant the SPN permissions to the image resource groups. We are moving away from this model, to allow for future capabilities. From 1st June 2020, Image Builder will not accept templates that do not have a user-assigned identity.
+
+You can review the [Azure user-assigned managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-manage-ua-identity-cli) documentation on how to create an identity, but here are some examples below.
+
+## Creating an Azure user-assigned Managed Identity
+### AZ CLI
+```bash
+idenityName=aibBuiUserId
+imageResourceGroup="<rgname>"
+az identity create -g $imageResourceGroup -n $idenityName
+```
+### PowerShell
+```PowerShell
+$idenityName="aibIdentity"
+$imageResourceGroup="<rgname>"
+## Add AZ PS module to support AzUserAssignedIdentity
+Install-Module -Name Az.ManagedServiceIdentity
+
+# create identity
+New-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName
+```
 
 ### Allowing AIB to Distribute Images
-For AIB to distribute images (Managed Images / Shared Image Gallery), the AIB service must be allowed to inject the images into these resource groups, to do this, you need to grant the AIB Service Principal Name (SPN) rights on the resource group where the image will be placed. 
+For AIB to distribute images (Managed Images / Shared Image Gallery), the AIB service must be allowed to inject the images into these resource groups, to do this, you need to create and grant a user-assigned identity rights on the resource group where the image will be placed. 
 
-You can avoid granting the AIB SPN contributor on the resource group to distribute images, but it's SPN will need these these Azure Actions in the distribution resource group:
+You can avoid granting the user-assigned identity contributor permission on the resource group to distribute images, but it will need permissions tp perform these Azure Actions in the distribution resource group:
 
 ```bash
 # these are minimum required for image builder, irrespective Managed Images \ Shared Image Gallery
@@ -75,96 +97,124 @@ Microsoft.Network/virtualNetworks/subnets/join/action
 The examples below show creating a Role Definition from the actions above, but these are being applied at the resource group level, but you should evaluate and test if these are granular enough for your requirements. For example the scope is set to the resource group, you maybe able to refine it to a specific Shared Image Gallery. The image actions allow read and write, you should decide what is appropriate for your environment, for example, you may create a role to allow AIB to read images from resource group 1 and allow it to write images to resource group 2.
 
 ### AZ CLI Examples
-#### Setting AIB SPN Permissions to use source custom image and distribute a custom image
+#### Setting AIB user-dentity Permissions to use source custom image and distribute a custom image
 ```bash
-# set your variables
-subscriptionID=<subID>
-imageResourceGroup=<distributionRG>
-
-# download preconfigured example
+# download user definition template
 curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
 
-# update the definition
+# update template
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+
+# get identity id
+imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
+
+# make role name unique, to avoid clashes in the same AAD Domain
+imageRoleDefName="Azure Image Builder Image Def"$(date +'%s')
+
+# update the definitions
+sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aibRoleImageCreation.json
 
 # create role definitions
 az role definition create --role-definition ./aibRoleImageCreation.json
 
-# grant role definition to the AIB SPN
+# grant role definition to the user assigned identity
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Image Creation Role" \
+    --assignee $imgBuilderCliId \
+    --role $imageRoleDefName \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 ```
-
 #### Setting AIB SPN Permissions to allow it to use an existing VNET
 ```bash
-# set your variables
-subscriptionID=<subID>
-imageResourceGroup=<distributionRG>
-
-# download preconfigured example
 curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleNetworking.json -o aibRoleNetworking.json
 
-# update the definition
+# update template
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleNetworking.json
 sed -i -e "s/<vnetRgName>/$vnetRgName/g" aibRoleNetworking.json
 
-# create role definitions
-az role definition update --role-definition ./aibRoleNetworking.json
+# get identity id
+imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
 
-# grant role definition to the AIB SPN
+# make role name unique, to avoid clashes in the same AAD Domain
+netRoleDefName="Azure Image Builder Network Def"$(date +'%s')
+
+# update the definitions
+sed -i -e "s/Azure Image Builder Service Networking Role/$netRoleDefName/g" aibRoleNetworking.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleNetworking.json
+
+# grant role definition to the user assigned identity
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Networking Role" \
- --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
+    --assignee $imgBuilderCliId \
+    --role $netRoleDefName \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
+
 ```
 
 ### Azure PowerShell Examples
 #### Setting AIB SPN Permissions to use source custom image and distribute a custom image
 ```powerShell
-# set your variables
+$timeInt=$(get-date -UFormat "%s")
+$imageRoleDefName="Azure Image Builder Image Def"+$timeInt
 
-# download preconfigured example
+# get the user-identity properties
+$idenityNameResourceId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName).Id
+$idenityNamePrincipalId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName).PrincipalId
+
+
+# assign permissions for identity to distribute images
+This command will download and update the template with the parameters specified earlier.
+```powerShell
 $aibRoleImageCreationUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json"
 $aibRoleImageCreationPath = "aibRoleImageCreation.json"
 
+# download config
 Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPath -UseBasicParsing
 
-# update the definition
+# update role definition template
 ((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $aibRoleImageCreationPath
 ((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<rgName>', $imageResourceGroup) | Set-Content -Path $aibRoleImageCreationPath
 
-# create role definitions
+## randomize the role definition name to make it unique for this example
+((Get-Content -path $aibRoleImageCreationPath -Raw) -replace 'Azure Image Builder Service Image Creation Role', $imageRoleDefName) | Set-Content -Path $aibRoleImageCreationPath
+
+# create role definition
 New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
 
-# grant role definition to the AIB SPN
+# grant role definition to image builder service principal
+New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
-New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Image Creation Role" -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
+### NOTE: If you see this error: 'New-AzRoleDefinition: Role definition limit exceeded. No more role definitions can be created.' See this article to resolve:
+https://docs.microsoft.com/en-us/azure/role-based-access-control/troubleshooting
 ```
 
 #### Setting AIB SPN Permissions to allow it to use an existing VNET
 
 ```powerShell
-# set your variables
+# set unique role name
+$networkRoleDefName="Azure Image Builder Network Def"+$timeInt
 
-# download preconfigured example
 $aibRoleNetworkingUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleNetworking.json"
 $aibRoleNetworkingPath = "aibRoleNetworking.json"
 
+# download configs
 Invoke-WebRequest -Uri $aibRoleNetworkingUrl -OutFile $aibRoleNetworkingPath -UseBasicParsing
 
-# update the definition
+# update role definition template
 ((Get-Content -path $aibRoleNetworkingPath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $aibRoleNetworkingPath
 ((Get-Content -path $aibRoleNetworkingPath -Raw) -replace '<vnetRgName>',$vnetRgName) | Set-Content -Path $aibRoleNetworkingPath
+
+## randomize the role definition name to make it unique for this example
+((Get-Content -path $aibRoleNetworkingPath -Raw) -replace 'Azure Image Builder Service Networking Role',$networkRoleDefName) | Set-Content -Path $aibRoleNetworkingPath
 
 # create role definitions
 New-AzRoleDefinition -InputFile  ./aibRoleNetworking.json
 
-# grant role definition to image builder service principal
-New-AzRoleAssignment -ObjectId ef511139-6170-438e-a6e1-763dc31bdf74 -RoleDefinitionName "Azure Image Builder Service Networking Role" -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
+# grant role definition to image builder user identity
+New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $networkRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$vnetRgName"
 ```
+
 ## Using Managed Identity to allowing Image Builder to Access Azure Storage
 If you want to seemlessly authenticate with Azure Storage, and use Private Containers, then you need to give AIB an Azure User-Assigned Managed Identity, which it can use to authenticate with Azure Storage.
 
