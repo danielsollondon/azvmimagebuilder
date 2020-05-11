@@ -361,6 +361,19 @@ Cause: Suspected this is a timing issue on the D1_V2 VM size, when you limited, 
 
 Action: Increase VM size, or add 60s PowerShell sleep customization.
 
+```text
+    "status": "Failed",
+    "error": {
+        "code": "ResourceOperationFailure",
+        "message":"The  resource operation completed with terminal provisioning state
+                       'Failed'.","details":[{"code":"InternalOperationError","message":"Failed in distributing 1
+                       images out of total 1: Some error happened, please check the error
+                       details.","details":[{"code":"InternalOperationError","message":"Internal error occurred."}]}]}}
+```
+Cause: This means the image customization worked fine, which is why you do not see any errors in the customization.log, but AIB timed out waiting for the image to create in the SIG or Image. 
+
+Action: Whilst AIB timed out, the image may have been created, can you check your distribution.
+
 ## DevOps task 
 
 ```text
