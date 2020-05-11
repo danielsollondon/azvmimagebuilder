@@ -95,7 +95,7 @@ New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName contr
 ```
 
 ## Step 3 : Get latest image version for source
-
+```powerShell
 # get all versions from SIG def
 $getAllImageVersions=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName)
 
@@ -107,7 +107,7 @@ $sortedVersionList=$($versionPubList | Select-Object Name, PublishedDate | Sort-
 
 # get latest version resource id
 $sigDefImgVersionId=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName -Name $sortedVersionList.name).Id
-
+```
 
 ## Step 4 : Configure the Image Template
 

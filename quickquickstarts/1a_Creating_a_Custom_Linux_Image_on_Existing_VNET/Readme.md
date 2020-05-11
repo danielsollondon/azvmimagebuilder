@@ -147,7 +147,7 @@ sed -i -e "s/<vnetRgName>/$vnetRgName/g" aibRoleNetworking.json
 For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
 
 ```bash
-# create user assigned identity for image builder to access the storage account where the script is located
+# create user assigned identity for image builder
 idenityName=aibBuiUserId$(date +'%s')
 az identity create -g $imageResourceGroup -n $idenityName
 

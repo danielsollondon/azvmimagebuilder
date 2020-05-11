@@ -54,7 +54,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # image resource group
-imageResourceGroup=aibmdimsi0001
+imageResourceGroup=aibmdimsi00022
 
 # storage resource group
 strResourceGroup=aibmdimsistor
@@ -100,9 +100,12 @@ imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/p
 # download preconfigured role definition example
 curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
 
+imageRoleDefName="Azure Image Builder Image Def"$(date +'%s')
+
 # update the definition
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aibRoleImageCreation.json
 
 # create role definitions
 az role definition create --role-definition ./aibRoleImageCreation.json
@@ -110,7 +113,7 @@ az role definition create --role-definition ./aibRoleImageCreation.json
 # grant role definition to the user assigned identity
 az role assignment create \
     --assignee $imgBuilderCliId \
-    --role "Azure Image Builder Service Image Creation Role" \
+    --role $imageRoleDefName \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 ```
 
@@ -128,6 +131,7 @@ az sig image-definition create \
    --gallery-name $sigName \
    --gallery-image-definition $imageDefName \
    --publisher corpIT \
+   --os-state Generalized \
    --offer myOffer \
    --sku 18.04-LTS \
    --os-type Linux
@@ -239,6 +243,16 @@ You should see the image was customized with a Message of the Day as soon as you
 
 ## Clean Up
 ```bash
+# delete permissions asssignments, roles and identity
+az role assignment delete \
+    --assignee $imgBuilderCliId \
+    --role "$imageRoleDefName" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+
+az role definition delete --name "$imageRoleDefName"
+
+az identity delete --ids $imgBuilderId
+
 
 # delete AIB Template
 az resource delete \
@@ -248,14 +262,14 @@ az resource delete \
 
 # get image version created by AIB, this always starts with 0.*
 sigDefImgVersion=$(az sig image-version list \
-   -g $sigResourceGroup \
+   -g $imageResourceGroup \
    --gallery-name $sigName \
    --gallery-image-definition $imageDefName \
    --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"')
 
 # delete image version
 az sig image-version delete \
-   -g $sigResourceGroup \
+   -g $imageResourceGroup \
    --gallery-image-version $sigDefImgVersion \
    --gallery-name $sigName \
    --gallery-image-definition $imageDefName \
@@ -263,29 +277,15 @@ az sig image-version delete \
 
 # delete image definition
 az sig image-definition delete \
-   -g $sigResourceGroup \
+   -g $imageResourceGroup \
    --gallery-name $sigName \
    --gallery-image-definition $imageDefName \
    --subscription $subscriptionID
 
 # delete SIG
-az sig delete -r $sigName -g $sigResourceGroup
+az sig delete -r $sigName -g $imageResourceGroup
 
-
-az identity delete --ids $imgBuilderId
-
-az resource delete \
-    --resource-group $imageResourceGroup \
-    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
-    -n helloImageTemplateMsi01
-
-az role assignment delete \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role "Azure Image Builder Service Image Creation Role" \
-    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
-
-az role definition delete --name "Azure Image Builder Service Image Creation Role"
-
+# delete resource groups
 az group delete -n $imageResourceGroup
 
 az group delete -n $strResourceGroup

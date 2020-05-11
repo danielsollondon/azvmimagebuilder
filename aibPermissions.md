@@ -30,7 +30,7 @@ Register-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderN
 ## Requirements 
 You must create an [Azure user-assigned managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-manage-ua-identity-cli) for use with AIB, this will be used during the image build to read images, write images, and access Azure storage. You then need to grant it permission to do specific actions below in your subscription.
 
-> Note! Previously with AIB, you would use the AIB SPN, and grant the SPN permissions to the image resource groups. We are moving away from this model, to allow for future capabilities. From 1st June 2020, Image Builder will not accept templates that do not have a user-assigned identity.
+> Note! Previously with AIB, you would use the AIB SPN, and grant the SPN permissions to the image resource groups. We are moving away from this model, to allow for future capabilities. From 1st June 2020, Image Builder will not accept templates that do not have a user-assigned identity. For customers using the Azure DevOps task, the task will be updated shortly to support this.
 
 You can review the [Azure user-assigned managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-manage-ua-identity-cli) documentation on how to create an identity, but here are some examples below.
 
@@ -58,7 +58,7 @@ For AIB to distribute images (Managed Images / Shared Image Gallery), the AIB se
 You can avoid granting the user-assigned identity contributor permission on the resource group to distribute images, but it will need permissions tp perform these Azure Actions in the distribution resource group:
 
 ```bash
-# these are minimum required for image builder, irrespective Managed Images \ Shared Image Gallery
+# these are minimum required for image builder, irrespective Managed Images \ Shared Image Gallery, as AIB creates an intermediate staging image.
 Microsoft.Compute/images/write
 Microsoft.Compute/images/read
 Microsoft.Compute/images/delete
@@ -155,6 +155,7 @@ az role assignment create \
 ### Azure PowerShell Examples
 #### Setting AIB SPN Permissions to use source custom image and distribute a custom image
 ```powerShell
+# make role name unique, to avoid clashes in the same AAD Domain
 $timeInt=$(get-date -UFormat "%s")
 $imageRoleDefName="Azure Image Builder Image Def"+$timeInt
 
