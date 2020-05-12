@@ -372,7 +372,7 @@ Action: Increase VM size, or add 60s PowerShell sleep customization.
 ```
 Cause: This means the image customization worked fine, which is why you do not see any errors in the customization.log, but AIB timed out waiting for the image to create in the SIG or Image, this could be that the image creation time exceeded the total buildTimeinMinutes, or AIB did not have permissions to create the image. 
 
-Action: Whilst AIB timed out, the image may still be replicating, you should check the SIG iamage version. If the image is not created at all, make sure you have granted [permissions for the distribution resource group](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#allowing-aib-to-distribute-images). If they are correct, increase 
+Action: Whilst AIB timed out, the image may still be replicating, you should check the SIG iamage version. If the image is not created at all, make sure you have granted [permissions for the distribution resource group](https://github.com/danielsollondon/azvmimagebuilder/blob/master/aibPermissions.md#allowing-aib-to-distribute-images). If they are correct, increase the [buildTimeoutInMinutes](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json#properties-buildtimeoutinminutes).
 
 
 ## DevOps task 
