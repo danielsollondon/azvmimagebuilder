@@ -75,6 +75,7 @@ The source images must be of the supported Image Builder OS's. You can choose ex
 ```json
 /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/<versionNumber>
 ```
+If you need to get the latest SIG version, you can have a AZ PowerShell / AZ CLI task before that will get the latest version and set a DevOps variable, so you can use it in the Az VM Image Builder DevOps task, please see [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/8_Getting_Latest_SIG_Version_ResID#getting-the-latest-image-version-resourceid-from-shared-image-gallery) for examples.
 
 * Marketplace Base Images
 Image Builder will defaults to using the 'latest' version of the supported OS's, you can specify an image version (optional).
