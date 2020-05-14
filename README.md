@@ -18,12 +18,41 @@ You can run these immediately using the Azure CloudShell from the Portal, and se
 2. [Azure Resource Manager (ARM) Image Builder Examples](/armTemplates/README.md). 
 The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 
-3. Release Information
+## SERVICE UPDATE May 2020: ACTION NEEDED by 26th May - Please Review
+
+We are making key changes to Azure Image Builder security model, this will be a breaking change, therefore we require you to take these before **26th May 0700 Pacific Time**.
+
+**The change** - Azure Image Builder Templates (AIB) **must** contain a populated [`identity`](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json#identity) property, and the user assigned identity **mus**t have permissions to read and write images.
+
+**Impact** - From the 26th May 0700 we will not accepting any new AIB Templates or process existing AIB Templates that do not contain a populated [`identity`](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json#identity). This also means any templates being submitted with api versions earlier than `2019-05-01-preview` will not be be accepted either.
+
+**Why?** - As well as allow us to prepare for future features, we are simplifying and improving the AIB security model, so instead of you granting permissions the AIB Service Principal Name, to build and distribute custom images, and then a user identity to you will now use a single user identity to get access to other Azure resources.
+
+## Actions Required
+### [1. Create a user assigned 'identity'](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#1-create-a-user-assigned-identity)
+
+### [2. Grant the permissions to the user assigned identity to the resource groups](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#2-grant-the-permissions-to-the-user-assigned-identity-az-cli-powershell-to-the-resource-groups)
+
+### 3. [Update your JSON templates with the `identity` property.](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#3-update-your-json-templates-with-the-identity-adding-this-property-to-the-template)
+
+### 4. [Submit your JSON template to the service.](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#4-submit-your-json-template-to-the-service)
+
+### 5. [Remove the old version of the template that does not contain property.](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#5-remove-the-old-version-of-the-template-that-does-not-contain-property)
+
+### 6. [Remove previously granted role assignments from the SPN](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#6-remove-previously-granted-role-assignments-from-the-spn)
+
+For full details and the next potential breaking change, please review the [May Service Update](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#service-update-may-2020-action-needed---please-review) document.
+
+If you have any questions, please review the above and [FAQs](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#faq), and if you cannot find them, please raise questions on GitHub issues.
+
+Thanks,
 
 ## Latest Release Information
 
 ### Timelines (updated March 2020)
 GA - Q2 2020
+
+
 
 ### March 2020 Updates
 It has been a busy year already, and we are so pleased to announce this new functionality:
