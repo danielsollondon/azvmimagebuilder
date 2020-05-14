@@ -1,10 +1,9 @@
 # Azure VM Image Builder Template Repo
-!!!!!Azure VM Image Builder is now in PUBLIC Preview!!!!!
 
 > **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
 
 
-Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder.
+Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder (Public Preview).
 
 What is Image Builder??
 Get started with the short intro video below, or go straight to the Quick Starts below.
