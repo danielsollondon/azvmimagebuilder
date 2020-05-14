@@ -104,6 +104,7 @@ echo subnetResourceId
 
 * **Why is there a date of 1st June on the [Azure Docs page](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-overview#permissions) for this change?** We needed to bring the change forward, due to dependencies, the page is being updated on 19th May, but the date for rejection of templates without 'identity' is 26th May.
 
-* More questions, pl
+* **I am new user, do I need to do anything?**
+No, all [Azure docs for Images Builder](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview), and this [GitHub repo quickstarts](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts) have been updated.
 
 
