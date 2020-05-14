@@ -1,5 +1,7 @@
 # Updating Image Builder Templates
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 Once you submit an Image Builder Template to the service and it is stored as an Image Builder Template artifact, you cannot update it. We have heard asks to support updating Image Builder Template artifacts, we are looking at ways this can be done, and would welcome your feedback on the ways you want this to work, on MS Teams.
 
 One way you could workaround this, is creating multiple templates using a name versioning.

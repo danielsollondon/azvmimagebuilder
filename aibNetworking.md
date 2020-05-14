@@ -1,5 +1,7 @@
 # Networking with Azure VM Image Builder
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 When the Azure Image Builder (AIB) runs, it starts Packer within the service, a build VM will be deployed into your subscription, into the AIB staging resource group, prefixed 'IT_', this is customized and turned into an image. 
 
 You have two options when deploying Azure VM Builder:

@@ -2,6 +2,8 @@
 
 Welcome to the Azure VM Image Builder QuickStarts, these are some key features you can test using Azure CloudShell in the Portal, Azure CLI, PowerShell.
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 **First time using Image Builder??** 
 
 Get started with the short walkthrough video below, or go straight to the Quick Starts below.

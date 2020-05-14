@@ -2,6 +2,8 @@
 
 Welcome to the Azure DevOps Task for Image Builder
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 ## V1 Design Purpose
 This task is designed to take your repo/build artifacts, and inject them into a VM image, so you can install, configure your application, and OS.
  

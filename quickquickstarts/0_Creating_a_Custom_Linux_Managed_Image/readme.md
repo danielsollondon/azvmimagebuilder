@@ -1,5 +1,7 @@
 # Create a Custom Managed Image from an Azure Platform Vanilla OS Image
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region. This covers using mutliple customizations to illustrate some high level functionality:
 
 This covers using mutliple customizations to illustrate some high level functionality:

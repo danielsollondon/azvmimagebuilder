@@ -1,5 +1,7 @@
 # Azure VM Image Builder Permissions Explained and Requirements
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 This document is to explain permissions granted and required for Azure VM Image Builder Service (AIB), covering these topics:
 
 * Permissions granted registering for the Service
