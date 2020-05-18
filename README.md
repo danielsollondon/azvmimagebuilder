@@ -19,6 +19,8 @@ You can run these immediately using the Azure CloudShell from the Portal, and se
 2. [Azure Resource Manager (ARM) Image Builder Examples](/armTemplates/README.md). 
 The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 
+## Service Updates and Latest Release Information
+
 ## SERVICE UPDATE May 2020: ACTION NEEDED by 26th May - Please Review
 
 We are making key changes to Azure Image Builder security model, this will be a breaking change, therefore we require you to take these before **26th May 0700 Pacific Time**.
