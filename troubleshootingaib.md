@@ -65,6 +65,7 @@ $buildJsonStatus
 
 ```
 
+## Common Image Template Submission Errors
 ```text
 'Conflict'. Details: Update/Upgrade of image templates is currently not supported
 ```
@@ -192,7 +193,7 @@ Lastly, you will see the deletion of AIB resources, once the build have complete
 PACKER ERR 2020/02/04 02:04:23 packer: 2020/02/04 02:04:23 Azure request method="DELETE" request="https://management.azure.com/subscriptions/<subId>/resourceGroups/IT_aibDevOpsImg_t_vvvvvvv_yyyyyy-de5f-4f7c-92f2-xxxxxxxx/providers/Microsoft.Network/networkInterfaces/pkrnijamvpo08eo?[REDACTED]" body=""
 ```
 
-## Common Build Errors
+## Common Image Build Errors
 ```text
   "provisioningState": "Succeeded",
   "lastRunStatus": {
