@@ -19,11 +19,52 @@ Errors for template submission occur during the submission, and will be returned
 
 If you need to recheck the status of the submission, and get the error by checking the status of the template:
 
+### Linux
 ```bash
 az resource show \
     --resource-group <imageTemplateResourceGroup> \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n <imageTemplateName>
+```
+
+### Window
+As there are currently no specific Azure PowerShell cmdlets for image builder, we need to construct API calls, with the authentication, this is just an example, note, you can use existing alternatives you may have.
+
+## Authentication Setup
+We need to start, by getting the Bearer Token from your existing session.
+
+>>> References
+A big thanks to brettmillerb, for [this](https://gist.github.com/brettmillerb/69c557f269515ea903364948238a41ab) simple method.
+
+
+```powerShell
+### Step 1: Update context
+$currentAzureContext = Get-AzContext
+
+### Step 2: Get instance profile
+$azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+$profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
+    
+Write-Verbose ("Tenant: {0}" -f  $currentAzureContext.Subscription.Name)
+ 
+### Step 4: Get token  
+$token = $profileClient.AcquireAccessToken($currentAzureContext.Tenant.TenantId)
+$accessToken=$token.AccessToken
+```
+
+## Get Image Build Status and Properties
+
+### Query the Image Template for Current or Last Run Status and Image Template Settings
+```powerShell
+$managementEp = $currentAzureContext.Environment.ResourceManagerUrl
+
+
+$urlBuildStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/{2}?api-version=2019-05-01-preview", $managementEp, $currentAzureContext.Subscription.Id,$imageTemplateName)
+
+$buildStatusResult = Invoke-WebRequest -Method GET  -Uri $urlBuildStatus -UseBasicParsing -Headers  @{"Authorization"= ("Bearer " + $accessToken)} -ContentType application/json 
+$buildJsonStatus =$buildStatusResult.Content
+$buildJsonStatus
+
 ```
 
 ```text
