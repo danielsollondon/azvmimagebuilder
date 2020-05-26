@@ -53,8 +53,6 @@ $accessToken=$token.AccessToken
 ```
 
 #### Get Image Template Submission or Build Status
-
-### Query the Image Template for Current or Last Run Status and Image Template Settings
 ```powerShell
 $managementEp = $currentAzureContext.Environment.ResourceManagerUrl
 
