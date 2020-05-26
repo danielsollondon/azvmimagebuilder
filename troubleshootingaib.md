@@ -14,10 +14,12 @@ AIB failures can happen in 2 areas:
 1. Image Template Submission
 2. Image Build
 
-## Image Template Submission Errors
-Errors for template submission occur during the submission, and will be returned at submission, there is no log for these.
+## Get Status/Error of the Template Submission or Template Build Status
+If you need to recheck the status of the template submission, o, and get the error by checking the status of the template build run the code below, and check `ProvisioningStatus`, or `LastRunStatus`.
 
-If you need to recheck the status of the submission, and get the error by checking the status of the template:
+> Note! Errors for template submission occur during the submission, and will be returned at submission, there is no log for these, but you can dumo the status, to get the error.
+
+
 
 ### Linux
 ```bash
@@ -66,6 +68,22 @@ $buildJsonStatus
 ```
 
 ## Common Image Template Submission Errors
+```text
+Microsoft.VirtualMachineImages/imageTemplates 'XXXXXXXXXXXX' failed with message '{
+  "status": "Failed",
+  "error": {
+    "code": "ResourceDeploymentFailure",
+    "message": "The resource operation completed with terminal provisioning state 'Failed'.",
+    "details": [
+      {
+        "code": "InternalOperationError",
+        "message": "Internal error occurred."
+      }
+```
+Cause: Internal error is a catch all error, it can be a user error or internal service error. As of 22nd May 2020, there is a bug in AIB which means all errors are being returned as internal service errors, we are working to resolve this by end of May.
+
+Action: To understand what the actual error is, please use 
+
 ```text
 'Conflict'. Details: Update/Upgrade of image templates is currently not supported
 ```
