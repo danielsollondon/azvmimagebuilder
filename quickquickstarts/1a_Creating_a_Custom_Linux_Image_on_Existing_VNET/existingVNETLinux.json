@@ -23,9 +23,7 @@
             "vmSize": "Standard_D1_v2",
             "osDiskSizeGB": 30,
             "vnetConfig": {
-                "name": "<vnetName>",
-                "subnetName": "<subnetName>",
-                "resourceGroupName": "<vnetRgName>"
+                "subnetId": "/subscriptions/<subscriptionID>/resourceGroups/<vnetRgName>/providers/Microsoft.Network/virtualNetworks/$vnetName/subnets/$subnetName"
                 }
             },
 
