@@ -27,10 +27,10 @@ az resource show \
     -n <imageTemplateName>
 ```
 
-### Window
+### Windows
 As there are currently no specific Azure PowerShell cmdlets for image builder, we need to construct API calls, with the authentication, this is just an example, note, you can use existing alternatives you may have.
 
-## Authentication Setup
+#### Authentication Setup
 We need to start, by getting the Bearer Token from your existing session.
 
 >>> References
@@ -52,7 +52,7 @@ $token = $profileClient.AcquireAccessToken($currentAzureContext.Tenant.TenantId)
 $accessToken=$token.AccessToken
 ```
 
-## Get Image Build Status and Properties
+#### Get Image Template Submission or Build Status
 
 ### Query the Image Template for Current or Last Run Status and Image Template Settings
 ```powerShell
