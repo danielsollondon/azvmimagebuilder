@@ -55,7 +55,7 @@ Thanks,
 ### Timelines (updated March 2020)
 GA - Q2 2020
 
-### 27th May 2020 Update - NEW API  VERSION
+## 27th May 2020 Update - NEW API VERSION - ACTION REQUIRED
 As you may have noticed, we have now made `identity` a mandatory parameter in the template, this has multiple advantages, as described above, but this was also needed in preparation for our new API release, `2020-02-14`, that will be available in all regions on the 27th May, by 0700 Pacific.
 
 We are in the process of updating all the documentation, new features, and end to end examples, but the main breaking changes are:
