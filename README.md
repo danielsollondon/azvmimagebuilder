@@ -55,6 +55,71 @@ Thanks,
 ### Timelines (updated March 2020)
 GA - Q2 2020
 
+### 27th May 2020 Update - NEW API  VERSION
+As you may have noticed, we have now made `identity` a mandatory parameter in the template, this has multiple advantages, as described above, but this was also needed in preparation for our new API release, `2020-02-14`, that will be available in all regions on the 27th May, by 0700 Pacific.
+
+We are in the process of updating all the documentation, new features, and end to end examples, but the main breaking changes are:
+* `identity` is a mandatory requirement, please review the [May Service Update](https://github.com/danielsollondon/azvmimagebuilder/blob/master/MayServiceAlert01.md#service-update-may-2020-action-needed---please-review) document, on how to add this to your templates.
+* `vnetConfig` - this specification is changing, from providing, name, subnetName, resourceGroupName to just `subnetId`, for example:
+
+```json
+    "vnetConfig": {
+        "subnetId": "/subscriptions/<subscriptionID>/resourceGroups/<vnetRgName>/providers/Microsoft.Network/virtualNetworks/<vnetName>/subnets/<subnetName>"
+        }
+    }
+```
+#### What does this mean for existing templates and new templates created?
+#### New Templates 
+If you create a new AIB template, and do not specify the API version in the calling client like below, then the template will be created using the new API version. This is because the calling client API version will override whatever exists in the AIB template.
+```bash
+az resource create \
+    --resource-group $imageResourceGroup \
+    --properties @existingVNETLinux.json \
+    --is-full-object \
+    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+    -n existingVNETLinuxTemplate01
+```
+If you specify the API version using the calling client, like below, this will be created using the specified API version:
+```powerShell
+New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2019-05-01-preview" -imageTemplateName $imageTemplateName -svclocation $location
+```
+#### Existing Templates
+Once the new API is released, calling clients will default to use the new API version. Therefore, if you have existing templates that were created using the previous API version `2019-05-01-preview`, in order to run, view properties, or delete them, you will need to specify the API version in the calling client, for example:
+
+Getting the template status AZ CLI:
+```bash
+az resource show \
+    --resource-group <imageTemplateResourceGroup> \
+    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+    --api-version 2019-05-01-preview
+    -n <imageTemplateName>
+```
+
+Getting the template status PowerShell:
+
+If you use the current [documented](https://github.com/danielsollondon/azvmimagebuilder/tree/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image#query-the-image-template-for-current-or-last-run-status-and-image-template-settings) method, then ensure the API version matches the previous API version `2019-05-01-preview`.
+```PowerShell
+$urlBuildStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/{2}?api-version=2019-05-01-preview", $managementEp, $currentAzureContext.Subscription.Id,$imageTemplateName)
+```
+
+Deleting Templates AZ CLI:
+```bash
+az resource delete \
+    --resource-group <imageTemplateResourceGroup> \
+    --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+    --api-version 2019-05-01-preview
+    -n <imageTemplateName>
+```
+Deleting Templates PowerShell:
+```PowerShell
+Remove-AzResource -ResourceId $resTemplateId.ResourceId -Force -ApiVersion "2019-05-01-preview"
+```
+
+#### FAQs
+* *What about the AIB Azure DevOps?* - The DevOps task is hard coded to use an API version, this will be updated, but continue to work without interuption. 
+
+* *When will we announce the new functionality?* - The new features will be documented by 28th May
+* *Can I use existing documentation?* - Yes, examples that have breaking changes will be updated.
 
 
 ### March 2020 Updates

@@ -58,9 +58,6 @@ $location="westus"
 # your subscription, this will get your current subscription
 $subscriptionID=$currentAzContext.Subscription.Id
 
-# name of the image to be created
-$imageName="aibCustomImgSvr2"
-
 # image template name
 $imageTemplateName="helloImageTemplateWin03ps"
 

@@ -49,15 +49,14 @@ The deployed proxy VM size is Standard A1_v2 ,in addition to the build VM. The p
 
 #### Image Template parameters to support VNET
 ```json
-"VirtualNetworkConfig": {
-        "name": "",
-        "subnetName": "",
-        "resourceGroupName": ""
-        },
+    "vnetConfig": {
+        "subnetId": "/subscriptions/<subscriptionID>/resourceGroups/<vnetRgName>/providers/Microsoft.Network/virtualNetworks/<vnetName>/subnets/<subnetName>"
+        }
+    }
 ```
-*name* - (Optional) Name of a pre-existing virtual network.
+*vnetName* - Name of a pre-existing virtual network.
 *subnetName* - Name of the subnet within the specified virtual network. Must be specified if and only if 'name' is specified.
-*resourceGroupName* - Name of the resource group containing the specified virtual network. Must be specified if and only if 'name' is specified.
+*vnetRgName* - Name of the resource group containing the specified virtual network. Must be specified if and only if 'name' is specified.
 
 Private Link service requires an IP from the given vnet and subnet. Currently, Azure does’t support Network Policies on these IPs. Hence, network policies need to be disabled on the subnet.  For more details, review the Private Link [documentation](https://docs.microsoft.com/en-us/azure/private-link/).
 
