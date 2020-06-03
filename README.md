@@ -113,7 +113,8 @@ Specify paid Market Place Offerings as a source:
 #### Cancel a running build
 If you are running an image build that you believe is incorrect, waiting for user input, or you feel will never complete successfully, then you can cancel the build.
 
-The build can only be cancelled any time, if the distribution phase has started you can cancel, but you will need to clean up any created images.
+The build can only be cancelled any time, if the distribution phase has started you can cancel, but you will need to clean up any created images. The cancel command does not wait for cancel to complete, please monitor `lastrunstatus.runstate` for canceling progress, using these status [commands](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#get-statuserror-of-the-template-submission-or-template-build-status).
+
 
 Examples of `cancel` commands:
 
