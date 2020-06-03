@@ -35,7 +35,7 @@ Release Date : 1st June 0900 PST
 *  Security model updates:
     * Simplified model - Now you do not grant the AIB permissions to your resources, now you use a single user identity, for more details see the [May 2020 Update](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review).
 * DevOps Task Actions Required and Updates
-    * **The existing AIB task, 'stable' will be updated on *4th June* to support user identity and the new API. This will break existing deployments, For more details see [here](https://aka.ms/azvmimagebuilderdevops).**
+    * **The existing AIB task, 'stable' will be updated on *4th June* to support user identity and the new API. This will break existing deployments, For more details see [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/1_Azure_DevOps#devops-task-versions).**
     * We now have an ['Unstable' AIB Task](https://marketplace.visualstudio.com/items?itemName=AzureImageBuilder.devOps-task-for-azure-image-builder-canary), this allows us to put in the latest updates and features, allow customers to test them, before we promote it to the 'stable' task, approx 1 week later. 
     * Support has been added to the task to support user identity.
     * Multliple Bug fixes to address source custom images
