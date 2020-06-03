@@ -20,6 +20,7 @@ The beauty of these examples, they are heavily parameterized, so you just need t
 ## June 2020 Updates
 Release Date : 1st June 0900 PST
 
+
 * NEW Api `2020-02-14`, containing:
     * Distribute updates:
         * Support for more Shared Image Gallery (SIG) properties:
@@ -37,7 +38,7 @@ Release Date : 1st June 0900 PST
     * **The existing AIB task, 'stable' will be updated on *4th June* to support user identity and the new API. This will break existing deployments, For more details see [here](https://aka.ms/azvmimagebuilderdevops).**
     * We now have an ['Unstable' AIB Task](https://marketplace.visualstudio.com/items?itemName=AzureImageBuilder.devOps-task-for-azure-image-builder-canary), this allows us to put in the latest updates and features, allow customers to test them, before we promote it to the 'stable' task, approx 1 week later. 
     * Support has been added to the task to support user identity.
-    * Mutliple Bug fixes to address source custom images
+    * Multliple Bug fixes to address source custom images
 
 Details below..    
 
@@ -112,7 +113,7 @@ Specify paid Market Place Offerings as a source:
 #### Cancel a running build
 If you are running an image build that you believe is incorrect, waiting for user input, or you feel will never complete successfully, then you can cancel the build.
 
-The build can only be cancelled during the customization phase, if the distribution phase has started you cannot cancel, and you will need to wait for the distribution to occur.
+The build can only be cancelled any time, if the distribution phase has started you can cancel, but you will need to clean up any created images.
 
 Examples of `cancel` commands:
 
