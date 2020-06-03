@@ -1,5 +1,4 @@
 # Documentation for the Azure VM Image Builder DevOps Task  
-Current task version: v1.0.32 
 
 ## V1 Design Purpose
 This task is designed to take your build artifacts, and inject them into a VM image, so you can install, configure your application, and OS.

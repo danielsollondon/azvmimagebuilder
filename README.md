@@ -1,5 +1,121 @@
 # Azure VM Image Builder Template Repo
 
+## Service Updates and Latest Release Information
+
+
+Release Date : 1st June 0900 PST
+
+## Features
+* NEW Api `2020-02-14`, containing:
+    * Distribute updates:
+        * Support for more Shared Image Gallery (SIG) properties:
+            * Specify your own SIG version
+            * storageAccountType
+            * excludeFromLatest
+    * Source updates:
+        * Support for Plan_Info
+        * Specify paid Market Place Offerings as a source
+    * Control Plane updates:
+        * Cancel build - You can now cancel a running build!
+*  Security model updates:
+    * Simplified model - Now you do not grant the AIB permissions to your resources, now you use a single user identity, for more details see the [May 2020 Update](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review).
+* DevOps Task Actions Required and Updates
+    * **The existing AIB task, 'stable' will be updated on *4th June* to support user identity and the new API. This will break existing deployments, For more details see [here](https://aka.ms/azvmimagebuilderdevops).**
+    * We now have an ['Unstable' AIB Task](https://marketplace.visualstudio.com/items?itemName=AzureImageBuilder.devOps-task-for-azure-image-builder-canary), this allows us to put in the latest updates and features, allow customers to test them, before we promote it to the 'stable' task, approx 1 week later. 
+    * Support has been added to the task to support user identity.
+    * Mutliple Bug fixes to address source custom images
+    
+
+## Deprecations & Notifications
+* As of the 4th of June, the service will reject templates that do not contain "identity", with a user assigned identity. 
+* This means any templates created before `2019-05-01-preview` will not be run, and not supported.
+* The `2020-02-14` API requires:
+    * identity is mandatory
+    * vnetConfig is now one property, `subnetId`, this is the resourceID of the subnet.
+* Please see the [May 2020 Update]() for details on how to mitigate the above.
+
+
+## Whats coming!
+* AIB AZ CLI module / PS cmdlets - this will simplify the image creation even more!
+* GA - Early Q3 2020
+
+## June 2020 Update
+
+## More details on features in API `2020-02-14`!
+These details are being added to Azure docs and examples now, but for those who want a sneak peak...
+
+### Support for more Shared Image Gallery (SIG) Properties
+* Specify your own SIG version (optional)
+Previously AIB would automatically generate a montonic version based on datetime, this works well if you just want to keep re-running the template every month, as you don't need to modify the SIG distribution. However, feedback was that many customers would like to use existing versioning schemes, to use these, simply append a version to the SIG resourceID:
+
+
+```json
+"galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>/versions/1.1.1"
+}
+```
+* storageAccountType (optional)
+AIB supports specifying these types of storage for the image version that is to be created:
+   * "Standard_LRS"
+   * "Standard_ZRS"
+
+For more information on these options, see [SIG documentation](https://docs.microsoft.com/en-us/cli/azure/sig/image-version?view=azure-cli-latest#az-sig-image-version-create-optional-parameters)
+* excludeFromLatest (optional)
+This allows you to mark the image version you create not be used as the latest version in the SIG definition, the default is 'false'.
+
+A complete example, showing all the properties:
+```json
+{   
+    "type": "SharedImage",
+    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>//versions/1.1.1",
+    "runOutputName": "<runOutputName>",
+    "artifactTags": {
+        "source": "azureVmImageBuilder",
+        "baseosimg": "windows2019"
+    },
+    "replicationRegions": [
+        "<region1>",
+        "<region2>"
+    ],
+    "storageAccountType" : "Standard_ZRS",
+    "excludeFromLatest" : true
+
+}
+```
+#### Support for Plan_Info
+Specify paid Market Place Offerings as a source:
+```json
+    "source": {
+        "type": "PlatformImage",
+        "publisher": "RedHat",
+        "offer": "rhel-byos",
+        "sku": "rhel-lvm75",
+        "version": "7.5.20190620",
+        "planInfo": {
+            "planName": "rhel-lvm75",
+            "planProduct": "rhel-byos",
+            "planPublisher": "redhat"
+       }
+```
+#### Cancel a running build
+If you are running an image build that you believe is incorrect, waiting for user input, or you feel will never complete successfully, then you can cancel the build.
+
+The build can only be cancelled during the customization phase, if the distribution phase has started you cannot cancel, and you will need to wait for the distribution to occur.
+
+Examples of `cancel` commands:
+
+```powerShell
+Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion >> API  "2019-05-01-preview" -Action Cancel -Force
+```
+
+```bash
+az resource invoke-action \
+     --resource-group $imageResourceGroup \
+     --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
+     -n helloImageTemplateLinux01 \
+     --action Cancel 
+```
+
+
 > **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
 
 
@@ -19,7 +135,6 @@ You can run these immediately using the Azure CloudShell from the Portal, and se
 2. [Azure Resource Manager (ARM) Image Builder Examples](/armTemplates/README.md). 
 The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 
-## Service Updates and Latest Release Information
 
 ## SERVICE UPDATE May 2020: ACTION NEEDED by 26th May - Please Review
 
@@ -50,10 +165,6 @@ If you have any questions, please review the above and [FAQs](https://github.com
 
 Thanks,
 
-## Latest Release Information
-
-### Timelines (updated March 2020)
-GA - Q2 2020
 
 ## 27th May 2020 Update - NEW API VERSION - ACTION REQUIRED
 As you may have noticed, we have now made `identity` a mandatory parameter in the template, this has multiple advantages, as described above, but this was also needed in preparation for our new API release, `2020-02-14`, that will be available in all regions on the 27th May, by 0700 Pacific.
