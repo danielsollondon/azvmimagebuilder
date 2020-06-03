@@ -24,7 +24,8 @@ Release Date : 1st June 0900 PST
     * We now have an ['Unstable' AIB Task](https://marketplace.visualstudio.com/items?itemName=AzureImageBuilder.devOps-task-for-azure-image-builder-canary), this allows us to put in the latest updates and features, allow customers to test them, before we promote it to the 'stable' task, approx 1 week later. 
     * Support has been added to the task to support user identity.
     * Mutliple Bug fixes to address source custom images
-    
+
+Details below..    
 
 ## Deprecations & Notifications
 * As of the 4th of June, the service will reject templates that do not contain "identity", with a user assigned identity. 
@@ -32,14 +33,12 @@ Release Date : 1st June 0900 PST
 * The `2020-02-14` API requires:
     * identity is mandatory
     * vnetConfig is now one property, `subnetId`, this is the resourceID of the subnet.
-* Please see the [May 2020 Update]() for details on how to mitigate the above.
+* Please see the [May 2020 Update](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review) for details on how to mitigate the above.
 
 
 ## Whats coming!
 * AIB AZ CLI module / PS cmdlets - this will simplify the image creation even more!
 * GA - Early Q3 2020
-
-## June 2020 Update
 
 ## More details on features in API `2020-02-14`!
 These details are being added to Azure docs and examples now, but for those who want a sneak peak...
