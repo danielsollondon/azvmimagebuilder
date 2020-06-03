@@ -1,5 +1,20 @@
 # Azure VM Image Builder Template Repo
 
+Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder (Public Preview).
+
+What is Image Builder??
+Get started with the short intro video below, or go straight to the Quick Starts below.
+
+
+[<img src="./introToAIB.png" alt="drawing" width="325"/>](https://youtu.be/nalr2rHRDew)
+
+
+1. [Quick QuickStarts Examples](/quickquickstarts/readme.md).
+You can run these immediately using the Azure CloudShell from the Portal, and see multiple scenarios that the VM Image Builder supports. 
+
+
+2. [Azure Resource Manager (ARM) Image Builder Examples](/armTemplates/README.md). 
+The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 ## Service Updates and Latest Release Information
 
 
@@ -113,26 +128,6 @@ az resource invoke-action \
      -n helloImageTemplateLinux01 \
      --action Cancel 
 ```
-
-
-> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
-
-
-Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder (Public Preview).
-
-What is Image Builder??
-Get started with the short intro video below, or go straight to the Quick Starts below.
-
-
-[<img src="./introToAIB.png" alt="drawing" width="325"/>](https://youtu.be/nalr2rHRDew)
-
-
-1. [Quick QuickStarts Examples](/quickquickstarts/readme.md).
-You can run these immediately using the Azure CloudShell from the Portal, and see multiple scenarios that the VM Image Builder supports. 
-
-
-2. [Azure Resource Manager (ARM) Image Builder Examples](/armTemplates/README.md). 
-The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 
 
 ## SERVICE UPDATE May 2020: ACTION NEEDED by 26th May - Please Review
