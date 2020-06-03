@@ -17,10 +17,9 @@ You can run these immediately using the Azure CloudShell from the Portal, and se
 The beauty of these examples, they are heavily parameterized, so you just need to drop in your own details, then begin image building, or integrate them to existing pipelines.
 ## Service Updates and Latest Release Information
 
-
+## June 2020 Updates
 Release Date : 1st June 0900 PST
 
-## Features
 * NEW Api `2020-02-14`, containing:
     * Distribute updates:
         * Support for more Shared Image Gallery (SIG) properties:
