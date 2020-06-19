@@ -127,6 +127,15 @@ Downloading external file (<myFile>) to local file (xxxxx.0.customizer.fp) [atte
 Cause: The file name or location is incorrect, or the location is not reachable.
 Action: Ensure the file is reachable and the name / location are correct.
 
+```text
+    "provisioningError": {
+      "message": "Internal error occurred. This is a generic error. To identify possible causes, go to https://aka.ms/azvmimagebuilderts.",
+      "provisioningErrorCode": "ServerError"
+    },
+```
+Cause: This could be an internal issue with the service, or one of its dependencies.
+
+Action: Delete the template and resubmit.
 
 ## Build Failures
 For image build failures, you can get the error from the 'lastrunstatus', and then review the details in the customization.log.

@@ -132,8 +132,8 @@ For more information on image builder permissions, please review this [document]
 # Download and update template
 ```powerShell
 # update AIB image config template
-$templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/helloImageTemplateWin.json"
-$templateFilePath = "helloImageTemplateWin.json"
+$templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/0_Creating_a_Custom_Windows_Managed_Image/01.json"
+$templateFilePath = "helloImageTemplateWin01.json"
 
 # download configs
 Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing

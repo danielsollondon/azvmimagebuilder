@@ -1,7 +1,27 @@
 {
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imageTemplateName": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        }
+    },
+    
+    "variables": {
+    },
+
+    "resources": [
+      {
+    "name": "[parameters('imageTemplateName')]",
     "type": "Microsoft.VirtualMachineImages/imageTemplates",
-    "apiVersion": "2019-05-01-preview",
-    "location": "<region>",
+    "apiVersion": "[parameters('api-version')]",
+    "location": "[parameters('svclocation')]",
     "dependsOn": [],
     "tags": {
         "imagebuilderTemplate": "windows2019",
@@ -20,7 +40,7 @@
 
         "vmProfile": 
                 {
-                "vmSize": "Standard_D2_v2",
+                "vmSize": "Standard_D1_v2",
                 "osDiskSizeGB": 127
                 },
         
@@ -83,5 +103,7 @@
                 }
             ]
         }
-}
+    }
+]
 
+}
