@@ -15,7 +15,7 @@ AIB failures can happen in 2 areas:
 2. Image Build
 
 ## Get Status/Error of the Template Submission or Template Build Status
-If you need to recheck the status of the template submission, o, and get the error by checking the status of the template build run the code below, and check `ProvisioningStatus`, or `LastRunStatus`.
+If you need to recheck the status of the template submission, or get the error by checking the status of the template build run the code below, and check `ProvisioningStatus`, or `LastRunStatus`.
 
 > Note! Errors for template submission occur during the submission, and will be returned at submission, there is no log for these, but you can dumo the status, to get the error.
 
@@ -82,7 +82,7 @@ Microsoft.VirtualMachineImages/imageTemplates 'XXXXXXXXXXXX' failed with message
 ```
 Cause: Internal error is a catch all error, it can be a user error or internal service error. As of 22nd May 2020, there is a bug in AIB which means all errors are being returned as internal service errors, we are working to resolve this by end of May.
 
-Action: To understand what the actual error is, please use 
+Action: To understand what the actual error is, please get the error from the submission, by using the steps above in 'Get Status/Error of the Template Submission or Template Build Status' section.
 
 ```text
 'Conflict'. Details: Update/Upgrade of image templates is currently not supported
