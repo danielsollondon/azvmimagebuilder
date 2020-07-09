@@ -80,7 +80,7 @@ A complete example, showing all the properties:
 ```json
 {   
     "type": "SharedImage",
-    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>//versions/1.1.1",
+    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>/versions/1.1.1",
     "runOutputName": "<runOutputName>",
     "artifactTags": {
         "source": "azureVmImageBuilder",
