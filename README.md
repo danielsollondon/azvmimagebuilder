@@ -53,7 +53,7 @@ Details below..
 
 ## Whats coming!
 * AIB AZ CLI module / PS cmdlets - this will simplify the image creation even more!
-* GA - Early Q3 2020
+* GA - Early Q4 2020
 
 ## More details on features in API `2020-02-14`!
 These details are being added to Azure docs and examples now, but for those who want a sneak peak...
