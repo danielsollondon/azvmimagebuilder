@@ -196,9 +196,8 @@ $managementEp = $currentAzureContext.Environment.ResourceManagerUrl
 
 $urlBuildStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/{2}?api-version=2019-05-01-preview", $managementEp, $currentAzureContext.Subscription.Id,$imageTemplateName)
 
-$buildStatusResult = Invoke-WebRequest -Method GET  -Uri $urlBuildStatus -UseBasicParsing -Headers  @{"Authorization"= ("Bearer " + $accessToken)} -ContentType application/json 
-$buildJsonStatus =$buildStatusResult.Content
-$buildJsonStatus
+$buildStatusResult = Invoke-RestMethod -Method Get -Uri $urlBuildStatus -Headers  @{"Authorization" = ("Bearer " + $accessToken) } -ContentType application/json 
+$buildStatusResult.properties.lastRunStatus
 
 ```
 
