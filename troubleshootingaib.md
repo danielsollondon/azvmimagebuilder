@@ -1,7 +1,5 @@
 # Troubleshooting Azure VM Image Build (AIB) Failures
 
-> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
-
 This article covers key troubleshooting guidance for the topics below, and also lists common errors, with cause and guidance.
 
 * Image Template Submission Errors
@@ -9,6 +7,16 @@ This article covers key troubleshooting guidance for the topics below, and also 
   * Collecting and Reviewing AIB Image Build Logs
 * DevOps task 
 * VMs created from AIB images do not create successfully
+
+If you have referred to the guidance, and still cannot troubleshoot your issue, you can open a support case. When doing so, please select right product and support topic, doing this will mean it the Azure VM Image Builder support team seeing it.
+
+Selecting the case product:
+```bash
+Product Family: Azure
+Product: Virtual Machine Running Windows
+Support Topic: Management
+Support Subtopic: Issues with Azure Image Builder
+```
 
 AIB failures can happen in 2 areas:
 1. Image Template Submission
