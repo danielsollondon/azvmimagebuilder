@@ -38,7 +38,7 @@ If they do not saw registered, run the commented out code below.
 ```bash
 # create storage account and blob in resource group
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
-z account set -s $subscriptionID
+az account set -s $subscriptionID
 strResourceGroup=<ResourceGroupName>
 location=westus
 scriptStorageAcc=aibstordot$(date +'%s')
