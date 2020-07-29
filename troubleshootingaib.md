@@ -461,6 +461,35 @@ Action: Please review the updated sysprep command we use at the bottom of the em
 
 ## DevOps task 
 
+### How to troubleshoot the task
+The task will only fail if an error occurs during customization, when this happens the task will report failure and leave the staging resource group, with the logs, so you can identify the issue. 
+
+To locate the log, you need to know the template name, go into pipeline > failed build > drill into the AIB DevOps task, then you will see the log and a template name:
+```text
+start reading task parameters...
+found build at:  /home/vsts/work/r1/a/_ImageBuilding/webapp
+end reading parameters
+getting storage account details for aibstordot1556933914
+created archive /home/vsts/work/_temp/temp_web_package_21475337782320203.zip
+Source for image:  { type: 'SharedImageVersion',
+  imageVersionId: '/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<galleryName>/images/<imageDefName>/versions/<imgVersionNumber>' }
+template name:  t_1556938436xxx
+``` 
+
+Go to the portal, search for the template name in resource group, then look for the resource group with IT_*.
+Go to the storage account > blobs > containers > logs.
+
+### Troubleshooting successful builds
+There maybe some cases where you need to investigate successful builds, and want to review the log. As mentioned, if the image build is successful, the staging resource group that contains the logs will be deleted as part of the clean up. However, what you can do, is introduce a sleep after the inline command, then get the logs as the build is paused. To do this follow these steps:
+ 
+1. Update the inline command, and add:
+Write-Host / Echo “Sleep” – this will allow you to search in the log
+2. Add a sleep for at least 10mins, you can use [Start-Sleep](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/start-sleep?view=powershell-7), or `Sleep` Linux command.
+3. Use the method above to identify the log location, and then keep downloading/checking the log until it gets to the sleep.
+
+
+### Common issues with the DevOps Task
+
 ```text
 2020-05-05T18:28:24.9280196Z ##[section]Starting: Azure VM Image Builder Task
 2020-05-05T18:28:24.9609966Z ==============================================================================
