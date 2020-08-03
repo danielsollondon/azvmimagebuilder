@@ -189,7 +189,7 @@ For more information on image builder permissions, please review this [document]
 # Submit the template
 Your template must be submitted to the service, this will download any dependent artifacts (scripts etc), and store them in the staging Resource Group, prefixed, *IT_*.
 ```powerShell
-New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2019-05-01-preview" -imageTemplateName $imageTemplateName -svclocation $location
+New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2020-02-14" -imageTemplateName $imageTemplateName -svclocation $location
 
 # note this will take minute, as validation is run (security / dependencies etc.)
 ```
@@ -198,7 +198,7 @@ New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFi
 To build the image you need to invoke 'Run'.
 
 ```powerShell
-Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview" -Action Run -Force
+Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2020-02-14" -Action Run -Force
 
 >>>> WAITING ON IMAGE BUILD
 
