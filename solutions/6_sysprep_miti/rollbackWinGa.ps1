@@ -1,4 +1,4 @@
-Write-Host 'Start of mitigation sysprep for 26th October sysprep issue, this should must be used past mid November'
+Write-Host 'Start of mitigation sysprep for 26th October sysprep issue, this **must** not be used past mid November'
 Write-Host "download older version of agent"
 Invoke-WebRequest -Uri https://go.microsoft.com/fwlink/?LinkID=394789 -OutFile guestagent.msi -UseBasicParsing
 
