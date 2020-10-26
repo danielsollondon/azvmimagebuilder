@@ -1,9 +1,4 @@
-Write-Host 'Modified version of sysprep for 26th October sysprep issue, this **must** notbe used past mid November'
-Write-Output '>>> Waiting for GA Service (WindowsAzureTelemetryService) to start ...'
-while ((Get-Service WindowsAzureTelemetryService) -and ((Get-Service WindowsAzureTelemetryService).Status -ne 'Running')) { Start-Sleep -s 5 }
-Write-Output '>>> Waiting for GA Service (WindowsAzureGuestAgent) to start ...'
-while ((Get-Service WindowsAzureGuestAgent).Status -ne 'Running') { Start-Sleep -s 5 }
-Write-Output '>>> Sysprepping VM ...'
+Write-Host 'V2 Modified version of sysprep for 26th October sysprep issue, this **must** notbe used past mid November'
 if( Test-Path $Env:SystemRoot\system32\Sysprep\unattend.xml ) {
   Remove-Item $Env:SystemRoot\system32\Sysprep\unattend.xml -Force
 }
