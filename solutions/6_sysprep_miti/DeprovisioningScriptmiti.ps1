@@ -2,7 +2,7 @@ Write-Host 'V2 Modified version of sysprep for 26th October sysprep issue, this 
 if( Test-Path $Env:SystemRoot\system32\Sysprep\unattend.xml ) {
   Remove-Item $Env:SystemRoot\system32\Sysprep\unattend.xml -Force
 }
-& $Env:SystemRoot\System32\Sysprep\Sysprep.exe /oobe /generalize /quiet /quit
+& $Env:SystemRoot\System32\Sysprep\Sysprep.exe /oobe /generalize /quiet /quit /mode:vm
 while($true) {
   $imageState = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State).ImageState
   Write-Output $imageState
