@@ -13,14 +13,13 @@
  Expand-Archive -LiteralPath 'C:\\Optimize\\Windows_10_VDI_Optimize-master.zip' -DestinationPath $Localpath -Force -Verbose
  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
 
- # overide the Win10_VirtualDesktop_Optimize.ps1 - setting 
+ # Patch: overide the Win10_VirtualDesktop_Optimize.ps1 - setting 'Set-NetAdapterAdvancedProperty'(see readme.md)
  $updatePath= "C:\optimize\Virtual-Desktop-Optimization-Tool-master\Win10_VirtualDesktop_Optimize.ps1"
-
  ((Get-Content -path $updatePath -Raw) -replace 'Set-NetAdapterAdvancedProperty -DisplayName "Send Buffer Size" -DisplayValue 4MB','#Set-NetAdapterAdvancedProperty -DisplayName "Send Buffer Size" -DisplayValue 4MB') | Set-Content -Path $updatePath
  
-
+# run script
  Set-Location -Path C:\\Optimize\\Virtual-Desktop-Optimization-Tool-master
  .\Win10_VirtualDesktop_Optimize.ps1 -WindowsVersion 2004 -Verbose
  write-host 'AIB Customization: Finished OS Optimizations script'
- write-host 'AIB Customization: Defering restart'
+
 
