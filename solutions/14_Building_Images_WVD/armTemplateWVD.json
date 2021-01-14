@@ -49,57 +49,33 @@
                 "type": "PlatformImage",
                     "publisher": "MicrosoftWindowsDesktop",
                     "offer": "windows-10",
-                    "sku": "20h2-evd",
+                    "sku": "20h1-ent",
                     "version": "latest"
-                
             },
             "customize": [
 
         
                     {
                         "type": "PowerShell",
-                        "name": "downloadWvdOptimizer",
+                        "name": "installFsLogix",
                         "runElevated": true,
                         "runAsSystem": true,
-                        "inline": [
-                            "write-host 'Downloading Download WVD Optimizer starting'",
-                            "New-Item -Path C:\\ -Name Optimize -ItemType Directory -ErrorAction SilentlyContinue",
-                            "$LocalPath = 'C:\\Optimize'",
-                            "$WVDOptimizeURL = 'https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/archive/master.zip'",
-                            "$WVDOptimizeInstaller = 'Windows_10_VDI_Optimize-master.zip'",
-                            "Invoke-WebRequest -Uri $WVDOptimizeURL -OutFile '$Localpath$WVDOptimizeInstaller'",
-                            "write-host 'Downloading Download WVD Optimizer finished'"
-                                ]
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/0_installConfFsLogix.ps1"
                     },
-
                     {
                         "type": "PowerShell",
-                        "name": "prepForWVDOptimize",
+                        "name": "OptimizeOS",
                         "runElevated": true,
                         "runAsSystem": true,
-                        "inline": [
-                            "write-host 'Prep for WVD Optimize starting'",
-                            "Expand-Archive -LiteralPath 'C:\\Optimize\\Windows_10_VDI_Optimize-master.zip' -DestinationPath '$Localpath' -Force -Verbose",
-                            "Set-Location -Path C:\\Optimize\\Virtual-Desktop-Optimization-Tool-master",
-                            "write-host 'Prep for WVD Optimize finished'"
-                                ]
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/1_Optimize_OS_for_WVD.ps1"
                     },
-
                     {
                         "type": "PowerShell",
-                        "name": "runWVDOptimizeScript",
+                        "name": "Install Teams",
                         "runElevated": true,
                         "runAsSystem": true,
-                        "inline": [
-                            "write-host 'Run WVD Optimize Script starting'",
-                            "New-Item -Path C:\\Optimize\\ -Name install.log -ItemType File -Force",
-                            "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose",
-                            "add-content c:\\Optimize\\install.log 'Starting Optimizations'",
-                            ".\\Win10_VirtualDesktop_Optimize.ps1 -WindowsVersion 2004 -Verbose",
-                            "write-host 'Run WVD Optimize Script finished'"
-                                ]
+                        "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/2_installTeams.ps1"
                     },
-
                     {
                         "type": "WindowsRestart",
                         "restartCheckCommand": "add-content c:\\Optimize\\install.log 'restarting post Optimizations'",
