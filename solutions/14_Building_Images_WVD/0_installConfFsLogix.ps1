@@ -1,4 +1,4 @@
-write-host 'Downloading FsLogix'
+write-host 'AIB Customization: Downloading FsLogix'
 New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
 $LocalPath = 'C:\\fslogix'
 $WVDflogixURL = 'https://raw.githubusercontent.com/DeanCefola/Azure-WVD/master/PowerShell/FSLogixSetup.ps1'
@@ -12,9 +12,9 @@ $installerFile="fslogix_download.zip"
 
 Invoke-WebRequest $fsLogixURL -OutFile $LocalPath\$installerFile
 Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath
-write-host 'Download Fslogix installer finished'
+write-host 'AIB Customization: Download Fslogix installer finished'
 
-write-host 'Start Fslogix installer'
+write-host 'AIB Customization: Start Fslogix installer'
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
 .\\FSLogixSetup.ps1 -ProfilePath \\wvdSMB\wvd -Verbose 
-write-host 'Finished Fslogix installer' 
+write-host 'AIB Customization: Finished Fslogix installer' 
