@@ -16,7 +16,21 @@
  # Patch: overide the Win10_VirtualDesktop_Optimize.ps1 - setting 'Set-NetAdapterAdvancedProperty'(see readme.md)
  $updatePath= "C:\optimize\Virtual-Desktop-Optimization-Tool-master\Win10_VirtualDesktop_Optimize.ps1"
  ((Get-Content -path $updatePath -Raw) -replace 'Set-NetAdapterAdvancedProperty -DisplayName "Send Buffer Size" -DisplayValue 4MB','#Set-NetAdapterAdvancedProperty -DisplayName "Send Buffer Size" -DisplayValue 4MB') | Set-Content -Path $updatePath
- 
+
+# Patch: overide the REG UNLOAD, needs GC before, otherwise will Access Deny unload(see readme.md)
+
+[System.Collections.ArrayList]$file = Get-Content $updatePath
+$insert = @()
+for ($i=0; $i -lt $file.count; $i++) {
+  if ($file[$i] -like "*& REG UNLOAD HKLM\DEFAULT*") {
+    $insert += $i-1 
+  }
+}
+#add gc and sleep
+$insert | ForEach-Object { $file.insert($_,"                [gc]::collect() `n                Start-Sleep -Seconds 15 ") }
+Set-Content $updatePath $file 
+
+
 # run script
  Set-Location -Path C:\\Optimize\\Virtual-Desktop-Optimization-Tool-master
  .\Win10_VirtualDesktop_Optimize.ps1 -WindowsVersion 2004 -Verbose
