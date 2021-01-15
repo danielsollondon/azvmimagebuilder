@@ -249,15 +249,7 @@ PROCESS {
                         Else { Write-Output ("[ERROR] Failed to create new Registry key") }
                     }
                 }
-                Write-Host "Starting Unload"
-                Write-Host "Exit code: " $LASTEXITCODE
-                # Patch # 
-                [gc]::collect()
-                [gc]::WaitForPendingFinalizers() 
-                Start-Sleep -Seconds 70
-                & REG UNLOAD HKLM\DEFAULT | Out-Null
-                Write-Host "Exit code: " $LASTEXITCODE
-                Write-Host "Finished Unload" 
+
 
             }
             Else { Write-Warning ("No Default User Settings to set") }
@@ -406,6 +398,19 @@ PROCESS {
         Write-Host "Exit code: " $LASTEXITCODE
     }
     #endregion
+
+    #Patch - Unload Hive
+    Write-Host "Starting Unload"
+    Write-Host "Exit code: " $LASTEXITCODE
+    # Patch # 
+    [gc]::collect()
+    [gc]::WaitForPendingFinalizers() 
+    Write-Host "Starting Unload pause"
+    Start-Sleep -Seconds 70
+    & REG UNLOAD HKLM\DEFAULT | Out-Null
+    Write-Host "Exit code: " $LASTEXITCODE
+    Write-Host "Finished Unload" 
+
 
     Set-Location $CurrentLocation
     $EndTime = Get-Date
