@@ -245,11 +245,28 @@ PROCESS {
                         Write-Warning ("Registry Path not found: {0}" -f $Item.HivePath)
                         Write-Verbose ("Creating new Registry Key")
                         $newKey = New-Item -Path ("{0}" -f $Item.HivePath) -Force
-                        If (Test-Path -Path $newKey.PSPath) { New-ItemProperty -Path ("{0}" -f $Item.HivePath) -Name $Item.KeyName -PropertyType $Item.PropertyType -Value $Value -Force | Out-Null}
-                        Else { Write-Output ("[ERROR] Failed to create new Registry key") }
+                        If (Test-Path -Path $newKey.PSPath) { 
+                        New-ItemProperty -Path ("{0}" -f $Item.HivePath) -Name $Item.KeyName -PropertyType $Item.PropertyType -Value $Value -Force | Out-Null
+                        $newKey.Handle.close()
+                        Start-Sleep -Seconds 1
+
+                        }
+                        Else { Write-Output ("[ERROR] Failed to create new Registry key") } 
+
                     }
                 }
-
+                
+                    #Patch - Unload Hive
+                    Write-Host "Starting Reg Hive Unload"
+                    Write-Host "Exit code: " $LASTEXITCODE
+                    # Patch # 
+                    [gc]::collect()
+                    [gc]::WaitForPendingFinalizers() 
+                    Write-Host "Starting Unload pause"
+                    Start-Sleep -Seconds 0
+                    & REG UNLOAD HKLM\DEFAULT | Out-Null
+                    Write-Host "Exit code: " $LASTEXITCODE
+                    Write-Host "Finished Reg Hive Unload" 
 
             }
             Else { Write-Warning ("No Default User Settings to set") }
@@ -398,18 +415,6 @@ PROCESS {
         Write-Host "Exit code: " $LASTEXITCODE
     }
     #endregion
-
-    #Patch - Unload Hive
-    Write-Host "Starting Reg Hive Unload"
-    Write-Host "Exit code: " $LASTEXITCODE
-    # Patch # 
-    [gc]::collect()
-    [gc]::WaitForPendingFinalizers() 
-    Write-Host "Starting Unload pause"
-    Start-Sleep -Seconds 70
-    & REG UNLOAD HKLM\DEFAULT | Out-Null
-    Write-Host "Exit code: " $LASTEXITCODE
-    Write-Host "Finished Reg Hive Unload" 
 
 
     Set-Location $CurrentLocation
