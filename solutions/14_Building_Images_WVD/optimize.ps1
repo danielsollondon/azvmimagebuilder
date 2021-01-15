@@ -248,21 +248,25 @@ PROCESS {
                         If (Test-Path -Path $newKey.PSPath) { 
                         New-ItemProperty -Path ("{0}" -f $Item.HivePath) -Name $Item.KeyName -PropertyType $Item.PropertyType -Value $Value -Force | Out-Null
                         #Patch - Unload Hive with fixes
-                        $newKey.Handle.close()
-                        Start-Sleep -Seconds 1
+                        # $newKey.Handle.close()
+                        # Start-Sleep -Seconds 1
 
                         }
                         Else { Write-Output ("[ERROR] Failed to create new Registry key") } 
 
                     }
                 }
-                
+                    #Patch - Unload Hive with fixes
+                    Write-Host "closing handles"
+                    $newKey.Handle.close()
+                    Start-Sleep -Seconds 1
+
                     #Patch - Unload Hive with fixes
                     Write-Host "Starting Reg Hive Unload"
                     Write-Host "Exit code: " $LASTEXITCODE
                     # Patch # 
                     [gc]::collect()
-                    [gc]::WaitForPendingFinalizers() 
+                    # [gc]::WaitForPendingFinalizers() 
                     Write-Host "Starting Unload pause"
                     Start-Sleep -Seconds 0
                     & REG UNLOAD HKLM\DEFAULT | Out-Null
