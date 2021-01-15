@@ -247,6 +247,7 @@ PROCESS {
                         $newKey = New-Item -Path ("{0}" -f $Item.HivePath) -Force
                         If (Test-Path -Path $newKey.PSPath) { 
                         New-ItemProperty -Path ("{0}" -f $Item.HivePath) -Name $Item.KeyName -PropertyType $Item.PropertyType -Value $Value -Force | Out-Null
+                        #Patch - Unload Hive with fixes
                         $newKey.Handle.close()
                         Start-Sleep -Seconds 1
 
@@ -256,7 +257,7 @@ PROCESS {
                     }
                 }
                 
-                    #Patch - Unload Hive
+                    #Patch - Unload Hive with fixes
                     Write-Host "Starting Reg Hive Unload"
                     Write-Host "Exit code: " $LASTEXITCODE
                     # Patch # 
