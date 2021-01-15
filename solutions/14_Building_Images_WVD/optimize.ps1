@@ -400,7 +400,7 @@ PROCESS {
     #endregion
 
     #Patch - Unload Hive
-    Write-Host "Starting Unload"
+    Write-Host "Starting Reg Hive Unload"
     Write-Host "Exit code: " $LASTEXITCODE
     # Patch # 
     [gc]::collect()
@@ -409,7 +409,7 @@ PROCESS {
     Start-Sleep -Seconds 70
     & REG UNLOAD HKLM\DEFAULT | Out-Null
     Write-Host "Exit code: " $LASTEXITCODE
-    Write-Host "Finished Unload" 
+    Write-Host "Finished Reg Hive Unload" 
 
 
     Set-Location $CurrentLocation
