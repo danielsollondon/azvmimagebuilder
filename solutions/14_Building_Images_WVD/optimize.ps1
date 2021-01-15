@@ -253,10 +253,12 @@ PROCESS {
                 Write-Host "Exit code: " $LASTEXITCODE
                 # Patch # 
                 [gc]::collect()
-                Start-Sleep -Seconds 30
+                [gc]::WaitForPendingFinalizers() 
+                Start-Sleep -Seconds 70
                 & REG UNLOAD HKLM\DEFAULT | Out-Null
                 Write-Host "Exit code: " $LASTEXITCODE
-                Write-Host "Finished Unload"
+                Write-Host "Finished Unload" 
+
             }
             Else { Write-Warning ("No Default User Settings to set") }
         }
