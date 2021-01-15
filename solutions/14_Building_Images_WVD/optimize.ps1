@@ -252,8 +252,8 @@ PROCESS {
                 Write-Host "Starting Unload"
                 Write-Host "Exit code: " $LASTEXITCODE
                 # Patch # 
-                # [gc]::collect()
-                # Start-Sleep -Seconds 15
+                [gc]::collect()
+                Start-Sleep -Seconds 30
                 & REG UNLOAD HKLM\DEFAULT | Out-Null
                 Write-Host "Exit code: " $LASTEXITCODE
                 Write-Host "Finished Unload"
