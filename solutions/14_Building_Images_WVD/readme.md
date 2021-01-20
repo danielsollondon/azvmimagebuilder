@@ -1,7 +1,5 @@
 # Using PowerShell to Create a Windows Virtual Desktop Custom Image using Azure VM Image Builder
 
-NOTE!! This is still under development, and not complete!
-
 This article is to show you how you can create a basic WVD customized image with these customizations:
 
 * Installing [FsLogix](https://github.com/DeanCefola/Azure-WVD/blob/master/PowerShell/FSLogixSetup.ps1)
