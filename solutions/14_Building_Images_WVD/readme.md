@@ -5,7 +5,7 @@ NOTE!! This is still under development, and not complete!
 This article is to show you how you can create a basic WVD customized image with these customizations:
 
 * Installing [FsLogix](https://github.com/DeanCefola/Azure-WVD/blob/master/PowerShell/FSLogixSetup.ps1)
-* Running a [WVD Optimzation script](https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool) from the WVD team
+* Running a [WVD Optimzation script](https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool) from the WVD Community repo.
 * Installing a LOB App, [MS Teams](https://docs.microsoft.com/en-us/azure/virtual-desktop/teams-on-wvd)
 * [Windows Restart](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#windows-restart-customizer)
 * [Windows Update](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#windows-update-customizer)
@@ -20,7 +20,7 @@ This walk through is intended to be a copy and paste exercise, and will provide 
 > Note! 
 The scripts to install the apps are located in this repo, note, they are for illustration and testing ONLY, and **NOT** production. 
 
-## Building Windows Images with AIB Notes:
+## Tips for Building Windows Images with AIB:
 1. VM Size - When AIB runs, it uses a build VM to build the image, the default AIB size (Standard_D1_v2) is not suitable. Use Standard_D2_v2 or greater.
 2. The example here uses the AIB [PowerShell customerizer scripts](https://docs.microsoft.com/azure/virtual-machines/linux/image-builder-json?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Fwindows%2Fbreadcrumb%2Ftoc.json#powershell-customizer), you will need to run these with the settings below. If you do not, the build will hang.
 ```text
@@ -44,7 +44,15 @@ The AIB build log (customization.log) is extremely verbose, if you comment your 
  write-host 'AIB Customization: Starting OS Optimizations script'
 ```
 
-4. Networking: Set-NetAdapterAdvancedProperty 
+4. Emit Exit Codes
+AIB expects all scripts to return a 0 exit code, any non zero exit code will result in AIB failing the customization and stopping the build. If you have complex scripts, add instrumentation and emit exit codes, these will be shown in the customization.log.
+```PowerShell
+ Write-Host "Exit code: " $LASTEXITCODE
+```
+5. Test
+Please test and test your code before on a standalone VM, ensure there are no user prompts, you are using the right privilege etc.
+
+6. Networking: Set-NetAdapterAdvancedProperty 
 
 This is being set in the optimization script, but fails the AIB build, as it disconnects the network, this is commented out. It is under investigation.
 
@@ -160,14 +168,38 @@ New-AzGalleryImageDefinition -GalleryName $sigGalleryName -ResourceGroupName $im
 ```
 
 # Configure the Image Template
-This command will download and update the template with the parameters specified earlier.
+For this example we have a template ready to that will download and update the template with the parameters specified earlier, it will install FsLogix, OS Optimizations, Teams and run Windows Update at the end.
 
-You can also change the Win10 image:
-```powerShell
-Get-AzVMImageSku -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10
+If you open the template you can see in the source property the image that is being used, in this example it uses a Win 10 Multi session image. 
+
+## Windows 10 images
+Two key types you should be aware of:
+
+### Multi session
+These images are intend for pooled usage, below is the image details in Azure:
+
+```json
+"publisher": "MicrosoftWindowsDesktop",
+"offer": "Windows-10",
+"sku": "20h2-evd",
+"version": "latest"
 ```
 
+### Single session
+These images are intend for induvidual usage, below is the image details in Azure:
+```json
+"publisher": "MicrosoftWindowsDesktop",
+"offer": "Windows-10",
+"sku": "19h2-ent",
+"version": "latest"
+```
 
+You can also change the Win10 images available:
+```powerShell
+Get-AzVMImageSku -Location westus2 -PublisherName MicrosoftWindowsDesktop -Offer windows-10
+```
+
+## Download template and configure
 ```powerShell
 
 $templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/armTemplateWVD.json"
@@ -186,12 +218,18 @@ Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
 ((Get-Content -path $templateFilePath -Raw) -replace '<imgBuilderId>',$idenityNameResourceId) | Set-Content -Path $templateFilePath
 
 ```
+Feel free to view the template, all the code is viewable.
 
 
 # Submit the template
 Your template must be submitted to the service, this will download any dependent artifacts (scripts etc), validate, check permissions, and store them in the staging Resource Group, prefixed, *IT_*.
 ```powerShell
 New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2020-02-14" -imageTemplateName $imageTemplateName -svclocation $location
+
+# Optional - if you have any errors running the above, run:
+$getStatus=$(Get-AzImageBuilderTemplate -ResourceGroupName $imageResourceGroup -Name $imageTemplateName)
+$getStatus.ProvisioningErrorCode 
+$getStatus.ProvisioningErrorMessage
 ```
  
 # Build the image
@@ -203,7 +241,15 @@ Start-AzImageBuilderTemplate -ResourceGroupName $imageResourceGroup -Name $image
 >> Note, the command will not wait for the image builder service to complete the image build, you can query the status below.
 
 ```powerShell
-Get-AzImageBuilderTemplate -ResourceGroupName $imageResourceGroup -Name $imageTemplateName 
+$getStatus=$(Get-AzImageBuilderTemplate -ResourceGroupName $imageResourceGroup -Name $imageTemplateName)
+
+# this shows all the properties
+$getStatus | Format-List -Property *
+
+# these show the status the build
+$getStatus.LastRunStatusRunState 
+$getStatus.LastRunStatusMessage
+$getStatus.LastRunStatusRunSubState
 ```
 ## Create a VM
 Now the build is finished you can build a VM from the image, use the examples from [here](https://docs.microsoft.com/en-us/powershell/module/az.compute/new-azvm?view=azps-2.5.0#examples).
