@@ -15,7 +15,7 @@
  Set-Location -Path C:\\Optimize\\Virtual-Desktop-Optimization-Tool-master
  
  # instrumentation
- $osOptURL = 'https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/14_Building_Images_WVD/optimize.ps1'
+ $osOptURL = 'https://raw.githubusercontent.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/master/Win10_VirtualDesktop_Optimize.ps1'
  $osOptURLexe = 'optimize.ps1'
  Invoke-WebRequest -Uri $osOptURL -OutFile $osOptURLexe
  
