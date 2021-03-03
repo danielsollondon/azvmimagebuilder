@@ -8,7 +8,7 @@ Go to the [Visual Studio Marketplace](https://marketplace.visualstudio.com), sea
  
 ## Prereqs
 * You must have a VSTS DevOps account, and a Build Pipeline created
-* Create a Standard Azure Storage Account in the source image Resource Group, you can use other Resource Group/Storage accounts, but you must ensure the Image Builder has contributor permissions to the Storage account. This is used transfer the build artifacts from the DevOps task to the image.
+* Create a Standard Azure Storage Account in the source image Resource Group, you can use other Resource Group/Storage accounts. This is used transfer the build artifacts from the DevOps task to the image.
 * Register and enable requirements, as per below:
 ```bash
 az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview
@@ -64,6 +64,9 @@ As discussed in the other docs, when creating a template artifact , this creates
 ### Location
 This is the location where the Image Builder will run, we only support a set amount of locations. The source images must be present in this location, so for example, if you are using Shared Image Gallery, a replica must exist in that region.
 
+### VNET Support
+Currently the DevOps task does not support specifying an existing Subnet, this is on the roadmap, but if you want to utilize an existing VNET, you can use an ARM template, with an Image Builder template nested inside, please see the PowerShell Image Builder template examples on how this is achieved.
+
 ### Source
 The source images must be of the supported Image Builder OS's. You can choose existing custom images in the same region as Image Builder is running from:
 * Managed Image - You need to pass in the resourceId, for example:
@@ -76,8 +79,13 @@ The source images must be of the supported Image Builder OS's. You can choose ex
 ```
 If you need to get the latest SIG version, you can have a AZ PowerShell / AZ CLI task before that will get the latest version and set a DevOps variable, so you can use it in the Az VM Image Builder DevOps task, please see [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/8_Getting_Latest_SIG_Version_ResID#getting-the-latest-image-version-resourceid-from-shared-image-gallery) for examples.
 
-* Marketplace Base Images
-Image Builder will defaults to using the 'latest' version of the supported OS's, you can specify an image version (optional).
+* (Marketplace) Base Image
+There is a drop downlist of popular images, these will always use the 'latest' version of the supported OS's. 
+
+If the base image is not in the list, you can specify the exact image using `Publisher:Offer:Sku`.
+
+Base Image Version (optional) - You can supply the version of the image you want to use, default is `latest`.
+
 
 ### Customize
 
