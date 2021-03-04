@@ -57,7 +57,7 @@ New-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenity
 ### Allowing AIB to Distribute Images
 For AIB to distribute images (Managed Images / Shared Image Gallery), the AIB service must be allowed to inject the images into these resource groups, to do this, you need to create and grant a user-assigned identity rights on the resource group where the image will be placed. 
 
-You can avoid granting the user-assigned identity contributor permission on the resource group to distribute images, but it will need permissions tp perform these Azure Actions in the distribution resource group:
+You can avoid granting the user-assigned identity contributor permission on the resource group to distribute images, but it will need permissions to perform these Azure Actions in the distribution resource group:
 
 ```bash
 # these are minimum required for image builder, irrespective Managed Images \ Shared Image Gallery, as AIB creates an intermediate staging image.
