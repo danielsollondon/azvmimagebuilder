@@ -3,19 +3,35 @@
     "apiVersion": "2019-05-01-preview",
     "location": "<region1>",
     "dependsOn": [],
+
+    "tags": {
+        "imagebuilderTemplate": "AzureVMImageBuilderSIGonSIG",
+        "userIdentity": "enabled"
+            },
+        "identity": {
+            "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                    "<imgBuilderId>": {}
+                        
+                }
+                        },
     "properties": {
         "source": {
-            "type": "ISO",
-            "sourceURI": "<rhelLinkAddress>",
-            "sha256Checksum": "<rhelChecksum>" 
+            "type": "ManagedImage",
+                "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<srcImageName>"
+ 
             
         },
         "customize": [
             {
                 "type": "Shell",
-                "name": "HelloImageScript1",
-                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
-            }
+                "name": "AddBuildArtifacts2",
+                "inline": [
+                    "sudo mkdir /buildArtifacts2",
+                    "sudo touch /buildArtifacts2/imageBuilder.md"
+                ]
+                }
+
         ],
         "distribute": 
             [
@@ -25,7 +41,7 @@
                     "runOutputName": "<runOutputName>",
                     "artifactTags": {
                         "source": "azureVmImageBuilder",
-                        "baseosimg": "rheliso75"
+                        "baseosimg": "ubuntu1804"
                     },
                     "replicationRegions": [
                       "<region1>",

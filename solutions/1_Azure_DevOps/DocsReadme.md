@@ -1,5 +1,4 @@
 # Documentation for the Azure VM Image Builder DevOps Task  
-Current task version: v1.0.31 
 
 ## V1 Design Purpose
 This task is designed to take your build artifacts, and inject them into a VM image, so you can install, configure your application, and OS.
@@ -9,7 +8,7 @@ Go to the [Visual Studio Marketplace](https://marketplace.visualstudio.com), sea
  
 ## Prereqs
 * You must have a VSTS DevOps account, and a Build Pipeline created
-* Create a Standard Azure Storage Account in the source image Resource Group, you can use other Resource Group/Storage accounts, but you must ensure the Image Builder has contributor permissions to the Storage account. This is used transfer the build artifacts from the DevOps task to the image.
+* Create a Standard Azure Storage Account in the source image Resource Group, you can use other Resource Group/Storage accounts. This is used transfer the build artifacts from the DevOps task to the image.
 * Register and enable requirements, as per below:
 ```bash
 az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview
@@ -39,7 +38,7 @@ If they do not saw registered, run the commented out code below.
 ```bash
 # create storage account and blob in resource group
 subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
-z account set -s $subscriptionID
+az account set -s $subscriptionID
 strResourceGroup=<ResourceGroupName>
 location=westus
 scriptStorageAcc=aibstordot$(date +'%s')
@@ -65,6 +64,9 @@ As discussed in the other docs, when creating a template artifact , this creates
 ### Location
 This is the location where the Image Builder will run, we only support a set amount of locations. The source images must be present in this location, so for example, if you are using Shared Image Gallery, a replica must exist in that region.
 
+### VNET Support
+Currently the DevOps task does not support specifying an existing Subnet, this is on the roadmap, but if you want to utilize an existing VNET, you can use an ARM template, with an Image Builder template nested inside, please see the PowerShell Image Builder template examples on how this is achieved.
+
 ### Source
 The source images must be of the supported Image Builder OS's. You can choose existing custom images in the same region as Image Builder is running from:
 * Managed Image - You need to pass in the resourceId, for example:
@@ -75,9 +77,15 @@ The source images must be of the supported Image Builder OS's. You can choose ex
 ```json
 /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup/providers/Microsoft.Compute/galleries/$sigName/images/$imageDefName/versions/<versionNumber>
 ```
+If you need to get the latest SIG version, you can have a AZ PowerShell / AZ CLI task before that will get the latest version and set a DevOps variable, so you can use it in the Az VM Image Builder DevOps task, please see [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/solutions/8_Getting_Latest_SIG_Version_ResID#getting-the-latest-image-version-resourceid-from-shared-image-gallery) for examples.
 
-* Marketplace Base Images
-Image Builder will defaults to using the 'latest' version of the supported OS's, you can specify an image version (optional).
+* (Marketplace) Base Image
+There is a drop downlist of popular images, these will always use the 'latest' version of the supported OS's. 
+
+If the base image is not in the list, you can specify the exact image using `Publisher:Offer:Sku`.
+
+Base Image Version (optional) - You can supply the version of the image you want to use, default is `latest`.
+
 
 ### Customize
 
@@ -85,6 +93,19 @@ Image Builder will defaults to using the 'latest' version of the supported OS's,
 Initialy, we are just supporting two customerizers, 'Shell', and 'PowerShell' and we only support 'inline'. If you want to download scripts, then you can pass inline commands to do so.
 
 For your OS, select with PowerShell, or Shell.
+
+#### Windows Update Task
+For Windows only, the task will run Windows Update at the end of the customizations for the task, it will handle the reboots it requires.
+
+This is the Windows Update configuration that is executed:
+```json
+    "type": "WindowsUpdate",
+    "searchCriteria": "IsInstalled=0",
+    "filters": [
+        "exclude:$_.Title -like '*Preview*'",
+        "include:$true"
+```
+It will install important and recommended Windows Updates, that are not preview.
 
 #### Build Path
 This task has been initially designed to be able to inject DevOps Build release artifacts into the image. To make this work, you will need to setup a Build Pipeline, and in the setup of the Release pipeline, you must add specific the repo of the build artifacts.
@@ -177,6 +198,9 @@ There are 3 distribute types supported:
     * Regions: list of regions, comma separated, e.g. westus, eastus, centralus
 * VHD
     * You cannot pass any values to this, Image Builder will emit the VHD to the temporary Image Builder resource group, ‘'IT_<DestinationResourceGroup>_<TemplateName>', in the 'vhds' container. When you start the release build, image builder will emit logs, and when it has finished, it will emit the VHD URL.
+
+### Optional Settings
+* [VM Size](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-json#vmprofile) - You can override the VM size, from the default of *Standard_D1_v2*. You may do this to reduce total customization time, or because you want to create the images that depend on certain VM sizes, such as GPU / HPC etc.
 
 ## How it works
 When you create the release, the task will:

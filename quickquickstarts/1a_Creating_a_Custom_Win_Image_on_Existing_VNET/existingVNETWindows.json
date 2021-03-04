@@ -1,29 +1,53 @@
 {
-    "type": "Microsoft.VirtualMachineImages/imageTemplates",
-    "apiVersion": "2019-05-01-preview",
-    "location": "<region>",
-    "dependsOn": [],
-    "tags": {
-        "imagebuilderTemplate": "windows2019",
-        "userIdentity": "enabled"
-            },
-        "identity": {
-            "type": "UserAssigned",
-                    "userAssignedIdentities": {
-                    "<imgBuilderId>": {}
-                        
-                }
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imageTemplateName": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        }
+    },
+    
+    "variables": {
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imageTemplateName')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[parameters('api-version')]",
+        "location": "[parameters('svclocation')]",
+        "dependsOn": [],
+        "tags": {
+            "imagebuilderTemplate": "AzureVMImageBuilderVNET",
+            "userIdentity": "enabled"
                 },
+            "identity": {
+                "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                        "<imgBuilderId>": {}
+                            
+                    }
+                    },
     "properties": {
 
         "buildTimeoutInMinutes" : 100,
-
-        "vmProfile": 
-                {
-                "vmSize": "Standard_D2_v2",
-                "osDiskSizeGB": 127
-                },
         
+        "vmProfile": 
+            {
+            "vmSize": "Standard_D2_v2",
+            "osDiskSizeGB": 127,
+            "vnetConfig": {
+                "subnetId": "/subscriptions/<subscriptionID>/resourceGroups/<vnetRgName>/providers/Microsoft.Network/virtualNetworks/<vnetName>/subnets/<subnetName>"
+                }
+            },
+
         "source": {
             "type": "PlatformImage",
                 "publisher": "MicrosoftWindowsServer",
@@ -33,10 +57,11 @@
             
         },
         "customize": [
+
+
             {
                 "type": "PowerShell",
                 "name": "CreateBuildPath",
-                "runElevated": false,
                 "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testPsScript.ps1"
             },
             {
@@ -54,21 +79,21 @@
             {
                 "type": "PowerShell",
                 "name": "settingUpMgmtAgtPath",
-                "runElevated": false,
                 "inline": [
                     "mkdir c:\\buildActions",
                     "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt"
                 ]
-                },
-                {
-                    "type": "WindowsUpdate",
-                    "searchCriteria": "IsInstalled=0",
-                    "filters": [
-                        "exclude:$_.Title -like '*Preview*'",
-                        "include:$true"
-                                ],
-                    "updateLimit": 20
-                }
+            },
+                
+            {
+                "type": "WindowsUpdate",
+                "searchCriteria": "IsInstalled=0",
+                "filters": [
+                    "exclude:$_.Title -like '*Preview*'",
+                    "include:$true"
+                            ],
+                "updateLimit": 20
+            }
         ],
         "distribute": 
             [
@@ -83,5 +108,14 @@
                 }
             ]
         }
+    }
+    ]
 }
+
+
+
+
+
+
+
 

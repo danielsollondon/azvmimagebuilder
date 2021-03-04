@@ -1,6 +1,18 @@
 # Create a Linux Custom Image, then Distribute and Version over Multiple Regions
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distibute to the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries), where you can replicate regions, control the scale, and share inside and outside your organizations.
+
+This covers using mutliple customizations to illustrate some high level functionality:
+
+This covers using mutliple customizations to illustrate some high level functionality:
+* Shell (ScriptUri) - Downloading a bash script and executing it
+* Shell (inline) - Execute an array of commands
+* File - Copy a html file from github to a specified, pre-created directory
+* buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
+* vmProfile - specifying a vmSize and Network properties
+* osDiskSizeGB - you can increase the size of image
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -53,8 +65,8 @@ additionalregion=eastus
 
 # your subscription
 # get the current subID : 'az account show | grep id'
-# or you can use this: subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 
 # name of the shared image gallery, e.g. myCorpGallery
 sigName=my21stSIG
@@ -67,13 +79,46 @@ runOutputName=u1804SigRo
 
 # create resource group
 az group create -n $sigResourceGroup -l $location
+```
 
-# assign permissions for that resource group
+## Step 2: Create a user identify and assign permissions for the resource group where the image will be created
+
+### Create User-Assigned Managed Identity and Grant Permissions 
+For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
+
+```bash
+# create user assigned identity for image builder to access the storage account where the script is located
+idenityName=aibBuiUserId$(date +'%s')
+az identity create -g $sigResourceGroup -n $idenityName
+
+# get identity id
+imgBuilderCliId=$(az identity show -g $sigResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
+
+# get the user identity URI, needed for the template
+imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$sigResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+
+# download preconfigured role definition example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+imageRoleDefName="Azure Image Builder Image Def"$(date +'%s')
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$sigResourceGroup/g" aibRoleImageCreation.json
+sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the user assigned identity
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --assignee $imgBuilderCliId \
+    --role "$imageRoleDefName" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+```
 
+### create SIG
+```bash
 # create SIG
 az sig create \
     -g $sigResourceGroup \
@@ -93,7 +138,7 @@ az sig image-definition create \
 ```
 
 
-## Step 2 : Modify HelloImage Example
+## Step 3 : Modify HelloImage Example
 
 ```bash
 # download the example and configure it with your vars
@@ -109,10 +154,11 @@ sed -i -e "s/<region1>/$location/g" helloImageTemplateforSIG.json
 sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateforSIG.json
 sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateforSIG.json
 
-```
->> Note, this example shows limited customizations, to see more possible customizations, see this [example](./0_Creating_a_Custom_Linux_Managed_Image).
+sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" helloImageTemplateforSIG.json
 
-## Step 3 : Create the Image
+```
+
+## Step 4 : Create the Image
 
 ```bash
 # submit the image confiuration to the VM Image Builder Service
@@ -135,7 +181,6 @@ az resource invoke-action \
 
 # wait minimum of 15mins (this includes replication time to both regions)
 ```
-
 
 ## Step 4 : Create the VM
 
@@ -161,11 +206,20 @@ You should see the image was customized with a Message of the Day as soon as you
 ```
 
 ## Clean Up
->>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *8_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
+>>Note! If you want to now try and take this SIG image, and re-customize it, try quick quickstart *2_Creating_a_Custom_Linux_Shared_Image_Gallery_Image_from_SIG*, and do not run the following code!!!!!
 
 ```bash
 # BEWARE : This is DELETING the Image created for you, be sure this is what you want!!!
 
+# delete permissions asssignments, roles and identity
+az role assignment delete \
+    --assignee $imgBuilderCliId \
+    --role "$imageRoleDefName" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$sigResourceGroup
+
+az role definition delete --name "$imageRoleDefName"
+
+az identity delete --ids $imgBuilderId
 # delete AIB Template
 az resource delete \
     --resource-group $sigResourceGroup \

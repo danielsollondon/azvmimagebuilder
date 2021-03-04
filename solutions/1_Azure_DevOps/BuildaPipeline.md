@@ -124,7 +124,7 @@ Add these settings:
 * Resource group - This should be the RG you created earlier
 * Location - Location of Image Builder Service location you will use
 * Image type - For this example, we will use MarketPlace
-* Base image - Select 'Windows 2019-Datacenter', the task will use the latext version
+* Base image - Select 'Windows 2019-Datacenter', the task will use the latest version
 * Provisioner - Select 'PowerShell', as this is going to be a Windows base image
 * Build path - Using the control (...), navigate to this location: `$(System.DefaultWorkingDirectory)/_BakeAppIntoImage/webApp`
 * Inline customization script - Set this to: `& 'c:\buildArtifacts\webApp\webConfig.ps1'`

@@ -1,13 +1,17 @@
 # Create a Custom Image that will use an Azure User-Assigned Managed Identity to seemlessly access files Azure Storage 
 
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
+
 AIB supports using scripts, or copying files from multiple locations, such as GitHub and Azure storage etc. 
 
 This article shows how to create a basic customized image using the Azure VM Image Builder, where the service will use a [User-assigned Managed Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) to access files in Azure storage for the image customization, without you having to make the files publically accessible, or setting up SAS tokens.
 
+In addition, you will not grant permissions to the AIB Service Principal, the user identity you create will be used by image builder to insert an image into an Azure Shared Image Gallery (SIG).
 
-In the example below, you will create two resource groups, one will be used for the custom image created, and the other one will just host an Azure Storage Account, that includes a scipt file. You will create a user-assigned identity, then grant that read permissions on the script file, and pass that identity to Image Builder. 
 
->>> Note! A PowerShell version of this quickstart is in development [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/testingArea/7_Creating_Custom_Win_Image_using_MSI_to_Access_Storage), expect this to be released mid-Decemeber.
+In the example below, you will create two resource groups, one will be used for the custom image created, and the other one will just host an Azure Storage Account, that includes a scipt file. You will create a user-assigned identity, this will be used by AIB to distribute the image, and then grant the user identity read permissions on the script file, and pass that identity to Image Builder. 
+
+>>> Note! A PowerShell version of this quickstart is in development [here](https://github.com/danielsollondon/azvmimagebuilder/tree/master/testingArea/7_Creating_Custom_Win_Image_using_MSI_to_Access_Storage), expect this to be released v soon.
 
 Here is a short video on how the example below works.
 
@@ -52,7 +56,7 @@ If they do not saw registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # image resource group
-imageResourceGroup=aibmdimsi
+imageResourceGroup=aibmdimsi00022
 
 # storage resource group
 strResourceGroup=aibmdimsistor
@@ -62,10 +66,16 @@ location=WestUS2
 
 # your subscription
 # get the current subID : 'az account show | grep id'
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 
-# name of the image to be created
-imageName=aibCustLinuxImgMsi01
+# additional region to replication image to
+additionalregion=eastus
+
+# name of the shared image gallery, e.g. myCorpGallery
+sigName=myaibsig
+
+# name of the image definition to be created, e.g. ProdImages
+imageDefName=ubuntu1804images
 
 # image distribution metadata reference name
 runOutputName=u1804ManImgMsiro
@@ -73,15 +83,65 @@ runOutputName=u1804ManImgMsiro
 # create resource group for Image Template
 az group create -n $imageResourceGroup -l $location
 ```
-## Step 2: Assign permissions for the resource group where the image will be created
+## Step 2: Create a user identify and assign permissions for the resource group where the image will be created
+
+### Create User-Assigned Managed Identity and Grant Permissions 
+For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
+
 ```bash
+# create user assigned identity for image builder to access the storage account where the script is located
+idenityName=aibBuiUserId$(date +'%s')
+az identity create -g $imageResourceGroup -n $idenityName
+
+# get identity id
+imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
+
+# get the user identity URI, needed for the template
+imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+
+# download preconfigured role definition example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+imageRoleDefName="Azure Image Builder Image Def"$(date +'%s')
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the user assigned identity
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --assignee $imgBuilderCliId \
+    --role $imageRoleDefName \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 ```
 
-## Step 3: Create another Resource Group for a Storage Account to host scripts
+## Step 3: Create Azure Shared Image Gallery & Definition
+```bash
+# create SIG
+az sig create \
+    -g $imageResourceGroup \
+    --gallery-name $sigName
+
+# create SIG image definition
+
+az sig image-definition create \
+   -g $imageResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --publisher corpIT \
+   --os-state Generalized \
+   --offer myOffer \
+   --sku 18.04-LTS \
+   --os-type Linux
+
+```
+
+
+## Step 4: Create another Resource Group for a Storage Account to host scripts
 ```bash
 # create resource group for the script storage
 az group create -n $strResourceGroup -l $location
@@ -106,28 +166,14 @@ az storage blob copy start --destination-blob customizeScript.sh \
                            --account-name $scriptStorageAcc \
                            --source-uri https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh
 ## wait a minute
-```
-
-
-## Step 4: Create User-Assigned Managed Identity and Grant Permissions 
-For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
-
-```bash
-# create user assigned identity for image builder to access the storage account where the script is located
-idenityName=aibBuiUserId$(date +'%s')
-az identity create -g $imageResourceGroup -n $idenityName
-
 
 # assign the identity permissions to the storage account, so it can read the script blob
-imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
 az role assignment create \
     --assignee $imgBuilderCliId \
     --role "Storage Blob Data Reader" \
     --scope /subscriptions/$subscriptionID/resourceGroups/$strResourceGroup/providers/Microsoft.Storage/storageAccounts/$scriptStorageAcc/blobServices/default/containers/$scriptStorageAccContainer 
-
-# create the user identity URI
-imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
 ```
+
 ## Step 5: Configure the Image Builder Template
 
 ```bash
@@ -137,12 +183,17 @@ curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/q
 
 sed -i -e "s/<subscriptionID>/$subscriptionID/g" helloImageTemplateMsi.json
 sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateMsi.json
-sed -i -e "s/<region>/$location/g" helloImageTemplateMsi.json
 sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateMsi.json
 sed -i -e "s%<scriptUrl>%$scriptUrl%g" helloImageTemplateMsi.json
 sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" helloImageTemplateMsi.json
 sed -i -e "s%<runOutputName>%$runOutputName%g" helloImageTemplateMsi.json
 
+sed -i -e "s/<imageDefName>/$imageDefName/g" helloImageTemplateMsi.json
+sed -i -e "s/<sharedImageGalName>/$sigName/g" helloImageTemplateMsi.json
+
+sed -i -e "s/<region1>/$location/g" helloImageTemplateMsi.json
+sed -i -e "s/<region2>/$additionalregion/g" helloImageTemplateMsi.json
+sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateMsi.json
 
 ```
 
@@ -165,7 +216,7 @@ az resource invoke-action \
      -n helloImageTemplateMsi01 \
      --action Run 
 
-# wait approx 15mins
+# wait approx 20mins (it includes replication time westus2 > eastus)
 ```
 
 
@@ -194,13 +245,49 @@ You should see the image was customized with a Message of the Day as soon as you
 
 ## Clean Up
 ```bash
+# delete permissions asssignments, roles and identity
+az role assignment delete \
+    --assignee $imgBuilderCliId \
+    --role "$imageRoleDefName" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+
+az role definition delete --name "$imageRoleDefName"
+
 az identity delete --ids $imgBuilderId
 
+
+# delete AIB Template
 az resource delete \
     --resource-group $imageResourceGroup \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateMsi01
 
+# get image version created by AIB, this always starts with 0.*
+sigDefImgVersion=$(az sig image-version list \
+   -g $imageResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID --query [].'name' -o json | grep 0. | tr -d '"')
+
+# delete image version
+az sig image-version delete \
+   -g $imageResourceGroup \
+   --gallery-image-version $sigDefImgVersion \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID
+
+# delete image definition
+az sig image-definition delete \
+   -g $imageResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --subscription $subscriptionID
+
+# delete SIG
+az sig delete -r $sigName -g $imageResourceGroup
+
+# delete resource groups
 az group delete -n $imageResourceGroup
 
 az group delete -n $strResourceGroup
@@ -208,4 +295,4 @@ az group delete -n $strResourceGroup
 ```
 
 ## Next Steps
-If you loved or hated Image Builder, please go to next steps to leave feedback, contact dev team, more documentation, or try more examples [here](../quickquickstarts/nextSteps.md)]
+If you loved or hated Image Builder, please go to next steps to leave feedback in the github issues, or try more examples.

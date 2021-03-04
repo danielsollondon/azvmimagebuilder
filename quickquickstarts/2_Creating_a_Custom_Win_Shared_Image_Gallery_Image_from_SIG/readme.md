@@ -1,55 +1,50 @@
-# Using PowerShell to Create a Windows Server Custom Image using Azure VM Image Builder
+# Create a Custom Windows Image, from an existing Shared Image Gallery Custom Image then Distribute and Version over Multiple Regions
 
 > **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
 
-This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distibute to the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries), where you can replicate regions, control the scale, and share inside and outside your organizations.
+This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and then use the Azure [Shared Image Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries).
 
-This covers using mutliple customizations to illustrate some high level functionality:
-* PowerShell (ScriptUri) - Downloading a bash script and executing it
-* PowerShell (inline) - Execute an array of commands
-* File - Copy a html file from github to a specified, pre-created directory
-* buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
-* vmProfile - specifying a vmSize and Network properties
-* osDiskSizeGB - you can increase the size of image
-* WindowsRestart - this will allow for restarts between software installs
-* WindowsUpdate - update the image with the latest Windows Updates, note this will handle its own required reboots.
+This Quick Start assumes you have completed 1_Creating_a_Custom_Win_Shared_Image_Gallery_Image, and therefore the variables below, will be preset to those variable names, for continuity, but you can always update them yourself.
 
-To simplify deploying an AIB configuration template with PowerShell CLI, this example uses an Azure Resource Manager (ARM) template with the AIB template nested inside, and gives you other benefits for free, such as variables and parameter inputs etc. You can also pass parameters from the commandline too, which you will see here.
-
-This walk through is intended to be a copy and paste exercise, and will provide you with a custom Win Server image (AIB also supports client images), showing you how you can easily create a custom image.
+To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
 >>> Note! Azure Image Builder automatically runs sysprep to generalize the image, this is a generic sysprep command, which you can [overide](https://github.com/danielsollondon/azvmimagebuilder/blob/master/troubleshootingaib.md#vms-created-from-aib-images-do-not-create-successfully) if you are aware of more favorable settings. However, for *Windows there are limits on how many times (8), an image can be sysprep'd*, see [here](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep) for more details. Therefore exercise caution on how many times you layer customizations.
 
+## Step 1 : Enable Prereqs
 
-## PreReqs
-You must have the latest Azure PowerShell CmdLets installed, see [here](https://docs.microsoft.com/en-us/powershell/azure/overview?view=azps-2.6.0) for install details.
+Happy Image Building!!!
 
-```PowerShell
-# Register for Azure Image Builder Feature
-Register-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderNamespace Microsoft.VirtualMachineImages
+### Register for Image Builder / VM / Storage Features
+```bash
+az feature register --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview
 
-Get-AzProviderFeature -FeatureName VirtualMachineTemplatePreview -ProviderNamespace Microsoft.VirtualMachineImages
-# wait until RegistrationState is set to 'Registered'
+az feature show --namespace Microsoft.VirtualMachineImages --name VirtualMachineTemplatePreview | grep state
 
-# check you are registered for the providers, ensure RegistrationState is set to 'Registered'.
-Get-AzResourceProvider -ProviderNamespace Microsoft.VirtualMachineImages
-Get-AzResourceProvider -ProviderNamespace Microsoft.Storage 
-Get-AzResourceProvider -ProviderNamespace Microsoft.Compute
-Get-AzResourceProvider -ProviderNamespace Microsoft.KeyVault
+# register and enable for shared image gallery
+az feature register --namespace Microsoft.Compute --name GalleryPreview
 
-# If they do not saw registered, run the commented out code below.
+# wait until it says registered
 
-## Register-AzResourceProvider -ProviderNamespace Microsoft.VirtualMachineImages
-## Register-AzResourceProvider -ProviderNamespace Microsoft.Storage
-## Register-AzResourceProvider -ProviderNamespace Microsoft.Compute
-## Register-AzResourceProvider -ProviderNamespace Microsoft.KeyVault
+# check you are registered for the providers
+
+az provider show -n Microsoft.VirtualMachineImages | grep registrationState
+az provider show -n Microsoft.Storage | grep registrationState
+az provider show -n Microsoft.Compute | grep registrationState
+az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
-## Step 1: Set up environment and variables
+If they do not saw registered, run the commented out code below.
+```bash
+## az provider register -n Microsoft.VirtualMachineImages
+## az provider register -n Microsoft.Storage
+## az provider register -n Microsoft.Compute
+## az provider register -n Microsoft.KeyVault
+
+```
+
+## Step 1 : Set Variables
 
 ```powerShell
-# Step 1: Import module
-Import-Module Az.Accounts
 
 # Step 2: get existing context
 $currentAzContext = Get-AzContext
@@ -63,87 +58,64 @@ $location="westus"
 # your subscription, this will get your current subscription
 $subscriptionID=$currentAzContext.Subscription.Id
 
-# name of the image to be created
-$imageName="aibCustomImgWin10"
-
 # image template name
-$imageTemplateName="helloImageTemplateWin02ps"
+$imageTemplateName="helloImageTemplateWin03ps"
 
 # distribution properties object name (runOutput), i.e. this gives you the properties of the managed image on completion
-$runOutputName="winclientR01"
+$runOutputName="winserverR02"
 
-# create resource group
-New-AzResourceGroup -Name $imageResourceGroup -Location $location
-```
-
-## Step 2 : Permissions, create user idenity and role for AIB
-
-### Create user identity
-```powerShell
-# setup role def names, these need to be unique
-$timeInt=$(get-date -UFormat "%s")
-$imageRoleDefName="Azure Image Builder Image Def"+$timeInt
-$idenityName="aibIdentity"+$timeInt
-
-## Add AZ PS module to support AzUserAssignedIdentity
-Install-Module -Name Az.ManagedServiceIdentity
-
-# create identity
-New-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName
-
-$idenityNameResourceId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName).Id
-$idenityNamePrincipalId=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $idenityName).PrincipalId
-
-```
-
-### Assign permissions for identity to distribute images
-This command will download and update the template with the parameters specified earlier.
-```powerShell
-$aibRoleImageCreationUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json"
-$aibRoleImageCreationPath = "aibRoleImageCreation.json"
-
-# download config
-Invoke-WebRequest -Uri $aibRoleImageCreationUrl -OutFile $aibRoleImageCreationPath -UseBasicParsing
-
-((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<subscriptionID>',$subscriptionID) | Set-Content -Path $aibRoleImageCreationPath
-((Get-Content -path $aibRoleImageCreationPath -Raw) -replace '<rgName>', $imageResourceGroup) | Set-Content -Path $aibRoleImageCreationPath
-((Get-Content -path $aibRoleImageCreationPath -Raw) -replace 'Azure Image Builder Service Image Creation Role', $imageRoleDefName) | Set-Content -Path $aibRoleImageCreationPath
-
-# create role definition
-New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
-
-# grant role definition to image builder service principal
-New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
-
-### NOTE: If you see this error: 'New-AzRoleDefinition: Role definition limit exceeded. No more role definitions can be created.' See this article to resolve:
-https://docs.microsoft.com/en-us/azure/role-based-access-control/troubleshooting
-
-
-```
-
-## Step 3 : Create the Shared Image Gallery
-
-```powerShell
 $sigGalleryName= "myaibsig01"
 $imageDefName ="winSvrimages"
 
 # additional replication region
 $replRegion2="eastus"
+```
 
-# create gallery
-New-AzGallery -GalleryName $sigGalleryName -ResourceGroupName $imageResourceGroup  -Location $location
+## Step 2 : Permissions, create user idenity and role for AIB
 
-# create gallery definition
-New-AzGalleryImageDefinition -GalleryName $sigGalleryName -ResourceGroupName $imageResourceGroup -Location $location -Name $imageDefName -OsState generalized -OsType Windows -Publisher 'myCo' -Offer 'Windows' -Sku 'Win2019'
+### Create user identity or use previous identity
+```powerShell
+# setup role def names, these need to be unique
+$idenityObject=$(Get-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup | Where-Object {$_.Name -Match "aibIdentity*"})
+
+
+$idenityNameResourceId=$idenityObject.Id
+$idenityNamePrincipalId=$idenityObject.PrincipalId
+$idenityName=$idenityObject.Name
+```
+### (Optional) Assign permissions for identity to read source images and distribute images
+In the previous example you have setup a SIG, with a user identity, that has permissions to read and write to the SIG. This is enough permissions for this example as we will be reading the SIG image version created in the prereq example, but just incase you are experimenting, and want to read an image version from another SIG, you will need to give the user identity permissions to access it, with the role definition.
+
+```powerShell
+$imageRoleDefName=<Get from previous example>
+# grant role definition to image builder service principal
+New-AzRoleAssignment -ObjectId $idenityNamePrincipalId -RoleDefinitionName contributor -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
 
 ```
+
+## Step 3 : Get latest image version for source
+```powerShell
+# get all versions from SIG def
+$getAllImageVersions=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName)
+
+# get name and expand publishing date for a version
+$versionPubList=$($getAllImageVersions | Select-Object -Property Name -ExpandProperty PublishingProfile)
+
+# order by published date (leaving in more columns for induvidual validation)
+$sortedVersionList=$($versionPubList | Select-Object Name, PublishedDate | Sort-Object PublishedDate -Descending | Select-Object Name -First 1)
+
+# get latest version resource id
+$sigDefImgVersionId=$(Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup  -GalleryName $sigGalleryName -GalleryImageDefinitionName $imageDefName -Name $sortedVersionList.name).Id
+```
+
+## Step 4 : Configure the Image Template
 
 # Configure the Image Template
 This command will download and update the template with the parameters specified earlier.
 ```powerShell
 
-$templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/1_Creating_a_Custom_Win_Shared_Image_Gallery_Image/armTemplateWinSIG.json"
-$templateFilePath = "armTemplateWinSIG.json"
+$templateUrl="https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/2_Creating_a_Custom_Win_Shared_Image_Gallery_Image_from_SIG/helloImageTemplateforSIGfromWinSIG.json"
+$templateFilePath = "helloImageTemplateforSIGfromWinSIG.json"
 
 Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
 
@@ -158,6 +130,9 @@ Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
 ((Get-Content -path $templateFilePath -Raw) -replace '<region2>',$replRegion2) | Set-Content -Path $templateFilePath
 
 ((Get-Content -path $templateFilePath -Raw) -replace '<imgBuilderId>',$idenityNameResourceId) | Set-Content -Path $templateFilePath
+
+((Get-Content -path $templateFilePath -Raw) -replace '<sigDefImgVersionId>',$sigDefImgVersionId) | Set-Content -Path $templateFilePath
+
 
 ```
 

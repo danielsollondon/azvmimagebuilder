@@ -3,22 +3,33 @@
     "apiVersion": "2019-05-01-preview",
     "location": "<region1>",
     "dependsOn": [],
+    "tags": {
+        "imagebuilderTemplate": "AzureVMImageBuilderSIGonSIG",
+        "userIdentity": "enabled"
+            },
+        "identity": {
+            "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                    "<imgBuilderId>": {}
+                        
+                }
+                        },
     "properties": {
         "source": {
             "type": "SharedImageVersion",
                 "imageVersionId": "<sigDefImgVersionId>"
             
         },
-
         "customize": [
             {
-                "type": "PowerShell",
-                "name": "settingUpMgmtAgtPath",
+                "type": "Shell",
+                "name": "AddBuildArtifacts3",
                 "inline": [
-                    "mkdir c:\\buildActions2",
-                    "echo Azure-Image-Builder-Was-Here  > c:\\buildActions2\\buildActionsOutput.txt" 
-                        ]
-            }
+                    "sudo mkdir /buildArtifacts3",
+                    "sudo touch /buildArtifacts3/imageBuilder.md"
+                ]
+                }
+
         ],
         "distribute": 
         [
@@ -28,7 +39,7 @@
                 "runOutputName": "<runOutputName>",
                 "artifactTags": {
                     "source": "azureVmImageBuilder",
-                    "baseosimg": "windows2019"
+                    "baseosimg": "ubuntu1804"
                 },
                 "replicationRegions": [
                   "<region1>",

@@ -4,8 +4,16 @@
     "location": "<region>",
     "dependsOn": [],
     "tags": {
-        "imagebuilderTemplate": "ubuntu1804"
+        "imagebuilderTemplate": "ubuntu1804",
+        "userIdentity": "enabled"
             },
+        "identity": {
+            "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                    "<imgBuilderId>": {}
+                        
+                }
+                },
     "properties": {
 
         "buildTimeoutInMinutes" : 80,
@@ -21,7 +29,7 @@
                 "publisher": "Canonical",
                 "offer": "UbuntuServer",
                 "sku": "18.04-LTS",
-                "version": "18.04.201903060"
+                "version": "latest"
             
         },
         "customize": [

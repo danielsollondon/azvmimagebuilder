@@ -1,24 +1,16 @@
-# Create a Custom Image from an Azure Platform Vanilla OS Image
+# Create a Custom Managed Image from an Azure Platform Vanilla OS Image
+
+> **MAY 2020 SERVICE ALERT** - Existing users, please ensure you are compliant this [Service Alert by 26th May!!!](https://github.com/danielsollondon/azvmimagebuilder#service-update-may-2020-action-needed-by-26th-may---please-review)
 
 This article is to show you how you can create a basic customized image using the Azure VM Image Builder, and distribute to a region. This covers using mutliple customizations to illustrate some high level functionality:
+
+This covers using mutliple customizations to illustrate some high level functionality:
 * Shell (ScriptUri) - Downloading a bash script and executing it
-* Shell (ScriptUri) with file validation, using sha256Checksum:
-    * Checksum your Script file locally, then pass this to Image Builder to compare the checksum during the image build. 
-    * To generate the sha256Checksum, using a terminal on Mac/Linux run:
-    ```bash
-    sha256sum <fileName>
-    ```
 * Shell (inline) - Execute an array of commands
 * File - Copy a html file from github to a specified, pre-created directory
-    * This also supports *sha256Checksum* property too.
 * buildTimeoutInMinutes - Increase a build time to allow for longer running builds 
-* vmProfile:
-    * vmSize
-    
-        By default Image Builder will use a "Standard_D1_v2" build VM, you can override this, for example, if you want to customize an Image for a GPU VM, you need a GPU VM size. This is optional.
-    * osDiskSizeGB
-        * By default, Image Builder will not change the size of the image, it will use the size from the source image. You can adjust the size of the OS Disk (Win and Linux), note, do not go too small than the minimum required space required for the OS. This is optional, and a value of 0 means leave the same size as the source image.
-
+* vmProfile - specifying a vmSize and Network properties
+* osDiskSizeGB - you can increase the size of image
 
 To use this Quick Quickstarts, this can all be done using the Azure [Cloudshell from the Portal](https://azure.microsoft.com/en-us/features/cloud-shell/). Simply copy and paste the code from here, at a miniumum, just update the **subscriptionID** variable below.
 
@@ -44,7 +36,8 @@ az provider show -n Microsoft.Compute | grep registrationState
 az provider show -n Microsoft.KeyVault | grep registrationState
 ```
 
-If they do not say registered, run the commented out code below.
+If they do not show registered, run the commented out code below.
+
 ```bash
 ## az provider register -n Microsoft.VirtualMachineImages
 ## az provider register -n Microsoft.Storage
@@ -59,14 +52,14 @@ If they do not say registered, run the commented out code below.
 # set your environment variables here!!!!
 
 # destination image resource group
-imageResourceGroup=aibmdi
+imageResourceGroup=aibmdi001
 
 # location (see possible locations in main docs)
 location=WestUS2
 
 # your subscription
 # get the current subID : 'az account show | grep id'
-subscriptionID=<INSERT YOUR SUBSCRIPTION ID HERE>
+subscriptionID=$(az account show | grep id | tr -d '",' | cut -c7-)
 
 # name of the image to be created
 imageName=aibCustomLinuxImg01
@@ -76,13 +69,42 @@ runOutputName=aibCustLinManImg01ro
 
 # create resource group
 az group create -n $imageResourceGroup -l $location
+```
 
-# assign permissions for that resource group
+## Create a user identify and assign permissions for the resource group where the image will be created
+
+### Create User-Assigned Managed Identity and Grant Permissions 
+For more information on User-Assigned Managed Identity, see [here](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm#user-assigned-managed-identity).
+
+```bash
+# create user assigned identity for image builder to access the storage account where the script is located
+idenityName=aibBuiUserId$(date +'%s')
+az identity create -g $imageResourceGroup -n $idenityName
+
+# get identity id
+imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
+
+# get the user identity URI, needed for the template
+imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+
+# download preconfigured role definition example
+curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aibRoleImageCreation.json
+
+imageRoleDefName="Azure Image Builder Image Def"$(date +'%s')
+
+# update the definition
+sed -i -e "s/<subscriptionID>/$subscriptionID/g" aibRoleImageCreation.json
+sed -i -e "s/<rgName>/$imageResourceGroup/g" aibRoleImageCreation.json
+sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aibRoleImageCreation.json
+
+# create role definitions
+az role definition create --role-definition ./aibRoleImageCreation.json
+
+# grant role definition to the user assigned identity
 az role assignment create \
-    --assignee cf32a0cc-373c-47c9-9156-0db11f6a6dfc \
-    --role Contributor \
+    --assignee $imgBuilderCliId \
+    --role $imageRoleDefName \
     --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
-
 ```
 
 ## Step 2 : Modify HelloImage Example
@@ -97,6 +119,8 @@ sed -i -e "s/<rgName>/$imageResourceGroup/g" helloImageTemplateLinux.json
 sed -i -e "s/<region>/$location/g" helloImageTemplateLinux.json
 sed -i -e "s/<imageName>/$imageName/g" helloImageTemplateLinux.json
 sed -i -e "s/<runOutputName>/$runOutputName/g" helloImageTemplateLinux.json
+
+sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" helloImageTemplateLinux.json
 
 ```
 
@@ -157,8 +181,18 @@ az resource delete \
     --resource-type Microsoft.VirtualMachineImages/imageTemplates \
     -n helloImageTemplateLinux01
 
-az group delete -n $imageResourceGroup
+# delete permissions asssignments, roles and identity
+az role assignment delete \
+    --assignee $imgBuilderCliId \
+    --role "$imageRoleDefName" \
+    --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
 
+az role definition delete --name "$imageRoleDefName"
+
+az identity delete --ids $imgBuilderId
+
+
+az group delete -n $imageResourceGroup
 
 ```
 
