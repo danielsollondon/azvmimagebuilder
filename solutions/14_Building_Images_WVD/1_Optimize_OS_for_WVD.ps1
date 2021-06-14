@@ -5,7 +5,8 @@
  New-Item -Path $drive -Name $appName  -ItemType Directory -ErrorAction SilentlyContinue
  $LocalPath = $drive + '\' + $appName 
  set-Location $LocalPath
- $osOptURL = 'https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/archive/master.zip'
+ #$osOptURL = 'https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/archive/master.zip'
+ $osOptURL = 'https://github.com/The-Virtual-Desktop-Team/Virtual-Desktop-Optimization-Tool/archive/main.zip'
  $osOptURLexe = 'Windows_10_VDI_Optimize-master.zip'
  $outputPath = $LocalPath + '\' + $osOptURLexe
  Invoke-WebRequest -Uri $osOptURL -OutFile $outputPath
