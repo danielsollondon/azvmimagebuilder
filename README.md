@@ -1,5 +1,8 @@
 # Azure VM Image Builder Template Repo
 
+# UPDATE: REPO MOVED TO https://github.com/Azure/azvmimagebuilder
+
+
 Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder (Public Preview).
 
 What is Image Builder??
