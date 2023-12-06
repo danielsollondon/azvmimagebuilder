@@ -3,7 +3,7 @@
 ## UPDATE: REPO MOVED TO https://github.com/Azure/azvmimagebuilder
 THANK YOU all for your contributions, community spirit and enthusiasm. I've enjoyed building this repo and working with you all here. As the repo has been migrated, this repo is archived, 
 
-<ARCHIVED CONTENT BELOW>
+### ARCHIVED CONTENT BELOW
 Get started now, this repo contains mutliple examples and test templates for Azure VM Image Builder (Public Preview).
 
 What is Image Builder??
